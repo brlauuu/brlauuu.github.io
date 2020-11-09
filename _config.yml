@@ -1,1 +1,10 @@
 theme: jekyll-theme-cayman
+
+name: Đorđe Relić
+
+description: PhD student @ Biozentrum
+
+avatar: https://avatars3.githubusercontent.com/u/4980604?s=460&u=fe69de5d96b8b9e8f8454f3eef5e369cfa15a7d9&v=4
+
+plugins:
+  - jemoji
