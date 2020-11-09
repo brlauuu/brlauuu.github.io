@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-11-09T16:15:23+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">brlauuu</title><subtitle>PhD candidate @ Biozentrum
+</subtitle><author><name>Đorđe Relić</name></author><entry><title type="html">Blat</title><link href="http://localhost:4000/tools/2020/11/08/BLAT.html" rel="alternate" type="text/html" title="Blat" /><published>2020-11-08T15:44:00+01:00</published><updated>2020-11-08T15:44:00+01:00</updated><id>http://localhost:4000/tools/2020/11/08/BLAT</id><content type="html" xml:base="http://localhost:4000/tools/2020/11/08/BLAT.html">&lt;h1 id=&quot;understanding-blat-v-36&quot;&gt;Understanding BLAT (v. 36)&lt;/h1&gt;
+
+&lt;p&gt;So, I’m sorry we have to go over this again, but I was wrong. Once again. Even though I was convinced that duplicated high scoring pairs (HSPs) (different alignments BLAT offers) are always overlapping in at least one of the sequences (query or database) it turns out that those were only the cases that I looked at. I now identified other examples where there are both overlapping and non-overlapping cases. This is such example. I’m sending you BLAT output (in two versions: 1 - pslx output which is what I use and 2 - blast output which is the alignment), BLAST output, and the sequences.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;send file&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Before I explain how and why some HSPs contain several fragments (parts of sequences from the alignment), I’d like to quickly explain parameters I’m using in BLAT and what does that mean. My BLAT call is:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt; blat database.fa query.fa output.pslx -prot -out=pslx -minScore=0&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-prot&lt;/code&gt; is for running BLAT on proteins. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psxl&lt;/code&gt; is the output of BLAT which contains sequences (fragments). &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-minScore=0&lt;/code&gt; is for not letting BLAT discard any hits that our algorithm might include. Other default parameters that are of interest are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-tileSize&lt;/code&gt; with default value of 5 for protein alignment&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-stepSize&lt;/code&gt; which is same as -tileSize and in this case, also 5.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-minMatch&lt;/code&gt; is set for 1 which means that at least one amino acid has to match in a given block/fragments&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now, that said, what we have is an algorithm that has two steps:
+1) Search stage: taking tiles of &lt;em&gt;overlapping&lt;/em&gt; 5 amino acids from query (human/mouse full proteins), and is mapping it to the &lt;em&gt;non overlapping&lt;/em&gt; 5-mer indexed database (zebrafish full proteins). Search stage results in a list of hits. (Section “Clumping Hits and Identifying Homologous Regions” at https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/)
+2) Alignment stage: hits assembled in 1) are extended into maximally scoring ungapped high scoring alignment (HSPs) using a score function where a match is worth 2 and a mismatch costs 1. &lt;em&gt;Note that this part is something I cannot influence!&lt;/em&gt; Next, a graph of HSPs is built. If HSP A starts before HSP B in &lt;em&gt;both&lt;/em&gt; query and database, an edge is placed between A and B. The edge is weighted by the score of B minus a gap penalty based on the distance between A dn B. Where A and B overlap, a “crossover” point is selected that maximizes “joining” of two HSPs. Then a dynamic algorithm is run which finds the maximal scoring alignment. This algorithm is applied until all HSPs are connected. (Section “Protein alignment” at https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/)&lt;/p&gt;
+
+&lt;p&gt;So, two questions appear:&lt;/p&gt;
+
+&lt;p&gt;1) Why do we have overlapping alignments?
+2) Why do we have several alignments that are not “stitched” together?&lt;/p&gt;
+
+&lt;p&gt;Answers:&lt;/p&gt;
+
+&lt;p&gt;1) What seems to be an “overlapping alignments” is essentially not overlapping in both sequences, but only in one of them. In the other sequence, it is a gap. And that is an attempt of BLAT to fill in the gaps byt taking &lt;em&gt;other&lt;/em&gt; parts of the sequence and “putting” them into those gaps. (“Stitching and Filling In” at https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/) It is hard to see that from .pslx output but once the output is set to .blast, in the alignment, it is clear that that is the case.&lt;/p&gt;
+
+&lt;p&gt;2) Some fragments are stitched together (in the same line), some are not. My guess is that the ones that are not, are just too far apart and instead were broken into several lines. BUT, the important thing is that all HSPs (lines with same target and query ID) are part of one alignment! And if we want to get all matches, or rather, the number of true matches, we&lt;/p&gt;
+
+&lt;p&gt;Important resources:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/&lt;/li&gt;
+  &lt;li&gt;https://genome.ucsc.edu/goldenpath/help/blatSpec.html&lt;/li&gt;
+  &lt;li&gt;https://biopython.org/docs/1.75/api/Bio.SearchIO.BlatIO.html#supported-formats&lt;/li&gt;
+  &lt;li&gt;http://web-old.archive.org/web/20190808121048/http://bow.web.id/blog/2012/07/initial-blat-support&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>brlauuu</name></author><category term="tools" /><summary type="html">Understanding BLAT (v. 36)</summary></entry></feed>

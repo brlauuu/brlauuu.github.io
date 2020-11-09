@@ -1,12 +1,56 @@
-theme: jekyll-theme-cayman
+title: brlauuu
+author:
+  name: Đorđe Relić
+description: > # this means to ignore newlines until "show_excerpts:"
+  PhD candidate @ Biozentrum
+show_excerpts: false # set to true to show excerpts on the homepage
 
-title: blrauuu
+# Minima date format
+# refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this
+minima:
+  date_format: "%b %-d, %Y"
 
-author: Đorđe Relić
+  # generate social links in footer
+  social_links:
+    twitter: brlauuu
+    github:  brlauuu
+    # devto: jekyll
+    # dribbble: jekyll
+    # facebook: jekyll
+    # flickr:   jekyll
+    # instagram: jekyll
+    linkedin: linkedin.com/in/dorderelic/
+    # pinterest: jekyll
+    # youtube: jekyll
+    # youtube_channel: UC8CXR0-3I70i1tfPg1PAE1g
+    # youtube_channel_name: CloudCannon
+    # telegram: jekyll
+    # googleplus: +jekyll
+    # microdotblog: jekyll
+    # keybase: jekyll
 
-description: PhD student @ Biozentrum
+    # Mastodon instances
+    # mastodon:
+    # - username: jekyll
+    #   instance: example.com
+    # - username: jekyll2
+    #   instance: example.com
 
-avatar: https://avatars3.githubusercontent.com/u/4980604?s=460&u=fe69de5d96b8b9e8f8454f3eef5e369cfa15a7d9&v=4
+    # GitLab instances
+    # gitlab:
+    # - username: jekyll
+    #   instance: example.com
+    # - username: jekyll2
+    #   instance: example.com
+
+# If you want to link only specific pages in your header, uncomment
+# this and add the path to the pages in order as they should show up
+#header_pages:
+# - about.md
+
+# Build settings
+theme: minima
 
 plugins:
-  - jemoji
+ - jekyll-feed
+ - jekyll-seo-tag

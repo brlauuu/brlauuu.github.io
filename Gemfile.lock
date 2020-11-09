@@ -257,6 +257,7 @@ PLATFORMS
 DEPENDENCIES
   github-pages (~> 209)
   jemoji
+  minima
 
 BUNDLED WITH
    2.1.4
