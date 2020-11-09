@@ -3,19 +3,21 @@ author:
   name: Đorđe Relić
 description: > # this means to ignore newlines until "show_excerpts:"
   PhD candidate @ Biozentrum
+
 show_excerpts: false # set to true to show excerpts on the homepage
 
+twitter_username: brlauuu
+github_username:  brlauuu
+linkedin_username: dorderelic
+
 # generate social links in footer
-social_links:
-  twitter: brlauuu
-  github:  brlauuu
-  linkedin: linkedin.com/in/dorderelic/
+minima:
+  date_format: "%b %-d, %Y"
 
-# If you want to link only specific pages in your header, uncomment
-# this and add the path to the pages in order as they should show up
 header_pages:
-- about.md
-
+  - _pages/frontpage.md
+  - _pages/about.md
+  - _pages/archive.md
 # Build settings
 theme: minima
 
