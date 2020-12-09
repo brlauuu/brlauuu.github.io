@@ -221,13 +221,13 @@ This simple case of using BLAT for protein-protein alignment provides quite stra
 
 ## References
 
-1. Kent, W. James. "BLAT—the BLAST-like alignment tool." Genome research 12.4 (2002): 656-664.
-2. Altschul, Stephen F., et al. "Basic local alignment search tool." Journal of molecular biology 215.3 (1990): 403-410.
+1. [Kent, W. James. "BLAT—the BLAST-like alignment tool." Genome research 12.4 (2002): 656-664.](https://genome.cshlp.org/content/12/4/656)
+2. [Altschul, Stephen F., et al. "Basic local alignment search tool." Journal of molecular biology 215.3 (1990): 403-410.](https://www.sciencedirect.com/science/article/pii/S0022283605803602?via%3Dihub)
 
 ## Other useful resources
 
-* https://biopython.org/DIST/docs/api/Bio.SearchIO.BlatIO-module.html
-* https://biopython.org/DIST/docs/api/Bio.SearchIO._model.hsp.HSP-class.html
-* https://biopython.org/docs/1.75/api/Bio.SearchIO.BlatIO.html#supported-formats
-* https://biopython.org/wiki/SeqRecord
-* http://web-old.archive.org/web/20190808121048/http://bow.web.id/blog/2012/07/initial-blat-support
+* [https://biopython.org/DIST/docs/api/Bio.SearchIO.BlatIO-module.html](https://biopython.org/DIST/docs/api/Bio.SearchIO.BlatIO-module.html)
+* [https://biopython.org/DIST/docs/api/Bio.SearchIO._model.hsp.HSP-class.html](https://biopython.org/DIST/docs/api/Bio.SearchIO._model.hsp.HSP-class.html)
+* [https://biopython.org/docs/1.75/api/Bio.SearchIO.BlatIO.html#supported-formats](https://biopython.org/docs/1.75/api/Bio.SearchIO.BlatIO.html#supported-formats)
+* [https://biopython.org/wiki/SeqRecord](https://biopython.org/wiki/SeqRecord)
+* [http://web-old.archive.org/web/20190808121048/http://bow.web.id/blog/2012/07/initial-blat-support](http://web-old.archive.org/web/20190808121048/http://bow.web.id/blog/2012/07/initial-blat-support)
