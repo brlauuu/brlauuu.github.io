@@ -1,6 +1,5 @@
-# Peculiar case of BLAT output
-
 In this blog post, I will discuss how I used BLAT to solve a protein sequence alignment task.
+
 ## BLAT
 
 Firstly, a short introduction. Blast Like Alignment Tool (BLAT) is sequence alignment tool written by W. James Kent, [published in Genome Research](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/). Manual for BLAT can be found at [UCSC page](https://genome.ucsc.edu/goldenpath/help/blatSpec.html). As from the abstract of the in WJ Kent's work<sup>1</sup> BLAT was developed with intend to increase the speed of genomic sequence alignment for the needs of the human genome project. In comparison with [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi)<sup>2</sup>, BLAT is different in few ways:
