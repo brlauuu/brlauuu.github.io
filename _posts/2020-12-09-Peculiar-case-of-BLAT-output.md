@@ -1,3 +1,9 @@
+---
+layout: post
+title: "A Peculiar Case of BLAT Output"
+author: "Đorđe Relić"
+---
+
 In this blog post, I will discuss how I used BLAT to solve a protein sequence alignment task.
 
 ## BLAT
