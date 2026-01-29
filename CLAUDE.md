@@ -64,8 +64,14 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
   layout: post
   title: "Post Title"
   author: "Đorđe Relić"
+  tags: [tag1, tag2, tag3]  # Optional - posts can have tags or no tags
   ---
   ```
+- **Tags**: Posts can optionally include tags for categorization
+  - Add tags as an array in the front matter: `tags: [python, bioinformatics]`
+  - Tags are displayed below the post title
+  - Tags link to the tags page with anchor navigation
+  - Posts without tags are perfectly valid
 
 ### Pages
 - Location: `_pages/`
@@ -73,7 +79,12 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
 - Current pages:
   - `_pages/about.md` - Short, subtle about section with social links
   - `_pages/archive.md` - Shows posts older than 1 year, grouped by year
-- Navigation defined in `_config.yml` under `navigation`
+  - `_pages/tags.md` - Lists all posts organized by tags, alphabetically
+- Navigation: Custom navigation in `_includes/navigation.html`
+  - Posts (home)
+  - Archive
+  - Tags
+  - About
 
 ### Archive System
 The site uses an automatic archive system that separates recent and old content:
@@ -82,6 +93,7 @@ The site uses an automatic archive system that separates recent and old content:
   - Shows only posts from the last year (365 days)
   - Automatically calculated based on current date vs. post date
   - Recent posts appear here
+  - If no recent posts exist, displays a message with link to archive
 
 - **Archive Page** (`_pages/archive.md`):
   - Shows only posts older than 1 year
@@ -90,6 +102,30 @@ The site uses an automatic archive system that separates recent and old content:
   - Displays message if no archived posts exist yet
 
 **Important**: When adding a new post, the archive automatically updates. Posts older than 1 year will move from the home page to the archive. No manual intervention needed.
+
+### Tags System
+
+The site includes a tagging system for categorizing posts:
+
+- **Tags Page** (`_pages/tags.md`): Lists all posts grouped by their tags
+- **Tag Display**: Tags appear below post titles on individual post pages
+- **Clickable Tags**: Tags link to the tags page with anchor navigation
+- **Optional**: Posts can have multiple tags, a single tag, or no tags at all
+
+**Adding tags to posts:**
+```yaml
+---
+layout: post
+title: "Your Post Title"
+author: "Đorđe Relić"
+tags: [tag1, tag2, tag3]
+---
+```
+
+**Tags are:**
+- Displayed alphabetically on the tags page
+- Shown below the post title with links to tag sections
+- Completely optional - omit the `tags:` line if not needed
 
 ### Dark Mode
 

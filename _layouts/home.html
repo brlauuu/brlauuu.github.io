@@ -6,7 +6,16 @@ layout: default
 Calculate the timestamp for 1 year ago
 Current time minus 31536000 seconds (365 days)
 {% endcomment %}
-{% assign one_year_ago = site.time | date: "%s" | minus: 31536000 %}
+{% assign one_year_ago = site.time | date: "%s" | plus: 0 | minus: 31536000 %}
+
+{% comment %} Count recent posts {% endcomment %}
+{% assign recent_post_count = 0 %}
+{% for post in site.posts %}
+  {% assign post_time = post.date | date: "%s" | plus: 0 %}
+  {% if post_time >= one_year_ago %}
+    {% assign recent_post_count = recent_post_count | plus: 1 %}
+  {% endif %}
+{% endfor %}
 
 <div class="catalogue">
   {% comment %} First, show sticky posts if any {% endcomment %}
@@ -18,13 +27,18 @@ Current time minus 31536000 seconds (365 days)
 
   {% comment %} Then, show only posts from the last year {% endcomment %}
   {% for post in site.posts %}
-    {% assign post_time = post.date | date: "%s" %}
+    {% assign post_time = post.date | date: "%s" | plus: 0 %}
     {% if post_time >= one_year_ago %}
       {% unless post.sticky %}
         {% include catalogue_item.html %}
       {% endunless %}
     {% endif %}
   {% endfor %}
-</div>
 
-{% comment %} Note: Pagination is removed since we're using custom filtering {% endcomment %}
+  {% comment %} If no recent posts, show message and link to archive {% endcomment %}
+  {% if recent_post_count == 0 %}
+    <div style="text-align: center; padding: 2rem 0;">
+      <p>No recent posts. Check out the <a href="{{ "/archive" | relative_url }}">archive</a> for older articles.</p>
+    </div>
+  {% endif %}
+</div>
