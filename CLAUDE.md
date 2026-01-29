@@ -18,17 +18,21 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 - **Social Links**: Twitter (@brlauuu), GitHub (brlauuu), LinkedIn (dorderelic)
 - **Plugins**: jekyll-paginate, jekyll-remote-theme, jekyll-feed, jekyll-seo-tag, jekyll-sitemap
 - **Archive System**: Automatic separation of recent (< 1 year) and archived (> 1 year) posts
+- **Dark Mode**: Toggle-based dark mode with localStorage persistence and system preference detection
 
 ## Directory Structure
 
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (for theme overrides)
+_includes/       # Custom HTML includes (head, dark-mode-toggle)
+_layouts/        # Custom layouts (default, home)
 assets/
   imgs/          # Images for posts and pages
+  css/           # Custom CSS (dark-mode.css)
+  js/            # JavaScript files (dark-mode.js)
 _config.yml      # Jekyll configuration
-index.html       # Homepage with paginated post list
+index.html       # Homepage with recent posts
 ```
 
 ## Development Commands
@@ -87,8 +91,33 @@ The site uses an automatic archive system that separates recent and old content:
 
 **Important**: When adding a new post, the archive automatically updates. Posts older than 1 year will move from the home page to the archive. No manual intervention needed.
 
+### Dark Mode
+
+The site includes a custom dark mode implementation:
+
+- **Toggle Button**: Fixed-position button (bottom-right) with moon/sun icons
+- **Automatic Detection**: Respects system preference (`prefers-color-scheme`)
+- **Persistence**: User choice saved in localStorage
+- **Smooth Transitions**: 0.3s ease transitions for theme changes
+
+**Files:**
+- `assets/css/dark-mode.css` - CSS variables and styling for both themes
+- `assets/js/dark-mode.js` - Theme switching logic and localStorage handling
+- `_includes/dark-mode-toggle.html` - Toggle button HTML
+- `_includes/head.html` - Custom head with dark mode initialization (prevents flash)
+- `_layouts/default.html` - Overridden layout to include toggle button
+
+**Color Variables:**
+- Light mode: White background, dark text (#555), blue links (#4a9ae1)
+- Dark mode: Dark background (#1a1a1a), light text (#d4d4d4), bright blue links (#6bb6ff)
+
+**Customization:**
+To modify dark mode colors, edit the CSS variables in `assets/css/dark-mode.css` under the `[data-theme="dark"]` selector.
+
 ### Assets
 - Images: `assets/imgs/`
+- CSS: `assets/css/`
+- JavaScript: `assets/js/`
 
 ## Tale Theme Details
 
