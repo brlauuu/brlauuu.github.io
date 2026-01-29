@@ -21,7 +21,7 @@ This scale influences how the market and the systems that shape the market evolv
 
 People used tobacco long before the United States existed. Indigenous populations in the Americas used it ritually. Europeans smoked pipes and cigars for centuries. But in the 20th-century United States, smoking transformed into something else entirely: a mass-produced, aggressively marketed consumer product.
 
-The numbers show how fast this scaled. It was in 1880 that James Bonsack invented an automatic cigarette rolling machine that allowed for mass production of cigarettes [^17]. This invention allowed opening up of the tobacco market which grew more than 270x from consuming 2.5B in 1900 to its peak consumption of 680B in 1981. Having around 30% of adults being active smokers, we come to around one and a half packs a day per person, on average.[^2]
+The numbers show how fast this scaled. It was in 1880 that James Bonsack invented an automatic cigarette rolling machine that allowed for mass production of cigarettes [^1]. This invention allowed opening up of the tobacco market which grew more than 270x from consuming 2.5B in 1900 to its peak consumption of 680B in 1981. Having around 30% of adults being active smokers, we come to around one and a half packs a day per person, on average.[^2]
 
 Why did it scale so rapidly? The US market was, and still is, large, unified, and highly consumer-oriented and sparsely regulated and it enabled the scale up.
 
@@ -65,11 +65,11 @@ Similar to PMI and Purdue, gambling companies are well equipped to serve their �
 
 And target group is very clearly defined: mostly young and mostly men. [^10] With current Millennials and Gen Zs being the main consumers, I would assume because those generations are now young but also, because those generations are the ones embedded with the digital world.
 
-> There’s been quite some talk recently how the young men today are lost and are finding themselves in different ways. One being becoming more religious [^18] and I believe that broader access to gambling opportunities will be another way for those young men to find excitement in the absence of purpose. But this is out of scope of this article.
+> There’s been quite some talk recently how the young men today are lost and are finding themselves in different ways. One being becoming more religious [^11] and I believe that broader access to gambling opportunities will be another way for those young men to find excitement in the absence of purpose. But this is out of scope of this article.
 
-While there are studies showing that individuals with higher income are more likely to gamble [^11] it is also shown that lower income individuals spend more on gambling, in relative terms, and get hit disproportionally by the gambling disorders. [^12] And that is where the phrase “Gambling is poverty tax” comes from.
+While there are studies showing that individuals with higher income are more likely to gamble [^12] it is also shown that lower income individuals spend more on gambling, in relative terms, and get hit disproportionally by the gambling disorders. [^13] And that is where the phrase “Gambling is poverty tax” comes from.
 
-Another layer to the problem of the consumer packed “product” that gambling is trying to be is that it misleads the “users” of these online platforms to believe they can win their way out of poverty using "skills" to predict game winners. Gambling, for some, will become a way towards the fulfillment of the ”American Dream”. With the ever slower raise in wages and harder jobs without higher degrees, winning that bet on the Sunday’s game looks like a legitimate way to get out of the hole or to cover for the next car payment, and it doesn’t require luck like playing a lottery [^13] However, these are not skills based competitions, it’s a zero-sum game and the house _will_ always win.
+Another layer to the problem of the consumer packed “product” that gambling is trying to be is that it misleads the “users” of these online platforms to believe they can win their way out of poverty using "skills" to predict game winners. Gambling, for some, will become a way towards the fulfillment of the ”American Dream”. With the ever slower raise in wages and harder jobs without higher degrees, winning that bet on the Sunday’s game looks like a legitimate way to get out of the hole or to cover for the next car payment, and it doesn’t require luck like playing a lottery [^14] However, these are not skills based competitions, it’s a zero-sum game and the house _will_ always win.
 
 ### Gambling Mechanics Are Embedded Into Modern Video Games
 
@@ -91,7 +91,7 @@ You can predict, or rather let's use the right term - you can _bet_ on everythin
 
 By all definitions and descriptions, prediction markets are gambling markets.
 
-Furthermore, top online betting companies (FanDuel, DraftKings etc.) are also becoming prediction markets[^14]. Everyone understands the schtick.
+Furthermore, top online betting companies (FanDuel, DraftKings etc.) are also becoming prediction markets[^15]. Everyone understands the schtick.
 
 ## The Geopolitical and Economic Consequences
 
@@ -101,7 +101,7 @@ Foreign exchange markets (FX) are called out for non-insignificantly contributin
 
 Unlike FX, which exists to support real trade, gambling markets are economically extractive by design.
 
-There's no, nor it ever will be, a P in all the increase of GDP gambling will bring. And in 2023, gambling allowed for redistribution of north of $110B from gamblers to U.S. casinos [^15]
+There's no, nor it ever will be, a P in all the increase of GDP gambling will bring. And in 2023, gambling allowed for redistribution of north of $110B from gamblers to U.S. casinos [^16]
 
 Gambling extracts money without producing goods, infrastructure, or long-term value.
 
@@ -117,40 +117,26 @@ Wealth disparity is further exacerbated while GDP growth is further distorted.
 
 Enabling gambling through internet access with very limited constraints is bound to have really bad consequences on the society, both culturally and economically.
 
-It's obvious that excessive gambling is addictive and detrimental. And it should be obvious that allowing it unbounded access to the power of the US market, that can scale, get optimized and turbocharged for profit generation is a really _really_ bad idea. Imagine how bad it can get when they, if they haven't already, hire McKinsey to help them be more profitable [^16]
+It's obvious that excessive gambling is addictive and detrimental. And it should be obvious that allowing it unbounded access to the power of the US market, that can scale, get optimized and turbocharged for profit generation is a really _really_ bad idea. Imagine how bad it can get when they, if they haven't already, hire McKinsey to help them be more profitable. [^17]
 
 I cannot predict (pun intended) how it's gonna look like but I'm really worried it's going to be quite ugly.
 
-[^2]: [Surveillance for Selected Tobacco-Use Behaviors -- United States, 1900-1994](https://www.cdc.gov/mmwr/preview/mmwrhtml/00033881.htm)
+## References
 
-[^3]: [Executive Summary (The Health Consequences of Smoking—50 Years of Progress: A Report of the Surgeon General)](https://www.hhs.gov/sites/default/files/consequences-smoking-exec-summary.pdf)
-
-[^4]: [Cigarette Smoking | Smoking and Tobacco Use | CDC](https://www.cdc.gov/tobacco/about/index.html?utm_source=chatgpt.com)
-
-[^5]: https://www.congress.gov/crs-product/IF12260#:~:text=In%20the%201990s%2C%20the%20intensified,6.8%20deaths%20per%20100%2C000%20people.
-
-[^6]: https://nida.nih.gov/research-topics/trends-statistics/overdose-death-rates#Fig4
-
-[^7]: https://en.wikipedia.org/wiki/Lottery#British_North_America_1612%E2%80%931783
-
-[^8]: https://en.wikipedia.org/wiki/Professional_and_Amateur_Sports_Protection_Act_of_1992
-
-[^9]: https://en.wikipedia.org/wiki/Murphy_v._National_Collegiate_Athletic_Association
-
-[^10]: https://spiegel.medill.northwestern.edu/sports-betting/
-
-[^11]: https://www150.statcan.gc.ca/n1/pub/75-006-x/2022001/article/00006-eng.htm
-
-[^12]: https://www.buffalo.edu/news/releases/2014/01/001.html
-
-[^13]: Side note: I’ve witnessed what gambling does firsthand in my home country, Serbia. On every second corner, there are betting shops. And while it’s not the majority of people, it doesn’t need to be. It’s enough that a visible fraction of the population wastes years of their lives, loses money they can’t afford to lose, stops trying to build real skills or careers. and lives under the illusion that gambling will solve their problems. That’s already devastating on a small scale, for a country that has less than 7M people. Now imagine it amplified by the U.S. market.
-
-[^14]: https://igamingbusiness.com/sports-betting/fanduel-plans-gradual-rollout-prediction-market-launch/
-
-[^15]: https://apnews.com/article/casinos-best-year-revenue-gambling-betting-slots-6cefeecd6631fb6d102bac191179e3a0
-
-[^16]: Join the Club CI Book club to talk about the role of McKinsey further (this comment will be obsolete after Feb 13th 2026)
-
-[^17]: https://en.wikipedia.org/wiki/James_Albert_Bonsack
-
-[^18]: https://www.nytimes.com/2024/09/23/us/young-men-religion-gen-z.html?smid=nytcore-ios-share
+[^1]: [James Albert Bonsack](https://en.wikipedia.org/wiki/James_Albert_Bonsack)
+[^2]: [Surveillance for Selected Tobacco-Use Behaviors — United States, 1900–1994](https://www.cdc.gov/mmwr/preview/mmwrhtml/00033881.htm)
+[^3]: [Executive Summary — The Health Consequences of Smoking—50 Years of Progress: A Report of the Surgeon General](https://www.hhs.gov/sites/default/files/consequences-smoking-exec-summary.pdf)
+[^4]: [Cigarette Smoking \| Smoking and Tobacco Use \| CDC](https://www.cdc.gov/tobacco/about/index.html)
+[^5]: [The Opioid Crisis in the United States (Congress CRS)](https://www.congress.gov/crs-product/IF12260)
+[^6]: [Overdose death rates — NIDA](https://nida.nih.gov/research-topics/trends-statistics/overdose-death-rates#Fig4)
+[^7]: [Lottery — Wikipedia (British North America 1612–1783)](https://en.wikipedia.org/wiki/Lottery#British_North_America_1612%E2%80%931783)
+[^8]: [Professional and Amateur Sports Protection Act of 1992 — Wikipedia](https://en.wikipedia.org/wiki/Professional_and_Amateur_Sports_Protection_Act_of_1992)
+[^9]: [Murphy v. National Collegiate Athletic Association — Wikipedia](https://en.wikipedia.org/wiki/Murphy_v._National_Collegiate_Athletic_Association)
+[^10]: [Sports betting demographics — Medill Spiegel](https://spiegel.medill.northwestern.edu/sports-betting/)
+[^11]: [Young men and religion — The New York Times](https://www.nytimes.com/2024/09/23/us/young-men-religion-gen-z.html)
+[^12]: [Gambling and income — Statistics Canada](https://www150.statcan.gc.ca/n1/pub/75-006-x/2022001/article/00006-eng.htm)
+[^13]: [Gambling disorder research — University at Buffalo](https://www.buffalo.edu/news/releases/2014/01/001.html)
+[^14]: Side note: I’ve witnessed what gambling does firsthand in my home country, Serbia. On every second corner, there are betting shops. And while it’s not the majority of people, it doesn’t need to be. It’s enough that a visible fraction of the population wastes years of their lives, loses money they can’t afford to lose, stops trying to build real skills or careers, and lives under the illusion that gambling will solve their problems. That’s already devastating on a small scale, for a country that has less than 7M people. Now imagine it amplified by the U.S. market.
+[^15]: [FanDuel plans gradual rollout of prediction market — iGamingBusiness](https://igamingbusiness.com/sports-betting/fanduel-plans-gradual-rollout-prediction-market-launch/)
+[^16]: [Casinos' 2023 revenue — AP News](https://apnews.com/article/casinos-best-year-revenue-gambling-betting-slots-6cefeecd6631fb6d102bac191179e3a0)
+[^17]: [_When McKinsey Comes to Town_ by Bogdanich  and Forsythe ](https://en.wikipedia.org/wiki/When_McKinsey_Comes_to_Town)
