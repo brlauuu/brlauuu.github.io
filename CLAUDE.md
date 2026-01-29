@@ -15,7 +15,7 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 - **Jekyll Version**: 3.10.0 (via github-pages gem)
 - **Site URL**: https://brlauuu.github.io
 - **Author**: Đorđe Relić
-- **Social Links**: Twitter (@brlauuu), GitHub (brlauuu), LinkedIn (dorderelic)
+- **Social Links**: GitHub (brlauuu), LinkedIn (dorderelic)
 - **Plugins**: jekyll-paginate, jekyll-remote-theme, jekyll-feed, jekyll-seo-tag, jekyll-sitemap
 - **Archive System**: Automatic separation of recent (< 1 year) and archived (> 1 year) posts
 - **Dark Mode**: Toggle-based dark mode with localStorage persistence and system preference detection
