@@ -8,6 +8,12 @@
       <li><a href="{{ "/archive" | prepend: site.baseurl }}">Archive</a></li>
       <li><a href="{{ "/tags" | prepend: site.baseurl }}">Tags</a></li>
       <li><a href="{{ "/about" | prepend: site.baseurl }}">About</a></li>
+      <li>
+        <button class="dark-mode-toggle nav-toggle" id="dark-mode-toggle" aria-label="Toggle dark mode">
+          <img src="{{ "/assets/imgs/lightbulb-on.png" | relative_url }}" alt="Light mode" class="sun-icon" />
+          <img src="{{ "/assets/imgs/lightbulb-off.png" | relative_url }}" alt="Dark mode" class="moon-icon" />
+        </button>
+      </li>
     </ul>
   </div>
 </nav>

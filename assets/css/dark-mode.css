@@ -20,11 +20,12 @@
 [data-theme="dark"] {
   --bg-color: #1a1a1a;
   --text-color: #d4d4d4;
-  --heading-color: #e8e8e8;
+  --heading-color: #ffffff;
   --link-color: #6bb6ff;
   --link-hover-color: #9cd1ff;
-  --code-bg: #2d2d2d;
-  --code-border: #404040;
+  --code-bg: #0d0d0d;
+  --code-text-color: #9a9a9a;
+  --code-border: #2a2a2a;
   --border-color: #404040;
   --nav-color: #888;
   --nav-hover-color: #e8e8e8;
@@ -33,14 +34,23 @@
 }
 
 /* Apply color variables to elements */
+html {
+  height: 100%;
+}
+
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-family: Arial, Helvetica, "Helvetica Neue", sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--heading-color);
+  font-family: Arial, Helvetica, "Helvetica Neue", sans-serif;
 }
 
 a {
@@ -66,12 +76,130 @@ pre code {
   border: none;
 }
 
+/* Dark mode specific code styling */
+[data-theme="dark"] code {
+  color: var(--code-text-color);
+  background-color: var(--code-bg);
+  border: 1px solid var(--code-border);
+}
+
+[data-theme="dark"] pre {
+  background-color: var(--code-bg);
+  border: 1px solid var(--code-border);
+}
+
+[data-theme="dark"] pre code {
+  color: var(--code-text-color);
+  background-color: transparent;
+  border: none;
+}
+
+/* Ensure page and post titles are white in dark mode */
+[data-theme="dark"] .post-title,
+[data-theme="dark"] .page-title,
+[data-theme="dark"] h1.post-title,
+[data-theme="dark"] h1 {
+  color: #ffffff !important;
+}
+
+/* Navigation title colors - black in light mode, white in dark mode */
+.nav-title,
+.nav h2,
+.nav-container h2,
+.nav-container a h2 {
+  color: #000000 !important;
+}
+
+[data-theme="dark"] .nav-title,
+[data-theme="dark"] .nav h2,
+[data-theme="dark"] .nav-container h2,
+[data-theme="dark"] .nav-container a h2 {
+  color: #ffffff !important;
+}
+
+/* Navigation links - black in light mode, white in dark mode */
 .nav a {
-  color: var(--nav-color);
+  color: #000000;
 }
 
 .nav a:hover {
-  color: var(--nav-hover-color);
+  color: #444444;
+}
+
+[data-theme="dark"] .nav a {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav a:hover {
+  color: #e8e8e8;
+}
+
+/* Share button styles - fixed floating button */
+.share-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--bg-color);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  color: #000000;
+}
+
+.share-button:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.share-button:active {
+  transform: scale(0.95);
+}
+
+.share-button svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+[data-theme="dark"] .share-button {
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .share-button:hover {
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Share feedback tooltip */
+.share-feedback {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background-color: #333;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.share-feedback.show {
+  opacity: 1;
+}
+
+[data-theme="dark"] .share-feedback {
+  background-color: #555;
 }
 
 .catalogue-time {
@@ -86,44 +214,63 @@ pre code {
   border-top: 1px solid var(--border-color);
 }
 
+/* Sticky footer at bottom */
+nav {
+  flex-shrink: 0;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
 footer {
   border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 footer span {
   color: var(--footer-color);
 }
 
-/* Dark mode toggle button styles */
+/* Dark mode toggle button styles - in navigation bar */
+.nav ul li {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
 .dark-mode-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: var(--bg-color);
-  border: 2px solid var(--border-color);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  background: none;
+  border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  transition: all 0.3s ease;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  transition: transform 0.2s ease;
+  vertical-align: middle;
+  line-height: 0;
+  height: auto;
 }
 
 .dark-mode-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transform: scale(1.15);
 }
 
 .dark-mode-toggle:active {
   transform: scale(0.95);
 }
 
-/* Icons for theme toggle */
+/* Icons for theme toggle - using images */
+.dark-mode-toggle img {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+}
+
 .dark-mode-toggle .sun-icon {
   display: none;
 }
@@ -145,15 +292,66 @@ footer span {
   :root:not([data-theme="light"]) {
     --bg-color: #1a1a1a;
     --text-color: #d4d4d4;
-    --heading-color: #e8e8e8;
+    --heading-color: #ffffff;
     --link-color: #6bb6ff;
     --link-hover-color: #9cd1ff;
-    --code-bg: #2d2d2d;
-    --code-border: #404040;
+    --code-bg: #0d0d0d;
+    --code-text-color: #9a9a9a;
+    --code-border: #2a2a2a;
     --border-color: #404040;
     --nav-color: #888;
     --nav-hover-color: #e8e8e8;
     --footer-color: #666;
     --catalogue-date-color: #888;
+  }
+
+  /* Apply same specific styling for system preference */
+  :root:not([data-theme="light"]) code {
+    color: var(--code-text-color);
+    background-color: var(--code-bg);
+    border: 1px solid var(--code-border);
+  }
+
+  :root:not([data-theme="light"]) pre {
+    background-color: var(--code-bg);
+    border: 1px solid var(--code-border);
+  }
+
+  :root:not([data-theme="light"]) pre code {
+    color: var(--code-text-color);
+    background-color: transparent;
+    border: none;
+  }
+
+  :root:not([data-theme="light"]) .post-title,
+  :root:not([data-theme="light"]) .page-title,
+  :root:not([data-theme="light"]) h1.post-title,
+  :root:not([data-theme="light"]) h1 {
+    color: #ffffff !important;
+  }
+
+  :root:not([data-theme="light"]) .nav-title,
+  :root:not([data-theme="light"]) .nav h2,
+  :root:not([data-theme="light"]) .nav-container h2,
+  :root:not([data-theme="light"]) .nav-container a h2 {
+    color: #ffffff !important;
+  }
+
+  /* Ensure navigation links are white for system dark mode */
+  :root:not([data-theme="light"]) .nav a {
+    color: #ffffff;
+  }
+
+  :root:not([data-theme="light"]) .nav a:hover {
+    color: #e8e8e8;
+  }
+
+  /* Share button color for system dark mode */
+  :root:not([data-theme="light"]) .share-button {
+    color: #ffffff;
+  }
+
+  :root:not([data-theme="light"]) .share-feedback {
+    background-color: #555;
   }
 }

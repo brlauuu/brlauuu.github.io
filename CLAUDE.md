@@ -131,7 +131,8 @@ tags: [tag1, tag2, tag3]
 
 The site includes a custom dark mode implementation:
 
-- **Toggle Button**: Fixed-position button (bottom-right) with moon/sun icons
+- **Toggle Button**: Located in navigation bar with light bulb icons
+- **Icons**: PNG images of lit/unlit light bulbs (see required files below)
 - **Automatic Detection**: Respects system preference (`prefers-color-scheme`)
 - **Persistence**: User choice saved in localStorage
 - **Smooth Transitions**: 0.3s ease transitions for theme changes
@@ -139,13 +140,20 @@ The site includes a custom dark mode implementation:
 **Files:**
 - `assets/css/dark-mode.css` - CSS variables and styling for both themes
 - `assets/js/dark-mode.js` - Theme switching logic and localStorage handling
-- `_includes/dark-mode-toggle.html` - Toggle button HTML
+- `_includes/navigation.html` - Contains toggle button in navbar
 - `_includes/head.html` - Custom head with dark mode initialization (prevents flash)
-- `_layouts/default.html` - Overridden layout to include toggle button
+
+**Required Images:**
+The toggle requires two PNG files in `assets/imgs/`:
+- `lightbulb-off.png` - Unlit bulb (shows in light mode)
+- `lightbulb-on.png` - Lit bulb (shows in dark mode)
+- Recommended size: 24x24 pixels or larger
+- See `assets/imgs/README.md` for detailed instructions
 
 **Color Variables:**
-- Light mode: White background, dark text (#555), blue links (#4a9ae1)
-- Dark mode: Dark background (#1a1a1a), light text (#d4d4d4), bright blue links (#6bb6ff)
+- Light mode: White background, black text, blue links (#4a9ae1)
+- Dark mode: Dark background (#1a1a1a), white text, bright blue links (#6bb6ff)
+- Navigation: Black in light mode, white in dark mode
 
 **Customization:**
 To modify dark mode colors, edit the CSS variables in `assets/css/dark-mode.css` under the `[data-theme="dark"]` selector.
