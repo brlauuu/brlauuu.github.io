@@ -17,7 +17,7 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 - **Author**: Đorđe Relić
 - **Social Links**: Twitter (@brlauuu), GitHub (brlauuu), LinkedIn (dorderelic)
 - **Plugins**: jekyll-paginate, jekyll-remote-theme, jekyll-feed, jekyll-seo-tag, jekyll-sitemap
-- **Pagination**: 5 posts per page
+- **Archive System**: Automatic separation of recent (< 1 year) and archived (> 1 year) posts
 
 ## Directory Structure
 
@@ -68,8 +68,24 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
 - Layout: Use `layout: post` for pages (Tale uses post layout for all content pages)
 - Current pages:
   - `_pages/about.md` - Short, subtle about section with social links
-  - `_pages/archive.md` - Chronological list of all posts
+  - `_pages/archive.md` - Shows posts older than 1 year, grouped by year
 - Navigation defined in `_config.yml` under `navigation`
+
+### Archive System
+The site uses an automatic archive system that separates recent and old content:
+
+- **Home Page** (`index.html` with `_layouts/home.html`):
+  - Shows only posts from the last year (365 days)
+  - Automatically calculated based on current date vs. post date
+  - Recent posts appear here
+
+- **Archive Page** (`_pages/archive.md`):
+  - Shows only posts older than 1 year
+  - Posts are grouped by year (most recent year first)
+  - Each year section shows the month and day with post title
+  - Displays message if no archived posts exist yet
+
+**Important**: When adding a new post, the archive automatically updates. Posts older than 1 year will move from the home page to the archive. No manual intervention needed.
 
 ### Assets
 - Images: `assets/imgs/`

@@ -1,0 +1,30 @@
+---
+layout: default
+---
+
+{% comment %}
+Calculate the timestamp for 1 year ago
+Current time minus 31536000 seconds (365 days)
+{% endcomment %}
+{% assign one_year_ago = site.time | date: "%s" | minus: 31536000 %}
+
+<div class="catalogue">
+  {% comment %} First, show sticky posts if any {% endcomment %}
+  {% for post in site.posts %}
+    {% if post.sticky %}
+      {% include catalogue_item.html sticky='true' %}
+    {% endif %}
+  {% endfor %}
+
+  {% comment %} Then, show only posts from the last year {% endcomment %}
+  {% for post in site.posts %}
+    {% assign post_time = post.date | date: "%s" %}
+    {% if post_time >= one_year_ago %}
+      {% unless post.sticky %}
+        {% include catalogue_item.html %}
+      {% endunless %}
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% comment %} Note: Pagination is removed since we're using custom filtering {% endcomment %}
