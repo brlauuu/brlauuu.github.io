@@ -5,7 +5,7 @@ author: "Đorđe Relić"
 tags: [geopolitics, opinion, gambling, scaling markets]
 ---
 
-Following the rapid development of online gambling and prediction markets in the United States made me think quite a bit about where this is heading going and I came to have quite a pessimistic sentiment.
+Following the rapid development of online gambling and prediction markets in the United States made me think quite a bit about where this is heading and I came to have quite a pessimistic expectation.
 
 The issue with allowing and promoting gambling on the large scale in the USA hits different levels. This, I believe, will have an actual geopolitical effect.
 
@@ -21,7 +21,7 @@ This scale influences how the market and the systems that shape the market evolv
 
 People used tobacco long before the United States existed. Indigenous populations in the Americas used it ritually. Europeans smoked pipes and cigars for centuries. But in the 20th-century United States, smoking transformed into something else entirely: a mass-produced, aggressively marketed consumer product.
 
-The numbers show how fast this scaled. It was in 1880 that James Bonsack invented an automatic cigarette rolling machine that allowed for mass production of cigarettes [^1]. This invention allowed opening up of the tobacco market which grew more than 270x from consuming 2.5B in 1900 to its peak consumption of 680B in 1981. Having around 30% of adults being active smokers, we come to around one and a half packs a day per person, on average.[^2]
+The numbers show how fast this scaled. It was in 1880 that James Bonsack invented an automatic cigarette rolling machine that allowed for mass production of cigarettes [^1]. This invention allowed opening up of the tobacco market which grew more than 270x from consuming 2.5 billion in 1900 to its peak consumption of 680 billion cigarettes in 1981. Having around 30% of adults being active smokers, we come to around one and a half packs a day per person, on average.[^2]
 
 Why did it scale so rapidly? The US market was, and still is, large, unified, and highly consumer-oriented and sparsely regulated and it enabled the scale up.
 
@@ -37,7 +37,7 @@ A more recent example of harmful scaling driven by market size is the opioid epi
 
 Similar to smoking, opioids have existed for a long time. Morphine was isolated in the early 19th century. Pain treatment using opioids existed across Europe and elsewhere but it was in the United States, with its market size, where the spreading of prescription opioids scaled so much and had horrible and long-lasting effects.
 
-In the late 1990s and early 2000s, opioid manufacturers aggressively marketed prescription painkillers as safe and non-addictive for chronic pain. The pain management campaigns successfully positioned opioids as something that everyone in the world would be interested in. But it was the US market, with its size and scaling capabilities, that allowed for an incredibly rapid, profit-oriented, growth.
+In the late 1990s and early 2000s, opioid manufacturers aggressively marketed prescription painkillers as safe and non-addictive for chronic pain. The pain management campaigns successfully positioned opioids as something that everyone in the world should be interested in. But it was the US market, with its size and scaling capabilities, that allowed for an incredibly rapid, profit-oriented, growth.
 
 The US healthcare system allowed, or rather failed to realize what was happening and to stop it. Prescription opioid sales went for 4x from 1999 until 2010. [^5]
 
@@ -53,13 +53,13 @@ This large scale exploitation potential mixed with how much we and the coming ge
 
 The United States had a rollercoaster relationship with gambling. From completely normalized view of gambling as another vice, to using lottery revenue to fund public works as well as kick starting universities. [^7] Today, we have it back in the main stream as a skill based way to generate revenue.
 
-For most of the 20th century, gambling in the United States was primarily state-regulated and largely barred from crossing state lines..It was localized and contained in a way that would prevent the scale up across the whole country. Additionally, due to 1992 PASPA[^8], sports betting was prohibited at the federal level.
+For most of the 20th century, gambling in the United States was primarily state-regulated and largely barred from crossing state lines. It was localized and contained in a way that would prevent the scale up across the whole country. Additionally, due to 1992 PASPA[^8], sports betting was prohibited at the federal level.
 
 This changed in 2018 with Murphy vs. NCAA[^9], when PASPA was overturned and states were given the right to decide if they wanted to allow or prohibit sports betting.
 
 In those same 25ish years, from federal ban to the overturning of the sports betting act, we had such a technology development that a computer you needed a room for in 1992, now fits in your pocket. That same computer allows you to access almost all the knowledge generated in the world so far, with just few clicks. But it also allows you, with just few clicks, to throw some money on your favorite sports team.
 
-Since the overturn of PASPA, we saw several very big players in the field of sports betting. Both ones that are very direct about being gambling companies, such as DraftKings and FanDuel, and the ones that branding like they’re not gambling companies, such as Polymarket, Kalshi, and RobinHood.
+Since the overturn of PASPA, we saw several very big players in the field of sports betting. Both ones that are very direct about being gambling companies, such as DraftKings and FanDuel, and the ones branding themselves like they’re not gambling companies, such as Polymarket, Kalshi, and RobinHood.
 
 Similar to PMI and Purdue, gambling companies are well equipped to serve their “product” to the large masses, through data-driven and user-targeted marketing campaigns to the highly consumeristic society. These companies, but also the market, are ready for industrialization of gambling.
 
@@ -69,7 +69,7 @@ And target group is very clearly defined: mostly young and mostly men. [^10] Wit
 
 While there are studies showing that individuals with higher income are more likely to gamble [^12] it is also shown that lower income individuals spend more on gambling, in relative terms, and get hit disproportionally by the gambling disorders. [^13] And that is where the phrase “Gambling is poverty tax” comes from.
 
-Another layer to the problem of the consumer packed “product” that gambling is trying to be is that it misleads the “users” of these online platforms to believe they can win their way out of poverty using "skills" to predict game winners. Gambling, for some, will become a way towards the fulfillment of the ”American Dream”. With the ever slower raise in wages and harder jobs without higher degrees, winning that bet on the Sunday’s game looks like a legitimate way to get out of the hole or to cover for the next car payment, and it doesn’t require luck like playing a lottery [^14] However, these are not skills based competitions, it’s a zero-sum game and the house _will_ always win.
+Another layer to the problem of the consumer packed “product” that gambling is trying to be is that it misleads the “users” of these online platforms to believe they can win their way out of poverty using "skills" to predict game winners. Gambling, for some, will become a way towards the fulfillment of the ”American Dream”. With the ever slower raise in wages and harder jobs without higher degrees, winning that bet on the Sunday’s game looks like a legitimate way to get out of the hole or to cover for the next car payment, and it doesn’t require luck like playing a lottery. [^14] However, these are not skills based competitions, it’s a zero-sum game and the house _will_ always win.
 
 ### Gambling Mechanics Are Embedded Into Modern Video Games
 
@@ -83,7 +83,7 @@ Kids are effectively being trained from an early age to associate money, chance,
 
 ### Prediction Markets Are Gambling
 
-Prediction markets give people the illusion that they can use their intelligence and acquired information to predict outcomes. What makes this illusion even more believable is that, in prediction markets, the users are predicting against _other users_, and not against the house as it's usually the case. But the old school gambling was exactly that, two people throwing dice and betting on the outcome with winner taking it all. At some point there came the guy who rented the dice and throwing board for a small fee and then later that same guy also set the rules of the game. Yours was just to show up, bring money and play.
+Prediction markets give people the illusion that they can use their intelligence and acquired information to predict outcomes. What makes this illusion even more believable is that, in prediction markets, the users are predicting against _other users_, and not against the house as it's usually the case. But the old school gambling was exactly that, two people throwing dice and betting on the outcome with winner taking it all. At some point there came the third guy who rented the dice and throwing board for a small fee and then later that same guy also set the rules of the game. Yours was just to show up, bring money, and play.
 
 Prediction markets platforms are doing exactly that: setting the game (controlling the questions), providing the dice and the throwing board (the platform), and finally, also accepting unregulated crypto as a payment method.
 
