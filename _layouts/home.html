@@ -2,6 +2,7 @@
 layout: default
 ---
 
+<div class="home-layout">
 {% comment %}
 Calculate the timestamp for 1 year ago
 Current time minus 31536000 seconds (365 days)
@@ -40,5 +41,14 @@ Current time minus 31536000 seconds (365 days)
     <div style="text-align: center; padding: 2rem 0;">
       <p>No recent posts. Check out the <a href="{{ "/archive" | relative_url }}">archive</a> for older articles.</p>
     </div>
+  {% endif %}
+</div>
+
+  {% if site.data.projects.size > 0 %}
+  <aside class="project-sidebar" aria-label="Projects">
+    {% for project in site.data.projects %}
+      {% include project-card.html project=project %}
+    {% endfor %}
+  </aside>
   {% endif %}
 </div>

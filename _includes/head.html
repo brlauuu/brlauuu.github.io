@@ -6,6 +6,10 @@
 
   <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
   <link rel="stylesheet" href="{{ "/assets/css/dark-mode.css" | relative_url }}">
+  {% if page.layout == 'home' %}
+  <link rel="stylesheet" href="{{ "/assets/css/projects.css" | relative_url }}">
+  <script src="{{ "/assets/js/project-stats.js" | relative_url }}" defer></script>
+  {% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ site.url }}/feed.xml" title="{{ site.title }}" />
 
   <!-- Dark mode initialization script (runs before page render to prevent flash) -->

@@ -1,0 +1,104 @@
+.home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  align-items: start;
+  gap: 2rem;
+}
+
+.project-sidebar {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 2rem;
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 0.75rem;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.project-card .project-name {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.project-action:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 4px;
+}
+
+.project-stats,
+.project-stat {
+  display: flex;
+  align-items: center;
+}
+
+.project-stats {
+  grid-column: 1 / -1;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.75rem;
+  color: var(--text-color);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.project-stat { gap: 0.3rem; }
+.project-stat svg { flex-shrink: 0; }
+
+/* Use the right margin on wide screens to retain the blog's original width. */
+@media (min-width: 1280px) {
+  .home-layout { margin-right: calc(-180px - 2rem); }
+}
+
+@media (max-width: 899px) {
+  .home-layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .project-sidebar { width: 180px; max-width: 100%; padding: 0 0 2rem; }
+}
+
+.home-layout .catalogue-item { color: var(--text-color); }
+.home-layout .catalogue-line { border-color: var(--heading-color); }
+
+.project-logo {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  object-fit: contain;
+  filter: contrast(1.2);
+  mix-blend-mode: multiply;
+}
+
+/* The repository favicons are monochrome with light backgrounds. */
+[data-theme="dark"] .project-logo {
+  filter: contrast(1.2) invert(1);
+  mix-blend-mode: screen;
+}
+
+.project-links {
+  grid-column: 1;
+  display: flex;
+  gap: 0.25rem;
+  margin-left: -0.25rem;
+}
+
+.project-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--text-color);
+}
+
+.project-action[href]:hover { color: var(--link-hover-color); }
+.project-action[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+.project-logo[hidden] { display: none; }
