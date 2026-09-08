@@ -1,0 +1,20 @@
+# Add projects here in the order they should appear. See README.md for live counter setup.
+- name: Podlog
+  repository: brlauuu/podlog
+  logo_url: https://raw.githubusercontent.com/brlauuu/podlog/main/apps/web/public/brand/podlog-favicon.png
+  website_fallback:
+  counter:
+    label: downloads
+    url:
+    field: count
+    fallback: "—"
+
+- name: Flatpare
+  repository: brlauuu/flatpare
+  logo_url: https://raw.githubusercontent.com/brlauuu/flatpare/main/public/icon-512.png
+  website_fallback: https://flatpare.vercel.app
+  counter:
+    label: users
+    url:
+    field: count
+    fallback: "—"
