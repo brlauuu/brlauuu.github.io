@@ -500,7 +500,7 @@ Delete the entire `@media (prefers-color-scheme: dark) { ... }` block at the end
 - [ ] **Step 6: Verify no axis-specific rules remain except the token block**
 
 Run: `grep -n 'important\|prefers-color-scheme\|data-theme' assets/css/theme.css`
-Expected: exactly one line, the `[data-theme="dark"] {` token block. (The toggle icon rules are handled in Task 5.)
+Expected: the `[data-theme="dark"] {` token block plus the two `[data-theme="dark"] .dark-mode-toggle` icon rules, which Task 5 replaces. Nothing else, and no `important` or `prefers-color-scheme` hits.
 
 - [ ] **Step 7: Build**
 
