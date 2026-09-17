@@ -120,3 +120,11 @@ test('a blocked storage still lets the buttons work for the session', () => {
   assert.equal(attrs['data-style'], 'pixel');
   assert.deepEqual(controller.current(), { theme: 'dark', color: 'off', style: 'pixel' });
 });
+
+test('an explicit theme choice survives system changes even when storage is blocked', () => {
+  const { attrs, buttons, media } = fakeDom({ brokenStorage: true, systemDark: false });
+  buttons[0].onclick();
+  assert.equal(attrs['data-theme'], 'dark');
+  media(false);
+  assert.equal(attrs['data-theme'], 'dark');
+});

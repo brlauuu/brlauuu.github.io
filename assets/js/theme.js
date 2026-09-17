@@ -29,6 +29,7 @@
     const write = (key, value) => { try { storage.setItem(key, value); } catch { /* private mode or blocked storage */ } };
     const media = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
     const buttons = Array.from(doc.querySelectorAll('[data-toggle]')).filter((button) => axes[button.dataset.toggle]);
+    let themeChosen = axes.theme.values.includes(read('theme'));
 
     const current = () => Object.fromEntries(Object.keys(axes).map((axis) => [axis, html.getAttribute(`data-${axis}`)]));
 
@@ -42,13 +43,14 @@
       const value = next(axis, html.getAttribute(`data-${axis}`));
       apply(axis, value);
       write(axis, value);
+      if (axis === 'theme') themeChosen = true;
       doc.dispatchEvent(new CustomEvent('themechange', { detail: current() }));
     }
 
     Object.keys(axes).forEach((axis) => apply(axis, resolve(axis, read(axis), Boolean(media?.matches))));
     buttons.forEach((button) => button.addEventListener('click', () => flip(button.dataset.toggle)));
     media?.addEventListener?.('change', (event) => {
-      if (!axes.theme.values.includes(read('theme'))) apply('theme', event.matches ? 'dark' : 'light');
+      if (!themeChosen) apply('theme', event.matches ? 'dark' : 'light');
     });
 
     return { current, flip };
