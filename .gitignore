@@ -21,4 +21,4 @@ Gemfile.lock
 ehthumbs.db
 Thumbs.db
 .omx/
-.enola/*
+.enola/*.superpowers/
