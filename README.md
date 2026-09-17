@@ -21,6 +21,7 @@ Edit `_data/projects.yml` to add, remove, or reorder projects. Each entry create
 
 - `name` and `repository` are required. Other settings are optional.
 - GitHub supplies stars, forks, and the website from the repository's **About → Website** field. `website_fallback` is used if that field is empty, invalid, or GitHub cannot be reached. With neither URL, the website icon is muted and disabled. The GitHub icon always links to the repository.
+- The version badge next to the name reads the first line of a `VERSION` file at the root of the repository's default branch (for example `1.2.0` or `v1.2.0-beta.1`). Repositories without that file show no badge.
 - `logo_url` loads directly from the supplied URL. A raw GitHub URL following `main` picks up future changes after normal browser/CDN caching. Broken images are hidden. Current icons are monochrome and receive contrast/inversion styling for light and dark themes; revisit that styling before using a full-color logo.
 - `counter.label` is `downloads` (default) or `users`; this selects the icon and accessible label.
 - `counter.url` is your public JSON endpoint. Leave it blank until available. No download/user totals are inferred from GitHub release downloads or fabricated.

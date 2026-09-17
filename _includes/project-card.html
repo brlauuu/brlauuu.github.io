@@ -1,5 +1,5 @@
 <article class="project-card" data-github-repo="{{ include.project.repository | escape }}" data-project-config="{{ include.project | jsonify | escape }}">
-  <h2 class="project-name">{{ include.project.name | escape }}</h2>
+  <h2 class="project-name">{{ include.project.name | escape }} <span class="project-version" data-project-version hidden></span></h2>
   <div class="project-links">
     <a class="project-action" data-project-website role="link" aria-disabled="true" aria-label="{{ include.project.name | escape }} website unavailable" title="Website unavailable">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>

@@ -28,6 +28,22 @@
   overflow-wrap: anywhere;
 }
 
+.project-version {
+  display: inline-block;
+  margin-left: 0.2rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--border-color);
+  color: var(--text-color);
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1.5;
+  vertical-align: 0.1em;
+  white-space: nowrap;
+}
+
+.project-version[hidden] { display: none; }
+
 .project-action:focus-visible {
   outline: 2px solid var(--link-color);
   outline-offset: 4px;
