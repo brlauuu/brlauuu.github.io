@@ -25,7 +25,7 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (head, dark-mode-toggle)
+_includes/       # Custom HTML includes (head, navigation, catalogue_item, project-card)
 _layouts/        # Custom layouts (default, home)
 assets/
   imgs/          # Images for posts and pages

@@ -206,6 +206,19 @@ pre code {
   color: var(--catalogue-date-color);
 }
 
+/* Home page post list: only the title is a link, so it is the only underlined text. */
+.catalogue-title a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.15em;
+}
+
+.catalogue-title a:hover,
+.catalogue-title a:focus {
+  color: var(--link-hover-color);
+}
+
 .pagination {
   border-top: 1px solid var(--border-color);
 }

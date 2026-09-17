@@ -1,0 +1,24 @@
+{% comment %}
+Overrides Tale's catalogue_item.html. Tale wraps the whole card in one <a>,
+which makes the date and excerpt read as link text. Here only the title is
+a link; the date and excerpt are plain text (see issue #5).
+{% endcomment %}
+<article class="catalogue-item">
+  <div>
+    {% if include.sticky == 'true' %}
+    <span class="catalogue-pinned">Pinned &middot;</span>
+    {% endif %}
+    <time datetime="{{ post.date }}" class="catalogue-time">{{ post.date | date: "%B %d, %Y" }}</time>
+    <h1 class="catalogue-title"><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h1>
+    <div class="catalogue-line"></div>
+
+    <p>
+      {% if post.excerpt_separator %}
+        {{ post.excerpt | strip_html }}
+      {% else %}
+        {{ post.content | strip_html | truncatewords: 30 }}
+      {% endif %}
+    </p>
+
+  </div>
+</article>
