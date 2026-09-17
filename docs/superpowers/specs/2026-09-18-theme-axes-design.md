@@ -77,7 +77,7 @@ Icons are inline SVG from `_includes/theme-icons.html`, 18px, drawn with
 `currentColor` so they take the nav text color in every combination. The bulb
 PNGs in `assets/imgs/` are replaced by SVG lit and unlit bulbs. Each icon
 include contains both states; CSS shows one per attribute value. The rainbow's
-"off" state is the only icon with fixed colors: five or six bands that do not
+"off" state is the only icon with fixed colors: six bands that do not
 change between light and dark.
 
 Each button is a `<button>` with an `aria-label` describing the action
