@@ -5,11 +5,12 @@ const vm = require('node:vm');
 const script = fs.readFileSync(require('node:path').join(__dirname, '../assets/js/project-stats.js'), 'utf8');
 const github = 'https://api.github.com/repos/owner/project';
 const endpoint = 'https://metrics.example.test/project';
+const versionFile = 'https://raw.githubusercontent.com/owner/project/HEAD/VERSION';
 
 async function render(overrides = {}, sources = {}, options = {}) {
   const config = { name: 'Project', repository: 'owner/project', ...overrides };
-  const elements = Object.fromEntries(['stars', 'forks', 'counter', 'website'].map(name => [name, {
-    textContent: '—', attrs: { 'aria-disabled': 'true' },
+  const elements = Object.fromEntries(['stars', 'forks', 'counter', 'website', 'version'].map(name => [name, {
+    textContent: '—', hidden: name === 'version', attrs: { 'aria-disabled': 'true' },
     setAttribute(name, value) { this.attrs[name] = value; },
     removeAttribute(name) { delete this.attrs[name]; }
   }]));
@@ -35,7 +36,8 @@ async function render(overrides = {}, sources = {}, options = {}) {
       if (!(url in sources)) throw new Error('Network failure');
       const response = sources[url];
       return { ok: response.status ? response.status < 400 : true,
-        json: async () => { if (response.invalidJson) throw new Error('Invalid JSON'); return response.body; } };
+        json: async () => { if (response.invalidJson) throw new Error('Invalid JSON'); return response.body; },
+        text: async () => response.body };
     }
   });
   await Promise.all(pending);
@@ -91,7 +93,7 @@ test('no website or counter configured leaves unavailable indicators', async () 
   assert.equal(elements.website.href, undefined);
   assert.equal(elements.website.attrs['aria-disabled'], 'true');
   assert.equal(elements.counter.textContent, '—');
-  assert.deepEqual(requests, [github]);
+  assert.deepEqual(requests, [github, versionFile]);
 });
 
 test('primitive JSON and default count fields support real zero', async () => {
@@ -136,4 +138,27 @@ test('a broken logo is hidden without affecting counters', async () => {
 test('malformed project configuration does not cause requests', async () => {
   const { requests } = await render({}, {}, { rawConfig: '{invalid' });
   assert.deepEqual(requests, []);
+});
+
+test('the VERSION file shows a version badge, normalizing whitespace and a v prefix', async () => {
+  for (const [body, expected] of [['1.1.0\n', 'v1.1.0'], ['  v2.0.0-beta.1  \n', 'v2.0.0-beta.1'], ['3\nchangelog', 'v3']]) {
+    const { elements, requests } = await render({}, { [github]: { body: {} }, [versionFile]: { body } });
+    assert.equal(elements.version.textContent, expected);
+    assert.equal(elements.version.hidden, false);
+    assert.equal(elements.version.attrs['aria-label'], `Project version ${expected.slice(1)}`);
+    assert.ok(requests.includes(versionFile));
+  }
+});
+
+test('a missing, invalid or failing VERSION file keeps the badge hidden without affecting stats', async () => {
+  const bodies = [{ status: 404 }, { body: '' }, { body: 'latest' }, { body: '<html>' }, { body: '1.0;' }, { body: 'v' + '9'.repeat(400) }, { body: { count: 1 } }];
+  for (const version of bodies) {
+    const { elements } = await render({}, { [github]: { body: { stargazers_count: 7 } }, [versionFile]: version });
+    assert.equal(elements.version.hidden, true);
+    assert.equal(elements.version.textContent, '—');
+    assert.equal(elements.stars.textContent, '7');
+  }
+  const { elements } = await render({}, { [versionFile]: { body: '1.0.0' } });
+  assert.equal(elements.version.textContent, 'v1.0.0');
+  assert.equal(elements.stars.textContent, '—');
 });

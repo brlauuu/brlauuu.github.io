@@ -13,20 +13,41 @@
     }
   }
 
-  async function fetchJson(url) {
+  async function fetchResource(url, accept, read) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
     try {
       const response = await fetch(url, {
         signal: controller.signal,
         credentials: 'omit',
-        headers: { Accept: 'application/json' }
+        headers: { Accept: accept }
       });
       if (!response.ok) throw new Error('Data source unavailable');
-      return await response.json();
+      return await read(response);
     } finally {
       clearTimeout(timeout);
     }
+  }
+
+  const fetchJson = (url) => fetchResource(url, 'application/json', (response) => response.json());
+  const fetchText = (url) => fetchResource(url, 'text/plain', (response) => response.text());
+
+  // The first line of the repository's VERSION file, e.g. "1.2.3" or "v1.2.3-beta.1".
+  function parseVersion(text) {
+    if (typeof text !== 'string') return null;
+    const line = text.split(/\r?\n/, 1)[0].trim();
+    if (line.length > 32) return null;
+    return /^v?\d+(\.\d+){0,3}(-[0-9A-Za-z.-]{1,32})?$/.test(line) ? line.replace(/^v/, '') : null;
+  }
+
+  function showVersion(card, config, text) {
+    const version = parseVersion(text);
+    const element = card.querySelector('[data-project-version]');
+    if (!version || !element) return;
+    element.textContent = `v${version}`;
+    element.setAttribute('aria-label', `${config.name} version ${version}`);
+    element.title = `Version ${version}`;
+    element.hidden = false;
   }
 
   function showCount(element, count, label, fallback = false) {
@@ -80,6 +101,10 @@
         if (validCount(data?.forks_count)) showCount(forks, data.forks_count, 'forks');
         showWebsite(card, config, data?.homepage);
       }).catch(() => {})); // Retain fallback values on a failed or blocked request.
+      // The version comes from the VERSION file on the repository's default branch; without one the badge stays hidden.
+      requests.push(fetchText(`https://raw.githubusercontent.com/${config.repository}/HEAD/VERSION`).then((text) => {
+        showVersion(card, config, text);
+      }).catch(() => {}));
     }
 
     const counterUrl = webUrl(counter.url);
