@@ -319,56 +319,49 @@ footer span {
   }
 }
 
-/* Dark mode toggle button styles - in navigation bar */
+/* Theme axis buttons in the nav */
 .nav ul li {
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
 }
 
-.dark-mode-toggle {
+.nav-toggles {
+  display: inline-flex;
+  gap: 0.75rem;
+  vertical-align: middle;
+}
+
+.theme-toggle {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   margin: 0;
-  display: inline-block;
-  transition: transform 0.2s ease;
-  vertical-align: middle;
+  display: inline-flex;
+  color: var(--nav-link-color);
   line-height: 0;
-  height: auto;
+  transition: transform 0.2s ease;
 }
 
-.dark-mode-toggle:hover {
+.theme-toggle:hover {
   transform: scale(1.15);
 }
 
-.dark-mode-toggle:active {
+.theme-toggle:active {
   transform: scale(0.95);
 }
 
-/* Icons for theme toggle - using images */
-.dark-mode-toggle img {
-  width: 18px;
-  height: 18px;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
-  padding: 0;
-}
-
-.dark-mode-toggle .sun-icon {
-  display: none;
-}
-
-.dark-mode-toggle .moon-icon {
+.theme-toggle svg {
   display: block;
 }
 
-[data-theme="dark"] .dark-mode-toggle .sun-icon {
-  display: block;
+/* Each button shows the icon for the state a click produces. */
+.theme-toggle [data-when] {
+  display: none;
 }
 
-[data-theme="dark"] .dark-mode-toggle .moon-icon {
-  display: none;
+[data-theme="light"] .theme-toggle[data-toggle="theme"] [data-when="light"],
+[data-theme="dark"] .theme-toggle[data-toggle="theme"] [data-when="dark"] {
+  display: block;
 }
