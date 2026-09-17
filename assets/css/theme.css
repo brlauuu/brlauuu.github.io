@@ -16,7 +16,7 @@
   --catalogue-date-color: #aaa;
   --code-text-color: #bf616a;
   --pre-text-color: inherit;
-  --title-color: #333;
+  --title-color: #353535;
   --nav-title-color: #000;
   --nav-link-color: #000;
   --nav-link-hover-color: #444;
@@ -103,6 +103,7 @@ pre code {
 /* Page and post titles. Same specificity as Tale's rules; this sheet loads later. */
 .post-title,
 .page-title,
+.catalogue-title,
 .tags-header-title,
 h1.post-title {
   color: var(--title-color);
