@@ -450,7 +450,7 @@ footer span {
   border-bottom-color: transparent;
   background-image: var(--rainbow);
   background-repeat: no-repeat;
-  background-size: 100% 1px;
+  background-size: 100% 2px;
   background-position: 0 100%;
 }
 
@@ -465,7 +465,7 @@ footer span {
   border-top-color: transparent;
   background-image: var(--rainbow);
   background-repeat: no-repeat;
-  background-size: 100% 1px;
+  background-size: 100% 2px;
   background-position: 0 0;
 }
 
