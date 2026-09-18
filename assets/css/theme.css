@@ -480,3 +480,58 @@ footer span {
   border-color: transparent;
   background: linear-gradient(var(--bg-color), var(--bg-color)) padding-box, var(--rainbow-border) border-box;
 }
+
+/* One shared hue cycle so every accent moves together. A filter rotates the
+   rendered colors, so text is not repainted. Reduced motion pauses it. */
+@keyframes rainbow-cycle {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
+}
+
+[data-color="on"] {
+  --rainbow-play: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-color="on"] {
+    --rainbow-play: paused;
+  }
+}
+
+[data-color="on"] h1,
+[data-color="on"] h2,
+[data-color="on"] h3,
+[data-color="on"] h4,
+[data-color="on"] h5,
+[data-color="on"] h6,
+[data-color="on"] .nav-title,
+[data-color="on"] .catalogue-title a,
+[data-color="on"] .catalogue-line,
+[data-color="on"] .post-line,
+[data-color="on"] .tags-header-line,
+[data-color="on"] .catalogue-item,
+[data-color="on"] .tag-section,
+[data-color="on"] .pagination,
+[data-color="on"] .pagination .top,
+[data-color="on"] footer,
+[data-color="on"] .tag-chip,
+[data-color="on"] .share-button,
+[data-color="on"] .project-card {
+  animation: rainbow-cycle 20s linear infinite;
+  animation-play-state: var(--rainbow-play);
+}
+
+/* Dark: a faint glow so gradient text does not look muddy on near-black.
+   drop-shadow follows the glyph alpha, so it never tints the fill itself. */
+[data-color="on"][data-theme="dark"] h1,
+[data-color="on"][data-theme="dark"] h2,
+[data-color="on"][data-theme="dark"] h3,
+[data-color="on"][data-theme="dark"] .nav-title,
+[data-color="on"][data-theme="dark"] .catalogue-title a {
+  animation-name: rainbow-cycle-glow;
+}
+
+@keyframes rainbow-cycle-glow {
+  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+}
