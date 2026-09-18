@@ -48,7 +48,7 @@ Data sources load independently. Network failures, non-success responses, invali
 ## Theme axes
 
 Three switches set `data-theme` (`light`/`dark`), `data-color` (`off`/`on`) and
-`data-style` (`smooth`/`pixel`) on `<html>`; the nav has the rainbow (color) and bulb (theme) buttons; the style button lands with issue #10; choices persist in localStorage under
+`data-style` (`smooth`/`pixel`) on `<html>`; the nav has the rainbow (color), bulb (theme) and shape (style) buttons; choices persist in localStorage under
 the same names. `assets/css/theme.css` defines the light and dark variables;
 `assets/js/theme.js` handles the buttons and emits `themechange` on `document`.
 The design is in `docs/superpowers/specs/2026-09-18-theme-axes-design.md`.
@@ -57,6 +57,12 @@ With color on, headings, the site title, lines, borders, tag chips, project card
 share button carry a rainbow gradient (`--rainbow` in `theme.css`, brighter stops in dark)
 and links turn magenta (light) or cyan (dark). Body text and code blocks stay neutral. The
 hue cycles once every 20 seconds; `prefers-reduced-motion` pauses it.
+
+With pixel style on, headings and the site chrome use Silkscreen (SIL Open Font License,
+self-hosted in `assets/fonts/`, downloaded only when pixel is on), corners are square,
+borders 2px, the share button casts a hard shadow, images render pixelated and nothing
+eases. Body text keeps its font. Combined with color on, the hue cycle steps instead of
+sliding.
 
 ## Local preview and checks
 

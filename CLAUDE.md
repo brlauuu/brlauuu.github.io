@@ -130,8 +130,7 @@ tags: [tag1, tag2, tag3]
 ### Theme axes
 
 The look of the site is controlled by three independent switches, each a
-`data-` attribute on `<html>`. The color and theme switches have nav buttons; the style
-button arrives with issue #10:
+`data-` attribute on `<html>`. Each switch has its nav button:
 
 | Axis  | Attribute    | Values           | Default                    | Storage key |
 |-------|--------------|------------------|----------------------------|-------------|
@@ -147,7 +146,13 @@ button) with a masked `::before` ring; only leaf accents and those pseudo-elemen
 animated, never containers. One `rainbow-cycle` keyframe (20 s hue rotation) is shared
 by every accent and paused by `--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
 is the only cross-axis block: brighter stops, dimmed card borders, a glow on headings.
-Style has no visual rules yet; see issue #10.
+**Style axis** (`[data-style="pixel"]`, last layer of `theme.css`): one `@font-face` for
+Silkscreen (`assets/fonts/`, OFL; downloads only when referenced), `--pixel-font` on
+headings, nav, dates, chips, badges, tooltip and pagination with stepped-down sizes; zero
+radii, 2px component borders, a hard offset shadow on the share button, dashed thick lines,
+`image-rendering: pixelated` on images, `shape-rendering: crispEdges` on inline SVG, all
+transitions off and hovers that translate by a pixel. Cross-axis with color:
+`--rainbow-timing: steps(12)` and 2px ring padding. Body text never changes font.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).

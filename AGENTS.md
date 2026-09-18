@@ -6,7 +6,7 @@
 - `_includes/` and `_layouts/` override the Tale theme’s HTML templates.
 - `assets/` stores site assets: `assets/imgs/`, `assets/css/` (`theme.css`, `projects.css`), `assets/js/` (`theme.js`, `project-stats.js`, `share-button.js`).
 - `_config.yml` contains Jekyll site configuration; `_site/` is the generated output.
-- Theme axes (`data-theme`, `data-color`, `data-style` on `<html>`) are documented in `CLAUDE.md` under "Theme axes"; `assets/css/theme.css` holds the tokens and per-axis layers.
+- Theme axes (`data-theme`, `data-color`, `data-style` on `<html>`) are documented in `CLAUDE.md` under "Theme axes"; `assets/css/theme.css` holds the tokens and per-axis layers; `assets/fonts/` holds the self-hosted Silkscreen font and its OFL license.
 
 ## Build, Test, and Development Commands
 - `bundle install` installs Ruby dependencies (use Ruby 3.3.4).
