@@ -367,3 +367,76 @@ footer span {
 [data-color="on"] .theme-toggle[data-toggle="color"] [data-when="on"] {
   display: block;
 }
+
+/* ------------------------------------------------------------------ */
+/* Color axis: rainbow accents. Body text, page background and code   */
+/* blocks stay neutral; everything that is already an accent carries  */
+/* the rainbow. Nothing here applies while data-color is off.         */
+/* ------------------------------------------------------------------ */
+
+[data-color="on"] {
+  --rainbow: linear-gradient(90deg, #ff3b30, #ff9500, #ffd60a, #34c759, #32ade6, #007aff, #af52de);
+  --rainbow-border: var(--rainbow);
+  --link-color: #d81b9a;
+  --link-hover-color: #ff2fb3;
+}
+
+[data-color="on"][data-theme="dark"] {
+  --rainbow: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffe066, #69db7c, #66d9e8, #74c0fc, #d0bfff);
+  --rainbow-border: linear-gradient(90deg, #ff6b6bbf, #ffa94dbf, #ffe066bf, #69db7cbf, #66d9e8bf, #74c0fcbf, #d0bfffbf);
+  --link-color: #3fd6ff;
+  --link-hover-color: #8ae6ff;
+}
+
+/* Headings and the site title: rainbow text fill. */
+[data-color="on"] h1,
+[data-color="on"] h2,
+[data-color="on"] h3,
+[data-color="on"] h4,
+[data-color="on"] h5,
+[data-color="on"] h6,
+[data-color="on"] .nav-title,
+[data-color="on"] .catalogue-title a {
+  background-image: var(--rainbow);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Post title underline on the home page and link underlines on hover. */
+[data-color="on"] .catalogue-title a {
+  text-decoration: none;
+  border-bottom: 0.1em solid transparent;
+  border-image: var(--rainbow) 1;
+}
+
+[data-color="on"] .post a:hover,
+[data-color="on"] .post a:focus {
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  border-image: var(--rainbow) 1;
+}
+
+/* Straight lines and section borders. */
+[data-color="on"] .catalogue-line,
+[data-color="on"] .post-line,
+[data-color="on"] .tags-header-line,
+[data-color="on"] .catalogue-item,
+[data-color="on"] .tag-section,
+[data-color="on"] .pagination,
+[data-color="on"] .pagination .top,
+[data-color="on"] footer {
+  border-image: var(--rainbow) 1;
+}
+
+/* Rounded elements: gradient border that keeps the radius. */
+[data-color="on"] .tag-chip {
+  border-color: transparent;
+  background: linear-gradient(var(--code-bg), var(--code-bg)) padding-box, var(--rainbow-border) border-box;
+}
+
+[data-color="on"] .share-button,
+[data-color="on"] .project-card {
+  border-color: transparent;
+  background: linear-gradient(var(--bg-color), var(--bg-color)) padding-box, var(--rainbow-border) border-box;
+}
