@@ -141,10 +141,11 @@ button arrives with issue #10:
 
 **Color axis** (`[data-color="on"]`, last layer of `theme.css`): defines `--rainbow` and
 `--rainbow-border`, swaps the link tokens, paints headings and the site title with the
-gradient as a text fill, lines and section borders with `border-image`, and rounded
-elements (tag chips, project cards, share button) with a two-layer gradient border. One
-`rainbow-cycle` keyframe (20 s hue rotation) is shared by every accent and paused by
-`--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
+gradient as a text fill, the three thick lines with `border-image`, thin section rules
+with an animated `::after` strip, and rounded elements (tag chips, project cards, share
+button) with a masked `::before` ring; only leaf accents and those pseudo-elements are
+animated, never containers. One `rainbow-cycle` keyframe (20 s hue rotation) is shared
+by every accent and paused by `--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
 is the only cross-axis block: brighter stops, dimmed card borders, a glow on headings.
 Style has no visual rules yet; see issue #10.
 
