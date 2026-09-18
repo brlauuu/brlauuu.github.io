@@ -58,8 +58,8 @@ The design is in `docs/superpowers/specs/2026-09-18-theme-axes-design.md`.
 ```sh
 bundle exec jekyll serve --host 127.0.0.1 --port 4000
 bundle exec jekyll build
-node --test _tests/theme.test.cjs
 node --test _tests/project-stats.test.cjs
+node --test _tests/theme.test.cjs
 node --check assets/js/project-stats.js
 ```
 
