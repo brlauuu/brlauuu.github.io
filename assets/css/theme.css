@@ -436,13 +436,37 @@ footer span {
 /* Straight lines and section borders. */
 [data-color="on"] .catalogue-line,
 [data-color="on"] .post-line,
-[data-color="on"] .tags-header-line,
+[data-color="on"] .tags-header-line {
+  border-image: var(--rainbow) 1;
+}
+
+/* 1px single-side borders: border-image snaps unreliably at sub-pixel row
+   heights (confirmed via getBoundingClientRect on the tags page — bottoms
+   land on fractional positions and Chromium drops the border-image on some
+   of them while the grey border-color fallback stays visible). A background
+   strip the size of the border does not depend on border snapping. */
 [data-color="on"] .catalogue-item,
-[data-color="on"] .tag-section,
+[data-color="on"] .tag-section {
+  border-bottom-color: transparent;
+  background-image: var(--rainbow);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 100%;
+}
+
+[data-color="on"] .catalogue-item:last-child,
+[data-color="on"] .tag-section:last-child {
+  background-image: none;
+}
+
 [data-color="on"] .pagination,
 [data-color="on"] .pagination .top,
 [data-color="on"] footer {
-  border-image: var(--rainbow) 1;
+  border-top-color: transparent;
+  background-image: var(--rainbow);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 0;
 }
 
 /* Rounded elements: gradient border that keeps the radius. */
