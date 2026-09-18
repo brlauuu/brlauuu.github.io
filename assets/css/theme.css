@@ -403,6 +403,22 @@ footer span {
   color: transparent;
 }
 
+/* Shrink gradient headings to their text so the whole spectrum lands on the glyphs. */
+[data-color="on"] h1,
+[data-color="on"] h2,
+[data-color="on"] h3,
+[data-color="on"] h4,
+[data-color="on"] h5,
+[data-color="on"] h6 {
+  width: fit-content;
+  max-width: 100%;
+}
+
+[data-color="on"] .post-title {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Post title underline on the home page and link underlines on hover. */
 [data-color="on"] .catalogue-title a {
   text-decoration: none;
