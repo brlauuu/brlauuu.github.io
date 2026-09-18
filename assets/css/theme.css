@@ -716,7 +716,7 @@ footer span {
 [data-style="pixel"] .tag-date,
 [data-style="pixel"] .pagination { font-size: 0.7rem; }
 [data-style="pixel"] .tag-chip,
-[data-style="pixel"] .project-name { font-size: 0.7rem; }
+[data-style="pixel"] .project-card .project-name { font-size: 0.7rem; }
 [data-style="pixel"] .tag-count,
 [data-style="pixel"] .project-version { font-size: 0.6rem; }
 [data-style="pixel"] .share-feedback { font-size: 0.6rem; }
