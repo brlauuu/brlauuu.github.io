@@ -8,6 +8,7 @@
       <li><a href="{{ "/tags" | prepend: site.baseurl }}">Tags</a></li>
       <li><a href="{{ "/about" | prepend: site.baseurl }}">About</a></li>
       <li class="nav-toggles">
+        {% include theme-toggle.html axis="color" %}
         {% include theme-toggle.html axis="theme" %}
       </li>
     </ul>

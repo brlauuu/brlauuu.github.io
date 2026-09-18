@@ -362,6 +362,8 @@ footer span {
 }
 
 :root:not([data-theme="dark"]) .theme-toggle[data-toggle="theme"] [data-when="light"],
-[data-theme="dark"] .theme-toggle[data-toggle="theme"] [data-when="dark"] {
+[data-theme="dark"] .theme-toggle[data-toggle="theme"] [data-when="dark"],
+:root:not([data-color="on"]) .theme-toggle[data-toggle="color"] [data-when="off"],
+[data-color="on"] .theme-toggle[data-toggle="color"] [data-when="on"] {
   display: block;
 }
