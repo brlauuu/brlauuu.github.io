@@ -666,8 +666,8 @@ footer span {
 
 @font-face {
   font-family: "Silkscreen";
-  src: url("/assets/fonts/Silkscreen-Regular.woff2") format("woff2"),
-       url("/assets/fonts/Silkscreen-Regular.ttf") format("truetype");
+  src: url("../fonts/Silkscreen-Regular.woff2") format("woff2"),
+       url("../fonts/Silkscreen-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -704,22 +704,34 @@ footer span {
 }
 
 [data-style="pixel"] .post-title,
-[data-style="pixel"] .tags-header-title { font-size: 2.2rem; }
-[data-style="pixel"] .catalogue-title { font-size: 1.3rem; }
-[data-style="pixel"] h2 { font-size: 1.15rem; }
+[data-style="pixel"] .tags-header-title { font-size: 2rem; }
+[data-style="pixel"] .catalogue-title { font-size: 1.5rem; }
+[data-style="pixel"] h1 { font-size: 1.5rem; }
+[data-style="pixel"] h2,
 [data-style="pixel"] h3 { font-size: 1rem; }
-[data-style="pixel"] .nav-title { font-size: 1.1rem; }
-[data-style="pixel"] .nav a { font-size: 0.8rem; }
+[data-style="pixel"] h4,
+[data-style="pixel"] h5,
+[data-style="pixel"] h6 { font-size: 0.75rem; }
+[data-style="pixel"] .nav-title { font-size: 1rem; }
+[data-style="pixel"] .nav a,
 [data-style="pixel"] .catalogue-time,
 [data-style="pixel"] .catalogue-pinned,
 [data-style="pixel"] .post-info,
 [data-style="pixel"] .tag-date,
-[data-style="pixel"] .pagination { font-size: 0.7rem; }
-[data-style="pixel"] .tag-chip,
-[data-style="pixel"] .project-card .project-name { font-size: 0.7rem; }
+[data-style="pixel"] .pagination,
+[data-style="pixel"] .tag-chip { font-size: 0.75rem; }
+[data-style="pixel"] .project-card .project-name { font-size: 0.75rem; line-height: 1.35; }
 [data-style="pixel"] .tag-count,
-[data-style="pixel"] .project-version { font-size: 0.6rem; }
-[data-style="pixel"] .share-feedback { font-size: 0.6rem; }
+[data-style="pixel"] .project-version,
+[data-style="pixel"] .share-feedback { font-size: 0.5rem; }
+
+[data-style="pixel"] .post-info span {
+  font-style: normal;
+}
+
+[data-style="pixel"] .project-version {
+  margin-left: 0;
+}
 
 /* Shapes: no rounding anywhere, thicker borders, hard shadows. */
 [data-style="pixel"] .tag-chip,
@@ -745,10 +757,6 @@ footer span {
   border-width: 2px;
 }
 
-[data-style="pixel"] .catalogue-item:last-child {
-  border-width: 0;
-}
-
 [data-style="pixel"] .share-button {
   box-shadow: 4px 4px 0 var(--heading-color);
 }
@@ -772,8 +780,7 @@ footer span {
 }
 
 /* Images and icons: no smoothing. */
-[data-style="pixel"] img,
-[data-style="pixel"] .project-logo {
+[data-style="pixel"] img {
   image-rendering: pixelated;
 }
 

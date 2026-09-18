@@ -28,7 +28,6 @@ _pages/          # Static pages (about, archive)
 _includes/       # Custom HTML includes (head, navigation, theme-toggle, catalogue_item, project-card)
 _layouts/        # Custom layouts (default, home)
 assets/
-  imgs/          # Images for posts and pages
   css/           # Custom CSS (theme.css, projects.css)
   js/            # JavaScript files (theme.js, project-stats.js, share-button.js)
 _config.yml      # Jekyll configuration
@@ -145,14 +144,19 @@ with an animated `::after` strip, and rounded elements (tag chips, project cards
 button) with a masked `::before` ring; only leaf accents and those pseudo-elements are
 animated, never containers. One `rainbow-cycle` keyframe (20 s hue rotation) is shared
 by every accent and paused by `--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
-is the only cross-axis block: brighter stops, dimmed card borders, a glow on headings.
+adds brighter stops, dimmed card borders and a glow on headings; the other cross-axis
+blocks belong to the style axis below.
 **Style axis** (`[data-style="pixel"]`, last layer of `theme.css`): one `@font-face` for
 Silkscreen (`assets/fonts/`, OFL; downloads only when referenced), `--pixel-font` on
 headings, nav, dates, chips, badges, tooltip and pagination with stepped-down sizes; zero
 radii, 2px component borders, a hard offset shadow on the share button, dashed thick lines,
 `image-rendering: pixelated` on images, `shape-rendering: crispEdges` on inline SVG, all
-transitions off and hovers that translate by a pixel. Cross-axis with color:
-`--rainbow-timing: steps(12)` and 2px ring padding. Body text never changes font.
+transitions off and hovers that translate by a pixel. Cross-axis with color
+(`[data-style="pixel"][data-color="on"]`): `--rainbow-timing: steps(12)`, 2px ring
+padding, and 3px rainbow strips to cover the 2px borders. With color on the thick lines
+paint as solid rainbow bars because `border-image` replaces the dashed style; accepted.
+The font fallback stack is monospace rather than the site's sans stack, on purpose.
+Body text never changes font.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).
@@ -172,7 +176,6 @@ based on `event.detail`.
 `!important` or hard-coded colors to component rules.
 
 ### Assets
-- Images: `assets/imgs/`
 - CSS: `assets/css/`
 - JavaScript: `assets/js/`
 
