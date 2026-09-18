@@ -48,11 +48,15 @@ Data sources load independently. Network failures, non-success responses, invali
 ## Theme axes
 
 Three switches set `data-theme` (`light`/`dark`), `data-color` (`off`/`on`) and
-`data-style` (`smooth`/`pixel`) on `<html>`; today only the theme button is in the nav,
-the color and style buttons land with issues #9 and #10; choices persist in localStorage under
+`data-style` (`smooth`/`pixel`) on `<html>`; the nav has the rainbow (color) and bulb (theme) buttons; the style button lands with issue #10; choices persist in localStorage under
 the same names. `assets/css/theme.css` defines the light and dark variables;
 `assets/js/theme.js` handles the buttons and emits `themechange` on `document`.
 The design is in `docs/superpowers/specs/2026-09-18-theme-axes-design.md`.
+
+With color on, headings, the site title, lines, borders, tag chips, project cards and the
+share button carry a rainbow gradient (`--rainbow` in `theme.css`, brighter stops in dark)
+and links turn magenta (light) or cyan (dark). Body text and code blocks stay neutral. The
+hue cycles once every 20 seconds; `prefers-reduced-motion` pauses it.
 
 ## Local preview and checks
 

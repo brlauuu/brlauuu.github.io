@@ -130,8 +130,8 @@ tags: [tag1, tag2, tag3]
 ### Theme axes
 
 The look of the site is controlled by three independent switches, each a
-`data-` attribute on `<html>`. Today only the theme switch has its nav button; the
-color and style buttons arrive with their axes (issues #9 and #10):
+`data-` attribute on `<html>`. The color and theme switches have nav buttons; the style
+button arrives with issue #10:
 
 | Axis  | Attribute    | Values           | Default                    | Storage key |
 |-------|--------------|------------------|----------------------------|-------------|
@@ -139,7 +139,15 @@ color and style buttons arrive with their axes (issues #9 and #10):
 | color | `data-color` | `off`, `on`      | `off`                      | `color`     |
 | style | `data-style` | `smooth`, `pixel`| `smooth`                   | `style`     |
 
-Color and style have no visual rules yet; see issues #9 and #10.
+**Color axis** (`[data-color="on"]`, last layer of `theme.css`): defines `--rainbow` and
+`--rainbow-border`, swaps the link tokens, paints headings and the site title with the
+gradient as a text fill, the three thick lines with `border-image`, thin section rules
+with an animated `::after` strip, and rounded elements (tag chips, project cards, share
+button) with a masked `::before` ring; only leaf accents and those pseudo-elements are
+animated, never containers. One `rainbow-cycle` keyframe (20 s hue rotation) is shared
+by every accent and paused by `--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
+is the only cross-axis block: brighter stops, dimmed card borders, a glow on headings.
+Style has no visual rules yet; see issue #10.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).
