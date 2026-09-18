@@ -813,3 +813,17 @@ footer span {
 [data-style="pixel"][data-color="on"] .project-card::before {
   padding: 2px;
 }
+
+/* The thin rainbow strips were sized for 1px borders; cover the 2px ones. */
+[data-style="pixel"][data-color="on"] .catalogue-item::after,
+[data-style="pixel"][data-color="on"] .tag-section::after {
+  bottom: -2px;
+  height: 3px;
+}
+
+[data-style="pixel"][data-color="on"] .pagination::after,
+[data-style="pixel"][data-color="on"] .pagination .top::after,
+[data-style="pixel"][data-color="on"] footer::after {
+  top: -2px;
+  height: 3px;
+}
