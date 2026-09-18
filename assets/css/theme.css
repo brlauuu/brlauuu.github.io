@@ -361,7 +361,7 @@ footer span {
   display: none;
 }
 
-[data-theme="light"] .theme-toggle[data-toggle="theme"] [data-when="light"],
+:root:not([data-theme="dark"]) .theme-toggle[data-toggle="theme"] [data-when="light"],
 [data-theme="dark"] .theme-toggle[data-toggle="theme"] [data-when="dark"] {
   display: block;
 }

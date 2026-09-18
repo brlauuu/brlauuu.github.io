@@ -47,8 +47,9 @@ Data sources load independently. Network failures, non-success responses, invali
 
 ## Theme axes
 
-Three nav buttons set `data-theme` (`light`/`dark`), `data-color` (`off`/`on`) and
-`data-style` (`smooth`/`pixel`) on `<html>`; choices persist in localStorage under
+Three switches set `data-theme` (`light`/`dark`), `data-color` (`off`/`on`) and
+`data-style` (`smooth`/`pixel`) on `<html>`; today only the theme button is in the nav,
+the color and style buttons land with issues #9 and #10; choices persist in localStorage under
 the same names. `assets/css/theme.css` defines the light and dark variables;
 `assets/js/theme.js` handles the buttons and emits `themechange` on `document`.
 The design is in `docs/superpowers/specs/2026-09-18-theme-axes-design.md`.
@@ -61,6 +62,7 @@ bundle exec jekyll build
 node --test _tests/project-stats.test.cjs
 node --test _tests/theme.test.cjs
 node --check assets/js/project-stats.js
+node --check assets/js/theme.js
 ```
 
 The dependency-free tests use Node's built-in test runner. `_tests/` is excluded from Jekyll output by its underscore prefix.

@@ -130,7 +130,8 @@ tags: [tag1, tag2, tag3]
 ### Theme axes
 
 The look of the site is controlled by three independent switches, each a
-`data-` attribute on `<html>`, each with its own nav button:
+`data-` attribute on `<html>`. Today only the theme switch has its nav button; the
+color and style buttons arrive with their axes (issues #9 and #10):
 
 | Axis  | Attribute    | Values           | Default                    | Storage key |
 |-------|--------------|------------------|----------------------------|-------------|
