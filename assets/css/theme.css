@@ -14,6 +14,17 @@
   --nav-hover-color: #222;
   --footer-color: #ccc;
   --catalogue-date-color: #aaa;
+  --code-text-color: #bf616a;
+  --pre-text-color: inherit;
+  --title-color: #353535;
+  --nav-title-color: #000;
+  --nav-link-color: #000;
+  --nav-link-hover-color: #444;
+  --share-color: #000;
+  --share-shadow: rgba(0, 0, 0, 0.2);
+  --share-shadow-hover: rgba(0, 0, 0, 0.3);
+  --share-feedback-bg: #333;
+  --share-feedback-color: #fff;
 }
 
 /* Dark mode colors */
@@ -31,6 +42,16 @@
   --nav-hover-color: #e8e8e8;
   --footer-color: #666;
   --catalogue-date-color: #888;
+  --pre-text-color: #9a9a9a;
+  --title-color: #fff;
+  --nav-title-color: #fff;
+  --nav-link-color: #fff;
+  --nav-link-hover-color: #e8e8e8;
+  --share-color: #fff;
+  --share-shadow: rgba(255, 255, 255, 0.1);
+  --share-shadow-hover: rgba(255, 255, 255, 0.2);
+  --share-feedback-bg: #555;
+  --share-feedback-color: #fff;
 }
 
 /* Apply color variables to elements */
@@ -65,6 +86,7 @@ a:focus {
 code {
   background-color: var(--code-bg);
   border: 1px solid var(--code-border);
+  color: var(--code-text-color);
 }
 
 pre {
@@ -73,65 +95,32 @@ pre {
 }
 
 pre code {
-  border: none;
-}
-
-/* Dark mode specific code styling */
-[data-theme="dark"] code {
-  color: var(--code-text-color);
-  background-color: var(--code-bg);
-  border: 1px solid var(--code-border);
-}
-
-[data-theme="dark"] pre {
-  background-color: var(--code-bg);
-  border: 1px solid var(--code-border);
-}
-
-[data-theme="dark"] pre code {
-  color: var(--code-text-color);
+  color: var(--pre-text-color);
   background-color: transparent;
   border: none;
 }
 
-/* Ensure page and post titles are white in dark mode */
-[data-theme="dark"] .post-title,
-[data-theme="dark"] .page-title,
-[data-theme="dark"] h1.post-title,
-[data-theme="dark"] h1 {
-  color: #ffffff !important;
+/* Page and post titles. Same specificity as Tale's rules; this sheet loads later. */
+.post-title,
+.page-title,
+.catalogue-title,
+.tags-header-title,
+h1.post-title {
+  color: var(--title-color);
 }
 
-/* Navigation title colors - black in light mode, white in dark mode */
+/* Navigation title and links */
 .nav-title,
-.nav h2,
-.nav-container h2,
-.nav-container a h2 {
-  color: #000000 !important;
+.nav-container h2 {
+  color: var(--nav-title-color);
 }
 
-[data-theme="dark"] .nav-title,
-[data-theme="dark"] .nav h2,
-[data-theme="dark"] .nav-container h2,
-[data-theme="dark"] .nav-container a h2 {
-  color: #ffffff !important;
-}
-
-/* Navigation links - black in light mode, white in dark mode */
 .nav a {
-  color: #000000;
+  color: var(--nav-link-color);
 }
 
 .nav a:hover {
-  color: #444444;
-}
-
-[data-theme="dark"] .nav a {
-  color: #ffffff;
-}
-
-[data-theme="dark"] .nav a:hover {
-  color: #e8e8e8;
+  color: var(--nav-link-hover-color);
 }
 
 /* Share button styles - fixed floating button */
@@ -150,13 +139,13 @@ pre code {
   justify-content: center;
   transition: all 0.3s ease;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  color: #000000;
+  box-shadow: 0 2px 10px var(--share-shadow);
+  color: var(--share-color);
 }
 
 .share-button:hover {
   transform: scale(1.15);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px var(--share-shadow-hover);
 }
 
 .share-button:active {
@@ -169,22 +158,13 @@ pre code {
   display: block;
 }
 
-[data-theme="dark"] .share-button {
-  color: #ffffff;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] .share-button:hover {
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-}
-
 /* Share feedback tooltip */
 .share-feedback {
   position: absolute;
   bottom: 60px;
   right: 0;
-  background-color: #333;
-  color: #fff;
+  background-color: var(--share-feedback-bg);
+  color: var(--share-feedback-color);
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 12px;
@@ -196,10 +176,6 @@ pre code {
 
 .share-feedback.show {
   opacity: 1;
-}
-
-[data-theme="dark"] .share-feedback {
-  background-color: #555;
 }
 
 .catalogue-time {
@@ -343,125 +319,49 @@ footer span {
   }
 }
 
-/* Dark mode toggle button styles - in navigation bar */
+/* Theme axis buttons in the nav */
 .nav ul li {
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
 }
 
-.dark-mode-toggle {
+.nav-toggles {
+  display: inline-flex;
+  gap: 0.75rem;
+  vertical-align: middle;
+}
+
+.theme-toggle {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   margin: 0;
-  display: inline-block;
-  transition: transform 0.2s ease;
-  vertical-align: middle;
+  display: inline-flex;
+  color: var(--nav-link-color);
   line-height: 0;
-  height: auto;
+  transition: transform 0.2s ease;
 }
 
-.dark-mode-toggle:hover {
+.theme-toggle:hover {
   transform: scale(1.15);
 }
 
-.dark-mode-toggle:active {
+.theme-toggle:active {
   transform: scale(0.95);
 }
 
-/* Icons for theme toggle - using images */
-.dark-mode-toggle img {
-  width: 18px;
-  height: 18px;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
-  padding: 0;
-}
-
-.dark-mode-toggle .sun-icon {
-  display: none;
-}
-
-.dark-mode-toggle .moon-icon {
+.theme-toggle svg {
   display: block;
 }
 
-[data-theme="dark"] .dark-mode-toggle .sun-icon {
-  display: block;
-}
-
-[data-theme="dark"] .dark-mode-toggle .moon-icon {
+/* Each button shows the icon for the state a click produces. */
+.theme-toggle [data-when] {
   display: none;
 }
 
-/* Respect system preference */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-color: #1a1a1a;
-    --text-color: #d4d4d4;
-    --heading-color: #ffffff;
-    --link-color: #6bb6ff;
-    --link-hover-color: #9cd1ff;
-    --code-bg: #0d0d0d;
-    --code-text-color: #9a9a9a;
-    --code-border: #2a2a2a;
-    --border-color: #404040;
-    --nav-color: #888;
-    --nav-hover-color: #e8e8e8;
-    --footer-color: #666;
-    --catalogue-date-color: #888;
-  }
-
-  /* Apply same specific styling for system preference */
-  :root:not([data-theme="light"]) code {
-    color: var(--code-text-color);
-    background-color: var(--code-bg);
-    border: 1px solid var(--code-border);
-  }
-
-  :root:not([data-theme="light"]) pre {
-    background-color: var(--code-bg);
-    border: 1px solid var(--code-border);
-  }
-
-  :root:not([data-theme="light"]) pre code {
-    color: var(--code-text-color);
-    background-color: transparent;
-    border: none;
-  }
-
-  :root:not([data-theme="light"]) .post-title,
-  :root:not([data-theme="light"]) .page-title,
-  :root:not([data-theme="light"]) h1.post-title,
-  :root:not([data-theme="light"]) h1 {
-    color: #ffffff !important;
-  }
-
-  :root:not([data-theme="light"]) .nav-title,
-  :root:not([data-theme="light"]) .nav h2,
-  :root:not([data-theme="light"]) .nav-container h2,
-  :root:not([data-theme="light"]) .nav-container a h2 {
-    color: #ffffff !important;
-  }
-
-  /* Ensure navigation links are white for system dark mode */
-  :root:not([data-theme="light"]) .nav a {
-    color: #ffffff;
-  }
-
-  :root:not([data-theme="light"]) .nav a:hover {
-    color: #e8e8e8;
-  }
-
-  /* Share button color for system dark mode */
-  :root:not([data-theme="light"]) .share-button {
-    color: #ffffff;
-  }
-
-  :root:not([data-theme="light"]) .share-feedback {
-    background-color: #555;
-  }
+:root:not([data-theme="dark"]) .theme-toggle[data-toggle="theme"] [data-when="light"],
+[data-theme="dark"] .theme-toggle[data-toggle="theme"] [data-when="dark"] {
+  display: block;
 }

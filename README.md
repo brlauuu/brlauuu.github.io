@@ -45,13 +45,24 @@ The endpoint must support browser requests without authentication. For another d
 
 Data sources load independently. Network failures, non-success responses, invalid JSON/counts, CORS blocks, and requests taking longer than eight seconds retain the fallback. Website destinations are not health-checked: a valid URL can still lead to a site that is offline. Fallbacks apply to data loading, not a guarantee that external websites are running.
 
+## Theme axes
+
+Three switches set `data-theme` (`light`/`dark`), `data-color` (`off`/`on`) and
+`data-style` (`smooth`/`pixel`) on `<html>`; today only the theme button is in the nav,
+the color and style buttons land with issues #9 and #10; choices persist in localStorage under
+the same names. `assets/css/theme.css` defines the light and dark variables;
+`assets/js/theme.js` handles the buttons and emits `themechange` on `document`.
+The design is in `docs/superpowers/specs/2026-09-18-theme-axes-design.md`.
+
 ## Local preview and checks
 
 ```sh
 bundle exec jekyll serve --host 127.0.0.1 --port 4000
 bundle exec jekyll build
 node --test _tests/project-stats.test.cjs
+node --test _tests/theme.test.cjs
 node --check assets/js/project-stats.js
+node --check assets/js/theme.js
 ```
 
 The dependency-free tests use Node's built-in test runner. `_tests/` is excluded from Jekyll output by its underscore prefix.

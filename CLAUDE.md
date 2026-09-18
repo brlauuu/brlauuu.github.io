@@ -18,19 +18,19 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 - **Social Links**: GitHub (brlauuu), LinkedIn (dorderelic)
 - **Plugins**: jekyll-paginate, jekyll-remote-theme, jekyll-feed, jekyll-seo-tag, jekyll-sitemap
 - **Archive System**: Automatic separation of recent (< 1 year) and archived (> 1 year) posts
-- **Dark Mode**: Toggle-based dark mode with localStorage persistence and system preference detection
+- **Theme axes**: light/dark, color on/off and smooth/pixel switches, persisted in localStorage
 
 ## Directory Structure
 
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (head, navigation, catalogue_item, project-card)
+_includes/       # Custom HTML includes (head, navigation, theme-toggle, catalogue_item, project-card)
 _layouts/        # Custom layouts (default, home)
 assets/
   imgs/          # Images for posts and pages
-  css/           # Custom CSS (dark-mode.css)
-  js/            # JavaScript files (dark-mode.js)
+  css/           # Custom CSS (theme.css, projects.css)
+  js/            # JavaScript files (theme.js, project-stats.js, share-button.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -127,36 +127,36 @@ tags: [tag1, tag2, tag3]
 - Shown below the post title with links to tag sections
 - Completely optional - omit the `tags:` line if not needed
 
-### Dark Mode
+### Theme axes
 
-The site includes a custom dark mode implementation:
+The look of the site is controlled by three independent switches, each a
+`data-` attribute on `<html>`. Today only the theme switch has its nav button; the
+color and style buttons arrive with their axes (issues #9 and #10):
 
-- **Toggle Button**: Located in navigation bar with light bulb icons
-- **Icons**: PNG images of lit/unlit light bulbs (see required files below)
-- **Automatic Detection**: Respects system preference (`prefers-color-scheme`)
-- **Persistence**: User choice saved in localStorage
-- **Smooth Transitions**: 0.3s ease transitions for theme changes
+| Axis  | Attribute    | Values           | Default                    | Storage key |
+|-------|--------------|------------------|----------------------------|-------------|
+| theme | `data-theme` | `light`, `dark`  | system preference or light | `theme`     |
+| color | `data-color` | `off`, `on`      | `off`                      | `color`     |
+| style | `data-style` | `smooth`, `pixel`| `smooth`                   | `style`     |
+
+Color and style have no visual rules yet; see issues #9 and #10.
 
 **Files:**
-- `assets/css/dark-mode.css` - CSS variables and styling for both themes
-- `assets/js/dark-mode.js` - Theme switching logic and localStorage handling
-- `_includes/navigation.html` - Contains toggle button in navbar
-- `_includes/head.html` - Custom head with dark mode initialization (prevents flash)
+- `_includes/head.html` sets the three attributes before first paint (no flash).
+- `assets/js/theme.js` wires `[data-toggle]` buttons, persists to localStorage, updates
+  `aria-label`s and dispatches `themechange` on `document` with `{ theme, color, style }`.
+  Its pure helpers are tested in `_tests/theme.test.cjs`.
+- `_includes/theme-toggle.html` renders one button per axis with both icon states as
+  inline SVG; the icon shows the state a click produces.
+- `assets/css/theme.css` holds every color as a variable: `:root` is light,
+  `[data-theme="dark"]` redefines the color variables. Component rules read variables
+  and never name an axis. Later axes add their own variable blocks.
 
-**Required Images:**
-The toggle requires two PNG files in `assets/imgs/`:
-- `lightbulb-off.png` - Unlit bulb (shows in light mode)
-- `lightbulb-on.png` - Lit bulb (shows in dark mode)
-- Recommended size: 24x24 pixels or larger
-- See `assets/imgs/README.md` for detailed instructions
+**Adding a dynamic effect:** listen for `themechange` and start or stop the effect
+based on `event.detail`.
 
-**Color Variables:**
-- Light mode: White background, black text, blue links (#4a9ae1)
-- Dark mode: Dark background (#1a1a1a), white text, bright blue links (#6bb6ff)
-- Navigation: Black in light mode, white in dark mode
-
-**Customization:**
-To modify dark mode colors, edit the CSS variables in `assets/css/dark-mode.css` under the `[data-theme="dark"]` selector.
+**Changing colors:** edit the variables in `assets/css/theme.css`. Do not add
+`!important` or hard-coded colors to component rules.
 
 ### Assets
 - Images: `assets/imgs/`

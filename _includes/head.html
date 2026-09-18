@@ -5,19 +5,28 @@
   {% seo %}
 
   <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
-  <link rel="stylesheet" href="{{ "/assets/css/dark-mode.css" | relative_url }}">
+  <link rel="stylesheet" href="{{ "/assets/css/theme.css" | relative_url }}">
   {% if page.layout == 'home' %}
   <link rel="stylesheet" href="{{ "/assets/css/projects.css" | relative_url }}">
   <script src="{{ "/assets/js/project-stats.js" | relative_url }}" defer></script>
   {% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ site.url }}/feed.xml" title="{{ site.title }}" />
 
-  <!-- Dark mode initialization script (runs before page render to prevent flash) -->
+  <!-- Set the three theme axes before first paint so the page never flashes the wrong look.
+       Keep in sync with the defaults in assets/js/theme.js. -->
   <script>
-    (function() {
-      const theme = localStorage.getItem('theme') ||
-                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', theme);
+    (function () {
+      var html = document.documentElement, storage = null;
+      try { storage = window.localStorage; } catch (e) {}
+      function set(axis, first, second, fallback) {
+        var value = null;
+        try { value = storage && storage.getItem(axis); } catch (e) {}
+        html.setAttribute('data-' + axis, value === first || value === second ? value : fallback);
+      }
+      var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      set('theme', 'light', 'dark', systemDark ? 'dark' : 'light');
+      set('color', 'off', 'on', 'off');
+      set('style', 'smooth', 'pixel', 'smooth');
     })();
   </script>
 </head>

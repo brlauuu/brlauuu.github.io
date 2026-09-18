@@ -4,7 +4,7 @@
 - `_posts/` holds blog posts in `YYYY-MM-DD-title.md` format.
 - `_pages/` contains static pages like `about.md`, `archive.md`, and `tags.md`.
 - `_includes/` and `_layouts/` override the Tale theme’s HTML templates.
-- `assets/` stores site assets: `assets/imgs/`, `assets/css/`, `assets/js/`.
+- `assets/` stores site assets: `assets/imgs/`, `assets/css/` (`theme.css`, `projects.css`), `assets/js/` (`theme.js`, `project-stats.js`, `share-button.js`).
 - `_config.yml` contains Jekyll site configuration; `_site/` is the generated output.
 
 ## Build, Test, and Development Commands
