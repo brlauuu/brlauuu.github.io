@@ -25,11 +25,11 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (head, navigation, theme-toggle, catalogue_item, project-card)
+_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card)
 _layouts/        # Custom layouts (default, home)
 assets/
   css/           # Custom CSS (theme.css, projects.css)
-  js/            # JavaScript files (theme.js, project-stats.js, share-button.js)
+  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -174,6 +174,20 @@ based on `event.detail`.
 
 **Changing colors:** edit the variables in `assets/css/theme.css`. Do not add
 `!important` or hard-coded colors to component rules.
+
+### Keyboard shortcuts
+
+`?` opens a native `<dialog>` (`_includes/shortcuts.html`, rendered by the default
+layout) listing the shortcuts. Its rows are the single source of truth: each carries
+`data-shortcut` and either `data-toggle` (a theme axis button to click) or `data-href`
+(a page). `assets/js/shortcuts.js` reads that table on load, listens for `keydown` on
+the document, ignores modifier combinations and editable targets, and runs `step()`:
+`t`/`c`/`p` click the matching `[data-toggle]` button, `g` arms a 1.5 s two-key
+sequence for `h`/`a`/`r`/`t`, `?` toggles the dialog, `Esc` and the backdrop close it.
+The pure helpers (`ignores`, `readBindings`, `step`) are tested in
+`_tests/shortcuts.test.cjs`. Dialog styles live in `theme.css` next to the nav buttons,
+with pixel and color variants at the end of the file. To add a shortcut, add a row to
+the include; nothing in the script needs to change.
 
 ### Assets
 - CSS: `assets/css/`

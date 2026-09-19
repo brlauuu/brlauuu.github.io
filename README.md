@@ -64,6 +64,15 @@ borders 2px, the share button casts a hard shadow, images render pixelated and n
 eases. Body text keeps its font. Combined with color on, the hue cycle steps instead of
 sliding.
 
+## Keyboard shortcuts
+
+Press `?` on any page for the list. `t`, `c` and `p` flip the theme, color and style
+switches (they click the nav buttons, so the choice persists like a click would). `g`
+followed by `h`, `a`, `r` or `t` goes to home, about, archive or tags. Shortcuts are
+ignored while typing in a field or with a modifier key held. The key table lives in
+`_includes/shortcuts.html`; `assets/js/shortcuts.js` reads it from the dialog rows, and
+its pure logic is tested in `_tests/shortcuts.test.cjs`.
+
 ## Local preview and checks
 
 ```sh
@@ -71,6 +80,7 @@ bundle exec jekyll serve --host 127.0.0.1 --port 4000
 bundle exec jekyll build
 node --test _tests/project-stats.test.cjs
 node --test _tests/theme.test.cjs
+node --test _tests/shortcuts.test.cjs
 node --check assets/js/project-stats.js
 node --check assets/js/theme.js
 ```
