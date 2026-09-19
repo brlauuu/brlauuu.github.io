@@ -29,7 +29,7 @@ _includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcu
 _layouts/        # Custom layouts (default, home)
 assets/
   css/           # Custom CSS (theme.css, projects.css)
-  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js, backdrop.js, constellation.js)
+  js/            # JavaScript files (theme.js, shortcuts.js, sidenotes.js, project-stats.js, share-button.js, backdrop.js, constellation.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -234,6 +234,22 @@ based on `event.detail`.
 
 **Changing colors:** edit the variables in `assets/css/theme.css`. Do not add
 `!important` or hard-coded colors to component rules.
+
+### Reference side notes
+
+Write references as Kramdown footnotes: `[^1]` inline and `[^1]: text` definitions
+placed under a `## References` heading at the very end of the post (Kramdown appends the
+endnotes list at the end of the document, so the heading must be last to sit above it).
+`assets/js/sidenotes.js` runs on pages with a `.post`: it intercepts clicks on
+`a.footnote[href*="#fn:"]`, copies the matching `li#fn:N` markup (minus the return arrow)
+into an `<aside class="sidenote" role="note">`, and places it in the right margin
+(`sidenote--wide`, absolutely positioned at the citing block's `offsetTop`, width
+clamped to the available margin, at 1200px and up) or inline after the citing paragraph
+or list item. One note at a time; Esc, outside click, the close button, or the same
+number again closes it; resize re-places it. The active number gets `is-active`. Styles
+in `theme.css` next to the share button, with rainbow left rule under color and square
+pixel variants at the end. Pure helpers `noteIdFor`, `placement`, `citingBlock` are
+tested in `_tests/sidenotes.test.cjs`.
 
 ### Keyboard shortcuts
 

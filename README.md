@@ -89,6 +89,16 @@ theme axes, is fully keyboard-accessible, and remains hidden under 600 px width 
 existing tag list is the primary interface on mobile. Touch interaction uses two-tap on Chromium, but single-tap on Safari and Firefox. Without JavaScript, the page shows
 the tag list only. Check the constellation with `node _tests/tools/constellation-check.cjs http://localhost:4000`.
 
+## Reference side notes
+
+Posts cite references with Kramdown footnotes (`[^1]` in the text, `[^1]: ...` under a
+`## References` heading at the end). On a post page, clicking a reference number shows
+that note beside the paragraph on wide screens (1200px and up, when the margin has room)
+or directly under it on narrow ones, instead of jumping to the list; Esc, a click
+elsewhere, or the same number again closes it. The list at the bottom is unchanged and
+is what you get without JavaScript. Script: `assets/js/sidenotes.js`; its pure helpers
+are tested in `_tests/sidenotes.test.cjs`.
+
 ## Local preview and checks
 
 ```sh
@@ -99,6 +109,7 @@ node --test _tests/theme.test.cjs
 node --test _tests/shortcuts.test.cjs
 node --test _tests/backdrop.test.cjs
 node --test _tests/constellation.test.cjs
+node --test _tests/sidenotes.test.cjs
 node --check assets/js/project-stats.js
 node --check assets/js/theme.js
 node _tests/tools/perf.cjs http://localhost:4000/ 10
