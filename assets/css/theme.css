@@ -364,7 +364,9 @@ footer span {
 :root:not([data-theme="dark"]) .theme-toggle[data-toggle="theme"] [data-when="light"],
 [data-theme="dark"] .theme-toggle[data-toggle="theme"] [data-when="dark"],
 :root:not([data-color="on"]) .theme-toggle[data-toggle="color"] [data-when="off"],
-[data-color="on"] .theme-toggle[data-toggle="color"] [data-when="on"] {
+[data-color="on"] .theme-toggle[data-toggle="color"] [data-when="on"],
+:root:not([data-style="pixel"]) .theme-toggle[data-toggle="style"] [data-when="smooth"],
+[data-style="pixel"] .theme-toggle[data-toggle="style"] [data-when="pixel"] {
   display: block;
 }
 
@@ -652,4 +654,183 @@ footer span {
     color: var(--heading-color);
     animation: none;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Style axis: pixel. Chrome and headings switch to a bitmap-style     */
+/* font, corners go square, borders thicken, shadows go hard, images   */
+/* render pixelated, nothing eases. Body text keeps its font. Nothing  */
+/* here applies while data-style is smooth; the font only downloads    */
+/* when a pixel rule references it.                                    */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: "Silkscreen";
+  src: url("../fonts/Silkscreen-Regular.woff2") format("woff2"),
+       url("../fonts/Silkscreen-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+[data-style="pixel"] {
+  --pixel-font: "Silkscreen", "Courier New", monospace;
+}
+
+/* Pixel font on chrome and headings only. Silkscreen is wide and has no
+   lowercase-height nuance, so sizes step down from Tale's defaults. */
+[data-style="pixel"] h1,
+[data-style="pixel"] h2,
+[data-style="pixel"] h3,
+[data-style="pixel"] h4,
+[data-style="pixel"] h5,
+[data-style="pixel"] h6,
+[data-style="pixel"] .nav-title,
+[data-style="pixel"] .nav a,
+[data-style="pixel"] .catalogue-time,
+[data-style="pixel"] .catalogue-pinned,
+[data-style="pixel"] .post-info,
+[data-style="pixel"] .tag-date,
+[data-style="pixel"] .tag-chip,
+[data-style="pixel"] .tag-count,
+[data-style="pixel"] .project-name,
+[data-style="pixel"] .project-version,
+[data-style="pixel"] .share-feedback,
+[data-style="pixel"] .pagination,
+[data-style="pixel"] .pagination .top {
+  font-family: var(--pixel-font);
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+[data-style="pixel"] .post-title,
+[data-style="pixel"] .tags-header-title { font-size: 2rem; }
+[data-style="pixel"] .catalogue-title { font-size: 1.5rem; }
+[data-style="pixel"] h1 { font-size: 1.5rem; }
+[data-style="pixel"] h2,
+[data-style="pixel"] h3 { font-size: 1rem; }
+[data-style="pixel"] h4,
+[data-style="pixel"] h5,
+[data-style="pixel"] h6 { font-size: 0.75rem; }
+[data-style="pixel"] .nav-title { font-size: 1rem; }
+[data-style="pixel"] .nav a,
+[data-style="pixel"] .catalogue-time,
+[data-style="pixel"] .catalogue-pinned,
+[data-style="pixel"] .post-info,
+[data-style="pixel"] .tag-date,
+[data-style="pixel"] .pagination,
+[data-style="pixel"] .tag-chip { font-size: 0.75rem; }
+[data-style="pixel"] .project-card .project-name { font-size: 0.75rem; line-height: 1.35; }
+[data-style="pixel"] .tag-count,
+[data-style="pixel"] .project-version,
+[data-style="pixel"] .share-feedback { font-size: 0.5rem; }
+
+[data-style="pixel"] .post-info span {
+  font-style: normal;
+}
+
+[data-style="pixel"] .project-version {
+  margin-left: 0;
+}
+
+/* Shapes: no rounding anywhere, thicker borders, hard shadows. */
+[data-style="pixel"] .tag-chip,
+[data-style="pixel"] .tag-count,
+[data-style="pixel"] .project-card,
+[data-style="pixel"] .project-version,
+[data-style="pixel"] .share-button,
+[data-style="pixel"] .share-feedback,
+[data-style="pixel"] code,
+[data-style="pixel"] pre,
+[data-style="pixel"] .highlight,
+[data-style="pixel"] .project-logo {
+  border-radius: 0;
+}
+
+[data-style="pixel"] .tag-chip,
+[data-style="pixel"] .project-card,
+[data-style="pixel"] .catalogue-item,
+[data-style="pixel"] .tag-section,
+[data-style="pixel"] .pagination,
+[data-style="pixel"] .pagination .top,
+[data-style="pixel"] footer {
+  border-width: 2px;
+}
+
+[data-style="pixel"] .share-button {
+  box-shadow: 4px 4px 0 var(--heading-color);
+}
+
+[data-style="pixel"] .share-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--heading-color);
+}
+
+[data-style="pixel"] .share-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Thick lines become stepped blocks. */
+[data-style="pixel"] .catalogue-line,
+[data-style="pixel"] .post-line,
+[data-style="pixel"] .tags-header-line {
+  border-top-width: 0.5rem;
+  border-top-style: dashed;
+}
+
+/* Images and icons: no smoothing. */
+[data-style="pixel"] img {
+  image-rendering: pixelated;
+}
+
+[data-style="pixel"] svg {
+  shape-rendering: crispEdges;
+}
+
+/* Motion: nothing eases; hovers snap by a pixel or two. */
+[data-style="pixel"] body,
+[data-style="pixel"] .share-button,
+[data-style="pixel"] .share-feedback,
+[data-style="pixel"] .theme-toggle,
+[data-style="pixel"] .catalogue-line,
+[data-style="pixel"] .nav-title,
+[data-style="pixel"] .nav li,
+[data-style="pixel"] .pagination .top,
+[data-style="pixel"] .pagination .arrow,
+[data-style="pixel"] .tags-post-line {
+  transition: none;
+}
+
+[data-style="pixel"] .theme-toggle:hover {
+  transform: translate(1px, 1px);
+}
+
+[data-style="pixel"] .theme-toggle:active {
+  transform: translate(2px, 2px);
+}
+
+/* Cross-axis: with color on, the hue cycle jumps instead of sliding, and
+   the gradient rings match the thicker borders. */
+[data-style="pixel"][data-color="on"] {
+  --rainbow-timing: steps(12);
+}
+
+[data-style="pixel"][data-color="on"] .tag-chip::before,
+[data-style="pixel"][data-color="on"] .project-card::before {
+  padding: 2px;
+}
+
+/* The thin rainbow strips were sized for 1px borders; cover the 2px ones. */
+[data-style="pixel"][data-color="on"] .catalogue-item::after,
+[data-style="pixel"][data-color="on"] .tag-section::after {
+  bottom: -2px;
+  height: 3px;
+}
+
+[data-style="pixel"][data-color="on"] .pagination::after,
+[data-style="pixel"][data-color="on"] .pagination .top::after,
+[data-style="pixel"][data-color="on"] footer::after {
+  top: -2px;
+  height: 3px;
 }
