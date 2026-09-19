@@ -29,7 +29,7 @@ _includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcu
 _layouts/        # Custom layouts (default, home)
 assets/
   css/           # Custom CSS (theme.css, projects.css)
-  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js)
+  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js, backdrop.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -157,6 +157,23 @@ padding, and 3px rainbow strips to cover the 2px borders. With color on the thic
 paint as solid rainbow bars because `border-image` replaces the dashed style; accepted.
 The font fallback stack is monospace rather than the site's sans stack, on purpose.
 Body text never changes font.
+
+**Backdrop** (`assets/js/backdrop.js`): a fixed canvas behind the page drawn by one
+fragment shader while `data-color="on"`. The script owns the element too: it creates
+`<canvas class="backdrop" aria-hidden="true">` as the first child of `<body>` on start and
+removes it 300 ms after color turns off (matching the background transition), so the canvas
+exists only while color is on and color-off pages composite exactly as they did before.
+Uniforms: time (an accumulator, so pause and resume never jump), resolution, eased pointer
+and strength, `u_light` (theme band), `u_grid` (0 smooth, 4 pixel), `u_intensity`.
+Started/stopped by `themechange`; theme and style flips only update uniforms. Smooth renders
+at quarter resolution (the upscale is the softness, no CSS blur); pixel at full resolution
+with coordinates and hue quantised in the shader. `<html>` carries the page background and
+`<body>` is transparent under color on so the canvas shows through; `.nav-container`, `main`,
+`footer` and `.project-sidebar` sit on `--panel-bg` at 92 % opacity, and only the nav and the
+footer add a `backdrop-filter: blur(4px)` (opaque and bordered under pixel). Pure helpers
+`uniformsFor`, `decide`, `ease` are tested in `_tests/backdrop.test.cjs`;
+`_tests/tools/perf.cjs` probes frame time and long tasks and `_tests/tools/backdrop-check.cjs`
+drives the color button in a browser.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).

@@ -48,6 +48,7 @@
   --syntax-prompt: #009;
   --syntax-output: #aaa;
   --syntax-lineno: #aaa;
+  --panel-bg: rgba(255, 255, 255, 0.92);
 }
 
 /* Dark mode colors */
@@ -97,6 +98,7 @@
   --syntax-prompt: #8b949e;
   --syntax-output: #8b949e;
   --syntax-lineno: #6e7681;
+  --panel-bg: rgba(26, 26, 26, 0.92);
 }
 
 /* Apply color variables to elements */
@@ -294,6 +296,22 @@ footer {
 
 footer span {
   color: var(--footer-color);
+}
+
+/* Animated backdrop canvas: created by backdrop.js only while color is on. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.backdrop.is-on {
+  opacity: 1;
 }
 
 /* Tags page layout */
@@ -770,6 +788,8 @@ footer span {
   [data-color="on"] {
     --rainbow-play: paused;
   }
+
+  .backdrop { transition: none; }
 }
 
 [data-color="on"] h1:not(.catalogue-title),
@@ -791,7 +811,7 @@ footer span {
 [data-color="on"] .tag-chip::before,
 [data-color="on"] .project-card::before,
 [data-color="on"] .share-button::before {
-  animation: rainbow-cycle 20s var(--rainbow-timing) infinite;
+  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 
@@ -824,6 +844,60 @@ footer span {
     color: var(--heading-color);
     animation: none;
   }
+
+  .backdrop { display: none; }
+
+  [data-color="on"] .nav-container,
+  [data-color="on"] main,
+  [data-color="on"] footer,
+  [data-color="on"] .project-sidebar {
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Backdrop: the page background moves to <html> so the canvas shows through
+   <body>, and the content column sits on a frosted panel. */
+[data-color="on"] {
+  background-color: var(--bg-color);
+}
+
+[data-color="on"] body {
+  background-color: transparent;
+}
+
+[data-color="on"] .nav-container,
+[data-color="on"] main,
+[data-color="on"] footer {
+  background-color: var(--panel-bg);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 8px;
+}
+
+/* Blur only on the two thin strips: a blur behind the whole content column is the
+   most expensive part of the frame and, at 92 % opacity, the least visible. */
+[data-color="on"] .nav-container,
+[data-color="on"] footer {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+[data-color="on"] main {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* The sidebar sits outside main, so it needs its own panel. */
+[data-color="on"] .project-sidebar {
+  background-color: var(--panel-bg);
+  border-radius: 8px;
+  padding: 0.6rem;
+  padding-top: 1.4rem;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1024,7 +1098,7 @@ footer span {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  animation: rainbow-cycle 20s var(--rainbow-timing) infinite;
+  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 
@@ -1050,4 +1124,25 @@ footer span {
 
 [data-style="pixel"][data-color="on"] .shortcuts::before {
   padding: 2px;
+}
+
+/* Backdrop under pixel: opaque bordered panels, crisp blocks, no blur. */
+[data-color="on"][data-style="pixel"] .nav-container,
+[data-color="on"][data-style="pixel"] main,
+[data-color="on"][data-style="pixel"] footer {
+  background-color: var(--bg-color);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+}
+
+[data-color="on"][data-style="pixel"] .project-sidebar {
+  background-color: var(--bg-color);
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+}
+
+[data-style="pixel"] .backdrop {
+  image-rendering: pixelated;
 }
