@@ -5,8 +5,6 @@
 
   <body>
 
-    {% include backdrop.html %}
-
     {% include navigation.html %}
 
     <main>
@@ -17,9 +15,9 @@
     {% include share-button.html %}
     {% include shortcuts.html %}
 
-    <script src="{{ "/assets/js/theme.js" | relative_url }}"></script>
-    <script src="{{ "/assets/js/share-button.js" | relative_url }}"></script>
-    <script src="{{ "/assets/js/shortcuts.js" | relative_url }}"></script>
-    <script src="{{ "/assets/js/backdrop.js" | relative_url }}"></script>
+    <script src="{{ "/assets/js/theme.js" | relative_url }}" defer></script>
+    <script src="{{ "/assets/js/share-button.js" | relative_url }}" defer></script>
+    <script src="{{ "/assets/js/shortcuts.js" | relative_url }}" defer></script>
+    <script src="{{ "/assets/js/backdrop.js" | relative_url }}" defer></script>
   </body>
 </html>

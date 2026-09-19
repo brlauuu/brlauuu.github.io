@@ -48,7 +48,7 @@
   --syntax-prompt: #009;
   --syntax-output: #aaa;
   --syntax-lineno: #aaa;
-  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-bg: rgba(255, 255, 255, 0.92);
 }
 
 /* Dark mode colors */
@@ -98,7 +98,7 @@
   --syntax-prompt: #8b949e;
   --syntax-output: #8b949e;
   --syntax-lineno: #6e7681;
-  --panel-bg: rgba(26, 26, 26, 0.85);
+  --panel-bg: rgba(26, 26, 26, 0.92);
 }
 
 /* Apply color variables to elements */
@@ -788,6 +788,8 @@ footer span {
   [data-color="on"] {
     --rainbow-play: paused;
   }
+
+  .backdrop { transition: none; }
 }
 
 [data-color="on"] h1:not(.catalogue-title),
@@ -842,6 +844,20 @@ footer span {
     color: var(--heading-color);
     animation: none;
   }
+
+  .backdrop { display: none; }
+
+  [data-color="on"] .nav-container,
+  [data-color="on"] main,
+  [data-color="on"] footer,
+  [data-color="on"] .project-sidebar {
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 /* Backdrop: the page background moves to <html> so the canvas shows through
@@ -854,24 +870,34 @@ footer span {
   background-color: transparent;
 }
 
-[data-color="on"]:not([data-style="pixel"]) .backdrop {
-  filter: blur(4px);
-}
-
 [data-color="on"] .nav-container,
 [data-color="on"] main,
 [data-color="on"] footer {
   background-color: var(--panel-bg);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   border-radius: 8px;
 }
 
+/* Blur only on the two thin strips: a blur behind the whole content column is the
+   most expensive part of the frame and, at 92 % opacity, the least visible. */
+[data-color="on"] .nav-container,
+[data-color="on"] footer {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
 [data-color="on"] main {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+/* The sidebar sits outside main, so it needs its own panel. */
+[data-color="on"] .project-sidebar {
+  background-color: var(--panel-bg);
+  border-radius: 8px;
+  padding: 0.6rem;
+  padding-top: 1.4rem;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1107,6 +1133,12 @@ footer span {
   background-color: var(--bg-color);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+}
+
+[data-color="on"][data-style="pixel"] .project-sidebar {
+  background-color: var(--bg-color);
   border: 2px solid var(--border-color);
   border-radius: 0;
 }

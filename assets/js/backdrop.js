@@ -4,7 +4,7 @@
 (() => {
   const INTENSITY = 1.0;      // the one knob: amplitude of everything
   const GRID_CSS_PX = 4;      // pixel style cell size in CSS pixels
-  const FADE_MS = 600;
+  const REMOVE_MS = 300;    // matches the body background transition
 
   function uniformsFor({ theme, style }) {
     return { light: theme === 'dark' ? 0 : 1, grid: style === 'pixel' ? GRID_CSS_PX : 0 };
@@ -25,7 +25,11 @@ attribute vec2 a_pos;
 void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
 
   const FRAGMENT = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 uniform float u_time;
 uniform vec2 u_resolution;
 uniform vec2 u_pointer;
@@ -83,17 +87,36 @@ void main() {
   }
 
   function init(doc, win) {
-    const canvas = doc.getElementById('backdrop');
-    if (!canvas) return;
     const html = doc.documentElement;
     const axes = () => ({ theme: html.dataset.theme, color: html.dataset.color, style: html.dataset.style });
     const reduced = win.matchMedia ? win.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
 
-    let gl = null, program = null, loc = null, frame = 0, running = false, hidden = false;
-    let startedAt = 0, pausedAt = 0, last = 0;
+    let canvas = null;
+    let gl = null, program = null, loc = null, frame = 0, running = false, hidden = doc.hidden;
+    let elapsed = 0, last = 0, removal = 0;
     let light = 1, lightTarget = 1, grid = 0;
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, strength: 0, strengthTarget: 0 };
     let needResize = true;
+
+    // The viewport without the scrollbar, so the canvas never forces one.
+    const viewW = () => html.clientWidth;
+    const viewH = () => html.clientHeight;
+
+    // The canvas exists only while color is on: a transparent canvas left in the
+    // DOM changes how the text above it is composited.
+    function create() {
+      const el = doc.createElement('canvas');
+      el.className = 'backdrop';
+      el.setAttribute('aria-hidden', 'true');
+      el.addEventListener('webglcontextlost', (event) => {
+        event.preventDefault();
+        gl = null; program = null; loc = null; needResize = true;
+        stop();
+      }, { passive: false });
+      el.addEventListener('webglcontextrestored', () => { if (axes().color === 'on') start(); });
+      doc.body.insertBefore(el, doc.body.firstChild);
+      return el;
+    }
 
     function setup() {
       gl = canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false });
@@ -117,13 +140,12 @@ void main() {
       for (const name of ['u_time', 'u_resolution', 'u_pointer', 'u_pointerStrength', 'u_light', 'u_grid', 'u_intensity']) {
         loc[name] = gl.getUniformLocation(program, name);
       }
-      canvas.addEventListener('webglcontextlost', (event) => { event.preventDefault(); stop(); }, { passive: false });
       return true;
     }
 
     function resize() {
-      const w = win.innerWidth, h = win.innerHeight;
-      const scale = grid > 0 ? 1 : 0.5;          // smooth renders at half resolution
+      const w = viewW(), h = viewH();
+      const scale = grid > 0 ? 1 : 0.25;        // smooth renders at quarter resolution
       canvas.width = Math.max(1, Math.round(w * scale));
       canvas.height = Math.max(1, Math.round(h * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -131,17 +153,20 @@ void main() {
     }
 
     function draw(now) {
+      if (!gl) return;
       if (needResize) resize();
       const dt = last ? Math.min(0.1, (now - last) / 1000) : 0;
       last = now;
+      // An accumulator, so pausing and resuming never jumps and the value stays small.
+      if (!reduced.matches) elapsed = (elapsed + dt) % 86400;
       light = ease(light, lightTarget, dt, 0.15);
       pointer.x = ease(pointer.x, pointer.tx, dt, 0.1);
       pointer.y = ease(pointer.y, pointer.ty, dt, 0.1);
       pointer.strength = ease(pointer.strength, pointer.strengthTarget, dt, pointer.strengthTarget > pointer.strength ? 0.15 : 0.6);
-      const scale = canvas.width / win.innerWidth;
-      gl.uniform1f(loc.u_time, reduced.matches ? 0 : (now - startedAt) / 1000);
+      const scale = canvas.width / viewW();
+      gl.uniform1f(loc.u_time, reduced.matches ? 0 : elapsed);
       gl.uniform2f(loc.u_resolution, canvas.width, canvas.height);
-      gl.uniform2f(loc.u_pointer, pointer.x * scale, (win.innerHeight - pointer.y) * scale);
+      gl.uniform2f(loc.u_pointer, pointer.x * scale, (viewH() - pointer.y) * scale);
       gl.uniform1f(loc.u_pointerStrength, reduced.matches ? 0 : pointer.strength);
       gl.uniform1f(loc.u_light, light);
       gl.uniform1f(loc.u_grid, grid * scale);
@@ -162,14 +187,17 @@ void main() {
     }
 
     function start() {
+      if (removal) { win.clearTimeout(removal); removal = 0; }
       if (running) return;
+      if (!canvas) canvas = create();               // reuse one still waiting to be removed
       if (!gl && !setup()) return;
       applyAxes();
-      light = lightTarget;                       // no cross-fade on a cold start
+      light = lightTarget;                          // no cross-fade on a cold start
+      needResize = true;
       running = true;
-      startedAt = win.performance.now();
       last = 0;
-      draw(startedAt);
+      draw(win.performance.now());
+      void canvas.offsetHeight;                     // flush the inserted element so the fade runs
       canvas.classList.add('is-on');
       if (!reduced.matches) frame = win.requestAnimationFrame(loop);
     }
@@ -178,8 +206,14 @@ void main() {
       if (!running) return;
       running = false;
       win.cancelAnimationFrame(frame);
-      canvas.classList.remove('is-on');
-      win.setTimeout(() => { if (!running && gl) { gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT); } }, FADE_MS);
+      if (canvas) canvas.classList.remove('is-on');
+      removal = win.setTimeout(() => {
+        removal = 0;
+        if (gl) gl.getExtension('WEBGL_lose_context')?.loseContext();
+        gl = null; program = null; loc = null; needResize = true;
+        if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+        canvas = null;
+      }, REMOVE_MS);
     }
 
     doc.addEventListener('themechange', (event) => {
@@ -192,18 +226,39 @@ void main() {
     doc.addEventListener('visibilitychange', () => {
       hidden = doc.hidden;
       if (!running) return;
-      if (hidden) { pausedAt = win.performance.now(); win.cancelAnimationFrame(frame); }
-      else { startedAt += win.performance.now() - pausedAt; last = 0; if (!reduced.matches) frame = win.requestAnimationFrame(loop); }
+      if (hidden) win.cancelAnimationFrame(frame);
+      else {
+        last = 0;
+        if (reduced.matches) draw(win.performance.now());
+        else frame = win.requestAnimationFrame(loop);
+      }
+    });
+
+    reduced.addEventListener?.('change', () => {
+      if (!running) return;
+      if (reduced.matches) { win.cancelAnimationFrame(frame); draw(win.performance.now()); }
+      else { last = 0; frame = win.requestAnimationFrame(loop); }
     });
 
     win.addEventListener('resize', () => { needResize = true; if (running && reduced.matches) draw(win.performance.now()); }, { passive: true });
     const point = (event) => { pointer.tx = event.clientX; pointer.ty = event.clientY; pointer.strengthTarget = 1; };
     doc.addEventListener('pointermove', point, { passive: true });
     doc.addEventListener('pointerdown', point, { passive: true });
-    doc.addEventListener('pointerleave', () => { pointer.strengthTarget = 0; }, { passive: true });
+    // relatedTarget null means the pointer left the window, not just one element.
+    doc.addEventListener('pointerout', (event) => { if (!event.relatedTarget) pointer.strengthTarget = 0; }, { passive: true });
+    const lift = (event) => { if (event.pointerType !== 'mouse') pointer.strengthTarget = 0; };
+    doc.addEventListener('pointerup', lift, { passive: true });
+    doc.addEventListener('pointercancel', lift, { passive: true });
     win.addEventListener('blur', () => { pointer.strengthTarget = 0; }, { passive: true });
 
-    if (axes().color === 'on') start();
+    // Listeners are live at once; the first draw waits for idle time after load.
+    const boot = () => { if (axes().color === 'on') start(); };
+    const schedule = () => {
+      if (win.requestIdleCallback) win.requestIdleCallback(boot, { timeout: 2000 });
+      else win.setTimeout(boot, 200);
+    };
+    if (doc.readyState === 'complete') schedule();
+    else win.addEventListener('load', schedule, { once: true });
   }
 
   if (typeof module !== 'undefined' && module.exports) {

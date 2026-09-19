@@ -1,4 +1,4 @@
-// Usage: node _tests/perf.cjs <url> [seconds]. Reports frames per second and long
+// Usage: node _tests/tools/perf.cjs <url> [seconds]. Reports frames per second and long
 // tasks with the backdrop on. Headless Chromium renders GL in software (SwiftShader),
 // so fps here is a floor, not what a GPU does; the long-task count is the number that
 // must hold.
@@ -13,13 +13,14 @@ const [url, seconds = '10'] = process.argv.slice(2);
   await page.waitForTimeout(1000);
   const result = await page.evaluate((secs) => new Promise((resolve) => {
     const longTasks = [];
-    try { new PerformanceObserver((list) => longTasks.push(...list.getEntries().map((e) => e.duration))).observe({ type: 'longtask', buffered: true }); } catch {}
+    try { new PerformanceObserver((list) => longTasks.push(...list.getEntries().map((e) => e.duration))).observe({ type: 'longtask' }); } catch {}
     let frames = 0;
     const t0 = performance.now();
     const tick = (now) => {
       frames++;
       if (now - t0 < secs * 1000) requestAnimationFrame(tick);
-      else resolve({ fps: frames / secs, longTasks: longTasks.filter((d) => d > 50).length });
+      // Divide by the time actually elapsed, not the requested seconds.
+      else resolve({ fps: frames / ((now - t0) / 1000), longTasks: longTasks.length });
     };
     requestAnimationFrame(tick);
   }), Number(seconds));

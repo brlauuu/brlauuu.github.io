@@ -104,7 +104,7 @@ on near-black, plus a faint colored text-shadow glow on headings; card borders
 slightly dimmed.
 
 Animation: elements carrying the rainbow share one keyframe that applies a
-`hue-rotate` filter through 360 degrees over 20 seconds, so all accents move
+`hue-rotate` filter through 360 degrees over 12 seconds, so all accents move
 together and text is not repainted. `prefers-reduced-motion: reduce` disables
 the animation and leaves the rainbow static.
 
@@ -133,9 +133,11 @@ it is the first consumer of the `themechange` event.
 
 ### Renderer
 
-- `_includes/backdrop.html` renders one `<canvas class="backdrop" aria-hidden="true">`,
-  fixed, full viewport, `pointer-events: none`, `z-index` below the page. It is always
-  in the DOM and draws nothing while color is off.
+- `assets/js/backdrop.js` creates the `<canvas class="backdrop" aria-hidden="true">` on
+  start and removes it 300 ms after stop (the length of the body background transition).
+  It is fixed, full viewport, `pointer-events: none`, `z-index` below the page. It is not
+  in the DOM while color is off, because a transparent canvas in the DOM changes how the
+  text above it is composited and would break color-off byte identity.
 - `assets/js/backdrop.js` owns it: WebGL 1, one full-screen triangle, one fragment
   shader with the source inline. Uniforms: `u_time` (seconds from a running clock),
   `u_resolution`, `u_pointer` (eased, in canvas pixels), `u_light` (0 dark, 1 light,
@@ -145,9 +147,10 @@ it is the first consumer of the `themechange` event.
   turns off. Theme and style flips only update uniforms; they never restart the loop.
   Pause on `visibilitychange` hidden, resume without a time jump. Pointer and resize
   handlers only store numbers (passive listeners); nothing reads layout per frame.
-- Resolution: capped at 1 device pixel per CSS pixel. Smooth renders at half resolution
-  and lets the browser upscale (invisible for a low-frequency field). Pixel renders at
-  full resolution with coordinates quantised in the shader to 4 CSS pixels per cell.
+- Resolution: capped at 1 device pixel per CSS pixel. Smooth renders at quarter resolution
+  and lets the browser upscale (invisible for a low-frequency field, and the upscale is the
+  only softening it needs). Pixel renders at full resolution with coordinates quantised in
+  the shader to 4 CSS pixels per cell.
 - The canvas fades in over 600 ms after its first drawn frame. If WebGL is unavailable
   or the context is lost, the canvas stays empty and the plain page background shows.
   No CPU fallback.
@@ -172,7 +175,7 @@ saturation. The bands are the only theme-dependent input.
 
 Same field and time. Coordinates quantised to the 4 px grid and hue quantised to 12
 steps, so blocks change color in jumps like the letters do. No blur. Smooth gets
-continuous hue and a slight blur.
+continuous hue, softened by the quarter-resolution upscale rather than a CSS blur.
 
 ### Pointer
 
@@ -183,17 +186,20 @@ over 2 s. Touch uses the last tap position. Reduced motion disables the pointer 
 
 ### Panel
 
-With color on, `.nav-container`, `main` and `footer` sit on a panel: page color at
-85 % opacity, `backdrop-filter: blur(8px)`, 1.5 rem horizontal padding. Pixel style
-makes the panel fully opaque, no blur, with a 2 px border. Color off removes the panel,
-so color-off byte identity still holds. Share button, theme buttons and the shortcut
-dialog are unchanged.
+With color on, `.nav-container`, `main`, `footer` and `.project-sidebar` sit on a panel:
+page color at 92 % opacity and 1.5 rem horizontal padding. Only the nav and the footer add
+`backdrop-filter: blur(4px)`; `main` and the project sidebar stay solid at 92 %, because a
+blur behind the whole content column is the most expensive part of the frame and the least
+visible. Pixel style makes the panel fully opaque, no blur, with a 2 px border. Color off
+removes the panel, so color-off byte identity still holds. Share button, theme buttons and
+the shortcut dialog are unchanged.
 
 ### Performance budget
 
-60 fps in one pass with no texture reads. Acceptance: on the home and post pages with
-color on, at least 55 fps over 10 s in headless Chromium, and no long task over 50 ms
-after load. Under a million fragments per frame at 1440p in smooth (half resolution).
+60 fps in one pass with no texture reads. Acceptance: no long task over 50 ms after load;
+under a million fragments per frame at 1440p in smooth (quarter resolution); frame rate is
+measured on a GPU, and the SwiftShader number from `_tests/tools/perf.cjs` is recorded as a
+floor only.
 
 ### Accessibility
 
