@@ -25,6 +25,29 @@
   --share-shadow-hover: rgba(0, 0, 0, 0.3);
   --share-feedback-bg: #333;
   --share-feedback-color: #fff;
+  /* Syntax highlighting (Rouge). Light values equal Tale's own palette. */
+  --syntax-keyword: #069;
+  --syntax-type: #078;
+  --syntax-string: #c30;
+  --syntax-string-plain: #d44950;
+  --syntax-comment: #999;
+  --syntax-comment-multi: #09f;
+  --syntax-preproc: #099;
+  --syntax-number: #f60;
+  --syntax-builtin: #366;
+  --syntax-function: #c0f;
+  --syntax-class: #0a8;
+  --syntax-namespace: #0cf;
+  --syntax-tag: #2f6f9f;
+  --syntax-attribute: #4f9fcf;
+  --syntax-variable: #033;
+  --syntax-decorator: #99f;
+  --syntax-constant: #360;
+  --syntax-operator: #555;
+  --syntax-operator-word: #000;
+  --syntax-prompt: #009;
+  --syntax-output: #aaa;
+  --syntax-lineno: #aaa;
 }
 
 /* Dark mode colors */
@@ -52,6 +75,28 @@
   --share-shadow-hover: rgba(255, 255, 255, 0.2);
   --share-feedback-bg: #555;
   --share-feedback-color: #fff;
+  --syntax-keyword: #79b8ff;
+  --syntax-type: #56d4dd;
+  --syntax-string: #ffab70;
+  --syntax-string-plain: #ffab70;
+  --syntax-comment: #8b949e;
+  --syntax-comment-multi: #8b949e;
+  --syntax-preproc: #8b949e;
+  --syntax-number: #f8c555;
+  --syntax-builtin: #56d4dd;
+  --syntax-function: #d2a8ff;
+  --syntax-class: #7ee787;
+  --syntax-namespace: #79c0ff;
+  --syntax-tag: #7ee787;
+  --syntax-attribute: #79c0ff;
+  --syntax-variable: #ffa657;
+  --syntax-decorator: #d2a8ff;
+  --syntax-constant: #7ee787;
+  --syntax-operator: #d4d4d4;
+  --syntax-operator-word: #79b8ff;
+  --syntax-prompt: #8b949e;
+  --syntax-output: #8b949e;
+  --syntax-lineno: #6e7681;
 }
 
 /* Apply color variables to elements */
@@ -99,6 +144,35 @@ pre code {
   background-color: transparent;
   border: none;
 }
+
+/* Rouge code boxes: Tale hard-codes a light box and palette; read the tokens
+   instead so dark mode gets a dark box and a readable palette. */
+.highlight {
+  background-color: var(--code-bg);
+}
+
+.highlight .lineno { color: var(--syntax-lineno); }
+.highlight .c, .highlight .c1, .highlight .cs, .highlight .ni { color: var(--syntax-comment); }
+.highlight .cm { color: var(--syntax-comment-multi); }
+.highlight .cp { color: var(--syntax-preproc); }
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: var(--syntax-keyword); }
+.highlight .kt { color: var(--syntax-type); }
+.highlight .o { color: var(--syntax-operator); }
+.highlight .ow { color: var(--syntax-operator-word); }
+.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .il { color: var(--syntax-number); }
+.highlight .s { color: var(--syntax-string-plain); }
+.highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2, .highlight .se, .highlight .sh, .highlight .sx, .highlight .s1 { color: var(--syntax-string); }
+.highlight .na { color: var(--syntax-attribute); }
+.highlight .nb, .highlight .bp { color: var(--syntax-builtin); }
+.highlight .nc { color: var(--syntax-class); }
+.highlight .no { color: var(--syntax-constant); }
+.highlight .nd, .highlight .nl { color: var(--syntax-decorator); }
+.highlight .nf { color: var(--syntax-function); }
+.highlight .nn { color: var(--syntax-namespace); }
+.highlight .nt { color: var(--syntax-tag); }
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: var(--syntax-variable); }
+.highlight .gp { color: var(--syntax-prompt); }
+.highlight .go { color: var(--syntax-output); }
 
 /* Page and post titles. Same specificity as Tale's rules; this sheet loads later. */
 .post-title,
