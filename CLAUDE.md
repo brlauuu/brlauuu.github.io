@@ -140,7 +140,9 @@ Physics live in the `C` constants at the top of `assets/js/constellation.js`: th
 pairs; inverse-square repulsion (strength 7000, clamped under 20 px) pushes all nodes;
 centring pull (strength 0.0012, 2.4× stronger on the vertical axis) draws toward the box
 centre so the layout settles as an ellipse rather than a circle; damping 0.9 dissipates
-energy; at rest the graph wanders with ±3 px per node per frame to breathe. Dragging pins
+energy; at rest each node shows a static ±3 px sine offset (the wander) so the graph
+breathes; the loop idles (stops itself) once at rest under pixel style and reduced motion,
+waking on drag, theme change or visibility resume. Dragging pins
 a node to the cursor; a drag under 4 px is a click. Positions are rounded to a 4 px grid
 under pixel style.
 
@@ -148,12 +150,15 @@ DOM contract: `<div class="constellation"><svg>...</svg></div>` contains `<a cla
 node--tag|node--post">` links with `<circle>` or `<rect>` shapes and `<text>` labels,
 plus `<line>` elements for springs. On hover or focus, the node and its neighbours get
 `is-lit`; everything else gets `is-dim` (0.3 opacity). A tag click jumps to `#slug`,
-a post click opens its URL. Touch uses two-tap on Chromium, but single-tap on Safari and Firefox because click events there carry no pointer type.
+a post click opens its URL. Labels sit to the right of their node, flipping to the left
+in the right quarter of the box so they stay inside it. Touch uses two-tap on Chromium,
+but single-tap on Safari and Firefox because click events there carry no pointer type.
 
 Theme integration: tag and post rings stroke `--heading-color` and `--text-color`
-respectively; links stroke `--border-color`; with color on, rings and lines use SVG
-`<linearGradient id="constellation-rainbow">` with stops from `--rainbow-stop-1` through
-`--rainbow-stop-7` (light or dark set chosen by the theme axis); the SVG group carries
+respectively; links stroke `--border-color`; with color on, tag rings and lines use SVG
+`<linearGradient id="constellation-rainbow">` (post rings keep the text color) with stops
+from `--rainbow-stop-1` through `--rainbow-stop-7` (light or dark set chosen by the theme
+axis), in user-space units spanning the box width; the SVG group carries
 the shared `rainbow-cycle` animation. Under pixel style, nodes are `<rect>` shapes with
 `shape-rendering: crispEdges` and labels use `--pixel-font` at 12 px; wander and throw
 are off. Under reduced motion, wander is off and the simulation runs to rest once, then

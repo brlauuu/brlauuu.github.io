@@ -39,8 +39,17 @@ in a group drawn before the nodes.
   `pointermove` updates it; `pointerup` releases with the last velocity (a flick throws).
   A drag under 4 px counts as a click and is not prevented.
 - Loop runs on `requestAnimationFrame`, stops when the document is hidden and when the
-  container is not displayed (mobile), resumes on visibility.
-- Pure helpers exported for Node tests: `step(nodes, links, box, dt)`, `highlightSet(nodes,
+  container is not displayed (mobile), resumes on visibility. Under pixel style and under
+  reduced motion nothing moves once the layout is at rest, so the loop stops itself there
+  (the container carries `data-running`) and is restarted by a `pointerdown`, a theme
+  change or a visibility resume. Under smooth with motion it keeps running for the wander.
+- The rainbow gradient is declared with `gradientUnits="userSpaceOnUse"` spanning
+  `x1=0`..`x2=800`, the box width, so the spectrum runs across the whole graph rather than
+  per-element, and an axis-aligned line still paints instead of collapsing to nothing.
+- Labels sit to the right of their node, except in the right quarter of the box
+  (`x > 0.75 * box.w`), where they flip to the left (`text-anchor: end`) so they do not run
+  off the edge. The side is written to the DOM only when it changes.
+- Pure helpers exported for Node tests: `step(nodes, links, box)`, `highlightSet(nodes,
   links, id)`, `isClick(dx, dy)`, `seed(tags, posts, box)`.
 
 ## Interaction
@@ -73,7 +82,9 @@ in a group drawn before the nodes.
 
 SVG `<title>` "Tags and posts" and `<desc>` explaining the interaction. Node accessible
 names: "Tag python, 1 post" / post title. Focus order tags then posts (DOM order). Visible
-focus ring (`outline` on the `<a>` via `:focus-visible`, 2 px `--link-color`). The list
+focus ring: `outline: 2px solid var(--link-color)` with a 2 px offset on the `<a>` via
+`:focus-visible`, plus a 3 px `--link-color` stroke on the shape as the fallback for
+browsers (Safari) that do not paint outlines on SVG `<a>`. The list
 below is unchanged and remains the primary structure.
 
 ## Mobile

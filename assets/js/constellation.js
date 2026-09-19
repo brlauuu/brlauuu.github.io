@@ -160,27 +160,46 @@
       }
     }
 
-    function render(t) {
+    // The drawn position of a node at time t: the simulation position plus the
+    // wander offset, snapped to the pixel grid under pixel style. Both the node
+    // transform and the line endpoints read it, so lines stay attached to the
+    // nodes while they breathe.
+    function pos(n, t) {
       const pixel = html.dataset.style === 'pixel';
       const snap = (v) => (pixel ? Math.round(v / C.grid) * C.grid : v);
+      let x = n.x, y = n.y;
+      if (!pixel && !reduced.matches && !n.pinned && atRest) {
+        x += Math.sin(t * 0.0006 + n.phase) * C.wander;
+        y += Math.cos(t * 0.0005 + n.phase * 1.3) * C.wander;
+      }
+      return { x: snap(x), y: snap(y) };
+    }
+
+    function render(t) {
       for (const n of nodes) {
-        let x = n.x, y = n.y;
-        if (!pixel && !reduced.matches && !n.pinned && atRest) {
-          x += Math.sin(t * 0.0006 + n.phase) * C.wander;
-          y += Math.cos(t * 0.0005 + n.phase * 1.3) * C.wander;
+        const p = pos(n, t);
+        const a = el.get(n.id);
+        a.setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)})`);
+        // Labels near the right edge flip to the left of their node so they do not
+        // run off the box. Only touched when the side changes, not every frame.
+        const side = p.x > box.w * 0.75 ? 'end' : 'start';
+        if (n.side !== side) {
+          n.side = side;
+          const t2 = a.querySelector('.label');
+          t2.setAttribute('text-anchor', side);
+          t2.setAttribute('x', side === 'end' ? -(n.r + 6) : n.r + 6);
         }
-        el.get(n.id).setAttribute('transform', `translate(${snap(x).toFixed(2)} ${snap(y).toFixed(2)})`);
       }
       links.forEach((l, i) => {
-        const a = byId.get(l.source), b = byId.get(l.target);
+        const a = pos(byId.get(l.source), t), b = pos(byId.get(l.target), t);
         const line = lineEl[i];
-        line.setAttribute('x1', snap(a.x).toFixed(2)); line.setAttribute('y1', snap(a.y).toFixed(2));
-        line.setAttribute('x2', snap(b.x).toFixed(2)); line.setAttribute('y2', snap(b.y).toFixed(2));
+        line.setAttribute('x1', a.x.toFixed(2)); line.setAttribute('y1', a.y.toFixed(2));
+        line.setAttribute('x2', b.x.toFixed(2)); line.setAttribute('y2', b.y.toFixed(2));
       });
     }
 
     nodes.forEach((n, i) => { n.phase = i * 1.7; });
-    let atRest = false, frame = 0, running = false, litId = null, built = false;
+    let atRest = false, frame = 0, running = false, litId = null, built = false, hoverId = null, settled = false;
 
     function light(id) {
       litId = id;
@@ -198,30 +217,53 @@
       for (const line of lineEl) line.classList.remove('is-lit', 'is-dim');
     }
 
+    // Leaving a node or blurring one does not mean nothing is lit: the keyboard may
+    // still be on a node, or the pointer may have crossed straight onto another one.
+    // Re-light whatever still holds attention rather than blindly clearing.
+    function refreshLight() {
+      const focused = doc.activeElement?.closest?.('.node');
+      if (focused && el.has(focused.dataset.id)) { light(focused.dataset.id); return; }
+      if (hoverId && el.has(hoverId)) { light(hoverId); return; }
+      clearLight();
+    }
+
+    // Under pixel style and reduced motion nothing moves once the layout is at rest,
+    // so the loop stops instead of burning a frame callback for an identical picture.
+    function idles() {
+      return html.dataset.style === 'pixel' || reduced.matches;
+    }
+
+    function setRunning(v) {
+      running = v;
+      container.dataset.running = v ? 'true' : 'false';
+    }
+
     function loop(t) {
       if (!running) return;
       const energy = step(nodes, links, box);
       atRest = energy < C.restEnergy;
       render(t);
+      if (atRest && idles() && !drag) { setRunning(false); return; }
       frame = win.requestAnimationFrame(loop);
     }
 
     function start() {
       if (running || !wide.matches) return;
       if (!built) { build(); built = true; }   // nothing in the DOM until the graph is shown
-      running = true;
       if (reduced.matches) {
-        for (let i = 0; i < 400; i++) step(nodes, links, box);
+        // Settle once, not on every resume, or each restart would teleport the graph.
+        if (!settled) { for (let i = 0; i < 400; i++) step(nodes, links, box); settled = true; }
         atRest = true;
         render(0);
-        running = false;                 // no loop; drags render directly
+        setRunning(false);               // no loop; drags render directly
         return;
       }
+      setRunning(true);
       frame = win.requestAnimationFrame(loop);
     }
 
     function stop() {
-      running = false;
+      setRunning(false);
       win.cancelAnimationFrame(frame);
     }
 
@@ -232,6 +274,9 @@
     }
 
     let drag = null;   // { node, startX, startY, lastX, lastY, moved }
+    // Firefox starts a native link drag from the <a> nodes, which cancels the pointer
+    // capture mid-drag and leaves the node pinned to nothing.
+    nodesG.addEventListener('dragstart', (e) => e.preventDefault());
     nodesG.addEventListener('pointerdown', (event) => {
       const a = event.target.closest('.node');
       if (!a || event.button !== 0) return;
@@ -240,6 +285,7 @@
       drag = { node: n, startX: event.clientX, startY: event.clientY, lastX: p.x, lastY: p.y, moved: false, offX: n.x - p.x, offY: n.y - p.y };
       n.pinned = true;
       a.setPointerCapture(event.pointerId);
+      start();   // the loop idles at rest under pixel and reduced motion; a drag wakes it
     });
     nodesG.addEventListener('pointermove', (event) => {
       if (!drag) return;
@@ -274,10 +320,19 @@
     nodesG.addEventListener('pointercancel', release);
 
     // Hover and focus light; touch needs two taps to act.
-    nodesG.addEventListener('pointerover', (event) => { const a = event.target.closest('.node'); if (a && event.pointerType !== 'touch') light(a.dataset.id); });
-    nodesG.addEventListener('pointerout', (event) => { if (event.pointerType !== 'touch' && !drag) clearLight(); });
+    nodesG.addEventListener('pointerover', (event) => {
+      const a = event.target.closest('.node');
+      if (!a || event.pointerType === 'touch') return;
+      hoverId = a.dataset.id;
+      light(hoverId);
+    });
+    nodesG.addEventListener('pointerout', (event) => {
+      if (event.pointerType === 'touch') return;
+      if (event.target.closest('.node')?.dataset.id === hoverId) hoverId = null;
+      if (!drag) refreshLight();
+    });
     nodesG.addEventListener('focusin', (event) => { const a = event.target.closest('.node'); if (a) light(a.dataset.id); });
-    nodesG.addEventListener('focusout', () => { if (!drag) clearLight(); });
+    nodesG.addEventListener('focusout', () => { if (!drag) refreshLight(); });
     // Two-tap gating is Chromium-only: `pointerType` on a click event and
     // `sourceCapabilities.firesTouchEvents` are both non-standard and absent in Safari
     // and Firefox, so there the first tap navigates straight away instead of lighting
@@ -290,10 +345,10 @@
       }
     });
 
-    doc.addEventListener('themechange', () => { if (!built) return; reshape(); if (!running) render(0); });
+    doc.addEventListener('themechange', () => { if (!built) return; reshape(); if (!running) { render(0); start(); } });
     doc.addEventListener('visibilitychange', () => { if (doc.hidden) stop(); else start(); });
     wide.addEventListener?.('change', (e) => { if (e.matches) start(); else stop(); });
-    reduced.addEventListener?.('change', () => { stop(); start(); });
+    reduced.addEventListener?.('change', () => { stop(); settled = false; start(); });
 
     start();
     return { nodes, links, light, clearLight };

@@ -2,7 +2,9 @@
 // Drives the tags page constellation in headless Chromium and checks the DOM
 // contract theme.css and constellation.js are supposed to uphold: node/link
 // counts, hover highlighting, click-to-hash, drag movement, the color-on
-// gradient stroke, the pixel-on rect shapes, and the sub-600px teardown.
+// gradient stroke and userSpaceOnUse units, the lit ring winning over the
+// gradient, the keyboard focus outline, the pixel-on rect shapes and idle loop,
+// and the sub-600px teardown.
 // Headless Chromium needs SwiftShader for WebGL (the backdrop canvas only
 // paints while color is on); the launch args below provide it.
 // Prints PASS/FAIL per line and exits non-zero on any FAIL.
@@ -97,7 +99,53 @@ function check(name, ok, detail) {
     return line ? getComputedStyle(line).stroke : null;
   });
   check("color on: .link computed stroke starts with 'url('", !!linkStroke && linkStroke.startsWith('url('), `stroke=${linkStroke}`);
+
+  // The gradient must span the graph in user space, or an axis-aligned line paints nothing.
+  const gradUnits = await colorPage.evaluate(() =>
+    document.getElementById('constellation-rainbow')?.getAttribute('gradientUnits') ?? null);
+  check('color on: gradient uses userSpaceOnUse', gradUnits === 'userSpaceOnUse', `gradientUnits=${gradUnits}`);
+
+  // A lit tag ring must beat the gradient: solid --link-color, not url(#...).
+  const colorBox = await colorPage.locator('[data-id="tag:tools"] .shape').boundingBox();
+  await colorPage.mouse.move(colorBox.x + colorBox.width / 2, colorBox.y + colorBox.height / 2);
+  await colorPage.waitForTimeout(300);
+  const lit = await colorPage.evaluate(() => {
+    const shape = document.querySelector('[data-id="tag:tools"] .shape');
+    const probe = document.createElement('span');
+    probe.style.color = getComputedStyle(document.documentElement).getPropertyValue('--link-color').trim();
+    document.body.appendChild(probe);
+    const linkColor = getComputedStyle(probe).color;
+    probe.remove();
+    return { isLit: shape.closest('.node').classList.contains('is-lit'), stroke: getComputedStyle(shape).stroke, linkColor };
+  });
+  check(
+    'color on: hovered tag ring strokes --link-color, not the gradient',
+    lit.isLit && !lit.stroke.startsWith('url(') && lit.stroke === lit.linkColor,
+    `stroke=${lit.stroke} linkColor=${lit.linkColor} isLit=${lit.isLit}`,
+  );
   await colorPage.close();
+
+  // --- Keyboard focus: is-lit plus a real outline -------------------------
+  const focusPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await focusPage.goto(url, { waitUntil: 'networkidle' });
+  await focusPage.waitForTimeout(1500);
+  let focusedNode = false;
+  for (let i = 0; i < 40 && !focusedNode; i++) {
+    await focusPage.keyboard.press('Tab');
+    focusedNode = await focusPage.evaluate(() => !!document.activeElement?.classList?.contains('node'));
+  }
+  const focusState = await focusPage.evaluate(() => {
+    const a = document.activeElement;
+    if (!a || !a.classList.contains('node')) return null;
+    const cs = getComputedStyle(a);
+    return { lit: a.classList.contains('is-lit'), outlineStyle: cs.outlineStyle, outlineWidth: cs.outlineWidth };
+  });
+  check(
+    'keyboard focus lights the node and paints an outline',
+    !!focusState && focusState.lit && focusState.outlineStyle !== 'none',
+    `state=${JSON.stringify(focusState)}`,
+  );
+  await focusPage.close();
 
   // --- Pixel on: shapes are <rect> elements --------------------------------
   const pixelPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
@@ -111,6 +159,25 @@ function check(name, ok, detail) {
     shapeTags.length > 0 && shapeTags.every((t) => t === 'rect'),
     `shapes=${JSON.stringify(shapeTags)}`,
   );
+
+  // Nothing moves at rest under pixel, so the rAF loop must stop rather than spin.
+  // The layout needs ~600 frames to fall under the rest threshold, so idle at least
+  // 3 s and then poll rather than guess a single deadline.
+  await pixelPage.waitForTimeout(3000);
+  let idle = null;
+  for (let i = 0; i < 40 && idle !== 'false'; i++) {
+    idle = await pixelPage.evaluate(() => document.getElementById('constellation').dataset.running);
+    if (idle !== 'false') await pixelPage.waitForTimeout(500);
+  }
+  check('pixel on: the loop idles at rest (data-running="false")', idle === 'false', `data-running=${idle}`);
+
+  // A drag wakes it again.
+  const wakeBox = await pixelPage.locator('[data-id="tag:tools"] .shape').boundingBox();
+  await pixelPage.mouse.move(wakeBox.x + wakeBox.width / 2, wakeBox.y + wakeBox.height / 2);
+  await pixelPage.mouse.down();
+  const woke = await pixelPage.evaluate(() => document.getElementById('constellation').dataset.running);
+  await pixelPage.mouse.up();
+  check('pixel on: pointerdown restarts the loop (data-running="true")', woke === 'true', `data-running=${woke}`);
   await pixelPage.close();
 
   // --- Under 600px: container display none, no nodes ----------------------

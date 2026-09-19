@@ -438,7 +438,6 @@ footer span {
 
 .constellation .node {
   cursor: grab;
-  outline: none;
   transition: opacity 0.2s ease;
 }
 
@@ -476,20 +475,6 @@ footer span {
 
 .constellation .is-dim {
   opacity: 0.3;
-}
-
-.constellation .node.is-lit .shape {
-  stroke: var(--link-color);
-}
-
-.constellation .link.is-lit {
-  stroke: var(--link-color);
-  stroke-width: 2;
-}
-
-.constellation .node:focus-visible .shape {
-  stroke: var(--link-color);
-  stroke-width: 3;
 }
 
 /* Keyboard shortcut help dialog (opened with "?") */
@@ -1014,6 +999,29 @@ footer span {
 [data-color="on"] .constellation svg {
   animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
+}
+
+/* Highlight and focus, axis-free but placed after the color-on strokes above so
+   that at equal specificity (0,4,0) the lit and focused node wins the gradient. */
+.constellation .node.is-lit .shape {
+  stroke: var(--link-color);
+}
+
+.constellation .link.is-lit {
+  stroke: var(--link-color);
+  stroke-width: 2;
+}
+
+/* Safari has no :focus-visible outline on SVG <a>, so the thick stroke stays as
+   the fallback beside the real outline. */
+.constellation .node:focus-visible .shape {
+  stroke: var(--link-color);
+  stroke-width: 3;
+}
+
+.constellation .node:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
 }
 
 /* ------------------------------------------------------------------ */
