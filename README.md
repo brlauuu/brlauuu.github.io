@@ -80,6 +80,15 @@ ignored while typing in a field or with a modifier key held. The key table lives
 `_includes/shortcuts.html`; `assets/js/shortcuts.js` reads it from the dialog rows, and
 its pure logic is tested in `_tests/shortcuts.test.cjs`.
 
+## Tags constellation
+
+The tags page features a force-directed constellation of tags and posts as draggable,
+interactive nodes. The constellation reads its data from `<script type="application/json"
+id="constellation-data">` emitted by `_pages/tags.md`, and is rendered by `assets/js/constellation.js` with styling from `assets/css/theme.css`. It responds to all three
+theme axes, is fully keyboard-accessible, and remains hidden under 600 px width so the
+existing tag list is the primary interface on mobile. Without JavaScript, the page shows
+the tag list only. Check the constellation with `node _tests/tools/constellation-check.cjs http://localhost:4000`.
+
 ## Local preview and checks
 
 ```sh

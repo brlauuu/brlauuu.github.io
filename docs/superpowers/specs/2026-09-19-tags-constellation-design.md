@@ -31,8 +31,7 @@ in a group drawn before the nodes.
 - Tag radius: 14–26 px scaled by post count (max count → 26). Post radius: 8 px.
 - Forces per frame: springs from each post to each of its tags (rest length 90 px,
   stiffness 0.02); inverse-square repulsion between all nodes, clamped for distances
-  under 20 px, strength 1800; centring pull 0.005 toward the box centre. Velocity damping
-  0.9. Positions clamped inside the box with a 30 px margin.
+  under 20 px, strength 7000; centring pull 0.0012 toward the box centre, 2.4× stronger on the vertical axis so the layout fills the wide box; a clamped node loses its velocity on that axis so the system settles. These values were tuned by simulation against the real tag data (the spec's first draft of 1800 / 0.005 collapsed eleven nodes into the middle third of the box). Velocity damping 0.9. Positions clamped inside the box with a 30 px margin.
 - Seed positions on a ring (tags on an outer ring, posts inner) so the first frames unfold.
 - Rest detection: when total kinetic energy falls below a threshold the loop switches to a
   low-amplitude wander (a slow sine offset of ±3 px per node) so the graph breathes.
