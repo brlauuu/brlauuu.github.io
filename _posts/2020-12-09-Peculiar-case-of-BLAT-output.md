@@ -9,7 +9,7 @@ In this blog post, I will discuss how I used BLAT to solve a protein sequence al
 
 ## BLAT
 
-Firstly, a short introduction. Blast Like Alignment Tool (BLAT) is sequence alignment tool written by W. James Kent, [published in Genome Research](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/). Manual for BLAT can be found at [UCSC page](https://genome.ucsc.edu/goldenpath/help/blatSpec.html). As from the abstract of the in WJ Kent's work<sup>1</sup> BLAT was developed with intend to increase the speed of genomic sequence alignment for the needs of the human genome project. In comparison with [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi)<sup>2</sup>, BLAT is different in few ways:
+Firstly, a short introduction. Blast Like Alignment Tool (BLAT) is sequence alignment tool written by W. James Kent, [published in Genome Research](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC187518/). Manual for BLAT can be found at [UCSC page](https://genome.ucsc.edu/goldenpath/help/blatSpec.html). As from the abstract of the in WJ Kent's work[^1] BLAT was developed with intend to increase the speed of genomic sequence alignment for the needs of the human genome project. In comparison with [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi)[^2], BLAT is different in few ways:
 
 1. "Where BLAST builds an index of the query sequence and then scans linearly through the database, BLAT builds an index of the database and then scans linearly through the query sequence."
 2. "Where BLAST triggers an extension when one or two hits occur in proximity to each other, BLAT can trigger extensions on any number of perfect or near-perfect hits."
@@ -226,11 +226,6 @@ Looking at this output, we can check our blocks from the BLAT's pslx output and 
 
 This simple case of using BLAT for protein-protein alignment provides quite strange output. It seems like BLAT is not doing what it claims to be doing and that is: providing a list of sequence fragments (or blocks) which are syntenic and stitched together into one alignment hit. Granted that I did not run BLAT in default mode and have added `-minScore=0` parameter. Once BLAT is ran without that parameter, the "extra" hit is not shown. However, due to the nature of the problem I am trying solve, I need this parameter, and it's a pity it just breaks the essential idea of BLAT output.
 
-## References
-
-1. [Kent, W. James. "BLAT—the BLAST-like alignment tool." Genome research 12.4 (2002): 656-664.](https://genome.cshlp.org/content/12/4/656)
-2. [Altschul, Stephen F., et al. "Basic local alignment search tool." Journal of molecular biology 215.3 (1990): 403-410.](https://www.sciencedirect.com/science/article/pii/S0022283605803602?via%3Dihub)
-
 ## Other useful resources
 
 * [https://biopython.org/DIST/docs/api/Bio.SearchIO.BlatIO-module.html](https://biopython.org/DIST/docs/api/Bio.SearchIO.BlatIO-module.html)
@@ -238,3 +233,8 @@ This simple case of using BLAT for protein-protein alignment provides quite stra
 * [https://biopython.org/docs/1.75/api/Bio.SearchIO.BlatIO.html#supported-formats](https://biopython.org/docs/1.75/api/Bio.SearchIO.BlatIO.html#supported-formats)
 * [https://biopython.org/wiki/SeqRecord](https://biopython.org/wiki/SeqRecord)
 * [http://web-old.archive.org/web/20190808121048/http://bow.web.id/blog/2012/07/initial-blat-support](http://web-old.archive.org/web/20190808121048/http://bow.web.id/blog/2012/07/initial-blat-support)
+
+## References
+
+[^1]: [Kent, W. James. "BLAT—the BLAST-like alignment tool." Genome research 12.4 (2002): 656-664.](https://genome.cshlp.org/content/12/4/656)
+[^2]: [Altschul, Stephen F., et al. "Basic local alignment search tool." Journal of molecular biology 215.3 (1990): 403-410.](https://www.sciencedirect.com/science/article/pii/S0022283605803602?via%3Dihub)
