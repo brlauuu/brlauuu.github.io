@@ -110,10 +110,11 @@ void main() {
       el.setAttribute('aria-hidden', 'true');
       el.addEventListener('webglcontextlost', (event) => {
         event.preventDefault();
+        if (el !== canvas) return;                 // a discarded canvas losing its context on purpose
         gl = null; program = null; loc = null; needResize = true;
         stop();
       }, { passive: false });
-      el.addEventListener('webglcontextrestored', () => { if (axes().color === 'on') start(); });
+      el.addEventListener('webglcontextrestored', () => { if (el === canvas && axes().color === 'on') start(); });
       doc.body.insertBefore(el, doc.body.firstChild);
       return el;
     }
@@ -190,7 +191,11 @@ void main() {
       if (removal) { win.clearTimeout(removal); removal = 0; }
       if (running) return;
       if (!canvas) canvas = create();               // reuse one still waiting to be removed
-      if (!gl && !setup()) return;
+      if (!gl && !setup()) {                        // no WebGL, or shaders failed: leave no canvas behind
+        gl = null; program = null; loc = null;
+        canvas.remove(); canvas = null;
+        return;
+      }
       applyAxes();
       light = lightTarget;                          // no cross-fade on a cold start
       needResize = true;

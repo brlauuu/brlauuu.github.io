@@ -298,7 +298,7 @@ footer span {
   color: var(--footer-color);
 }
 
-/* Animated backdrop canvas: present on every page, visible only with color on. */
+/* Animated backdrop canvas: created by backdrop.js only while color is on. */
 .backdrop {
   position: fixed;
   inset: 0;
