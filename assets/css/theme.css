@@ -296,6 +296,22 @@ footer span {
   color: var(--footer-color);
 }
 
+/* Animated backdrop canvas: present on every page, visible only with color on. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.backdrop.is-on {
+  opacity: 1;
+}
+
 /* Tags page layout */
 .tags-page {
   display: grid;
