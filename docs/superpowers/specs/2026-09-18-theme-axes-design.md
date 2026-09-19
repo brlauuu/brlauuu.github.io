@@ -125,6 +125,93 @@ Images: post images and project logos use `image-rendering: pixelated`.
 Motion: every transition duration becomes 0. Hovers move elements by one or
 two pixels instead of scaling.
 
+## Backdrop (issue #19)
+
+With color on, a full-viewport animated background sits behind the page and the
+content column sits on a translucent panel. Added after the three axes shipped;
+it is the first consumer of the `themechange` event.
+
+### Renderer
+
+- `_includes/backdrop.html` renders one `<canvas class="backdrop" aria-hidden="true">`,
+  fixed, full viewport, `pointer-events: none`, `z-index` below the page. It is always
+  in the DOM and draws nothing while color is off.
+- `assets/js/backdrop.js` owns it: WebGL 1, one full-screen triangle, one fragment
+  shader with the source inline. Uniforms: `u_time` (seconds from a running clock),
+  `u_resolution`, `u_pointer` (eased, in canvas pixels), `u_light` (0 dark, 1 light,
+  cross-faded over 0.5 s on a theme flip), `u_grid` (0 smooth, else pixel cell size in
+  canvas pixels), `u_intensity` (one constant, documented as the knob).
+- Start when color is on at load or turns on via `themechange`; stop and clear when it
+  turns off. Theme and style flips only update uniforms; they never restart the loop.
+  Pause on `visibilitychange` hidden, resume without a time jump. Pointer and resize
+  handlers only store numbers (passive listeners); nothing reads layout per frame.
+- Resolution: capped at 1 device pixel per CSS pixel. Smooth renders at half resolution
+  and lets the browser upscale (invisible for a low-frequency field). Pixel renders at
+  full resolution with coordinates quantised in the shader to 4 CSS pixels per cell.
+- The canvas fades in over 600 ms after its first drawn frame. If WebGL is unavailable
+  or the context is lost, the canvas stays empty and the plain page background shows.
+  No CPU fallback.
+- The pure parts are exported for Node tests: uniform derivation from the axis values,
+  pointer easing, and the start/stop decision from a `themechange` detail.
+
+### Field
+
+Three summed layers: a slow diagonal plasma of overlapping sines; four soft blobs on
+Lissajous paths that merge where they overlap; a slow downward drift of the whole
+field (the "drip"). The sum maps to hue in the same order as `--rainbow`. One full
+field cycle takes about 40 s; the letters cycle in 12 s (`rainbow-cycle` changes from
+20 s to 12 s with this work).
+
+### Palettes
+
+Same hue everywhere; the theme picks the lightness and saturation band:
+light roughly 80–92 % lightness (pastel), dark roughly 18–34 % lightness with higher
+saturation. The bands are the only theme-dependent input.
+
+### Pixel
+
+Same field and time. Coordinates quantised to the 4 px grid and hue quantised to 12
+steps, so blocks change color in jumps like the letters do. No blur. Smooth gets
+continuous hue and a slight blur.
+
+### Pointer
+
+The pointer position is eased toward the real pointer over about 300 ms. Around it
+the field bulges outward and the hue rotates, with a radius of about one fifth of the
+viewport, fading with distance. When the pointer leaves the window the bulge relaxes
+over 2 s. Touch uses the last tap position. Reduced motion disables the pointer effect.
+
+### Panel
+
+With color on, `.nav-container`, `main` and `footer` sit on a panel: page color at
+85 % opacity, `backdrop-filter: blur(8px)`, 1.5 rem horizontal padding. Pixel style
+makes the panel fully opaque, no blur, with a 2 px border. Color off removes the panel,
+so color-off byte identity still holds. Share button, theme buttons and the shortcut
+dialog are unchanged.
+
+### Performance budget
+
+60 fps in one pass with no texture reads. Acceptance: on the home and post pages with
+color on, at least 55 fps over 10 s in headless Chromium, and no long task over 50 ms
+after load. Under half a million fragments per frame at 1440p in smooth.
+
+### Accessibility
+
+Canvas `aria-hidden`. `prefers-reduced-motion: reduce` freezes the field to one frame
+and disables the pointer effect. Panel contrast is unchanged from today; margins carry
+no text.
+
+### Testing
+
+Node tests for the pure helpers. Browser checks: the canvas draws only with color on;
+the frame-rate criterion; screenshots of all eight combinations plus one with the
+pointer moved; reduced motion; a color-off byte diff against master.
+
+### Documentation
+
+README and CLAUDE.md describe the renderer, the `themechange` wiring, the panel and
+the intensity knob. The cross-axis list below gains the panel and grid rules.
+
 ## Cross-axis rules
 
 These are the only places one axis knows about another:
@@ -135,6 +222,8 @@ These are the only places one axis knows about another:
   jumps instead of sliding.
 - `[data-style="pixel"]` shape icon: the circle is drawn as a stepped, blocky
   circle.
+- Backdrop: `u_light` from the theme, `u_grid` from the style, both read by the same
+  shader; `[data-color="on"][data-style="pixel"]` makes the panel opaque and bordered.
 
 ## Error handling
 
