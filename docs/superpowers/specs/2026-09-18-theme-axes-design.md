@@ -193,7 +193,7 @@ dialog are unchanged.
 
 60 fps in one pass with no texture reads. Acceptance: on the home and post pages with
 color on, at least 55 fps over 10 s in headless Chromium, and no long task over 50 ms
-after load. Under half a million fragments per frame at 1440p in smooth.
+after load. Under a million fragments per frame at 1440p in smooth (half resolution).
 
 ### Accessibility
 
