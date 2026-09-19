@@ -58,6 +58,12 @@ share button carry a rainbow gradient (`--rainbow` in `theme.css`, brighter stop
 and links turn magenta (light) or cyan (dark). Body text and code blocks stay neutral. The
 hue cycles once every 20 seconds; `prefers-reduced-motion` pauses it.
 
+With color on, a WebGL plasma (`assets/js/backdrop.js`) runs behind the page and reacts
+to the pointer; the content sits on a frosted panel. It follows light/dark (palette band)
+and pixel (chunky blocks, opaque panels), pauses when the tab is hidden, freezes under
+`prefers-reduced-motion`, and shows nothing without WebGL. `INTENSITY` at the top of the
+script is the one knob.
+
 With pixel style on, headings and the site chrome use Silkscreen (SIL Open Font License,
 self-hosted in `assets/fonts/`, downloaded only when pixel is on), corners are square,
 borders 2px, the share button casts a hard shadow, images render pixelated and nothing
@@ -81,6 +87,7 @@ bundle exec jekyll build
 node --test _tests/project-stats.test.cjs
 node --test _tests/theme.test.cjs
 node --test _tests/shortcuts.test.cjs
+node --test _tests/backdrop.test.cjs
 node --check assets/js/project-stats.js
 node --check assets/js/theme.js
 ```

@@ -25,11 +25,11 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card)
+_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card, backdrop)
 _layouts/        # Custom layouts (default, home)
 assets/
   css/           # Custom CSS (theme.css, projects.css)
-  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js)
+  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js, backdrop.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -157,6 +157,17 @@ padding, and 3px rainbow strips to cover the 2px borders. With color on the thic
 paint as solid rainbow bars because `border-image` replaces the dashed style; accepted.
 The font fallback stack is monospace rather than the site's sans stack, on purpose.
 Body text never changes font.
+
+**Backdrop** (`_includes/backdrop.html`, `assets/js/backdrop.js`): a fixed canvas behind
+the page drawn by one fragment shader while `data-color="on"`. Uniforms: time,
+resolution, eased pointer and strength, `u_light` (theme band), `u_grid` (0 smooth,
+4 pixel), `u_intensity`. Started/stopped by `themechange`; theme and style flips only
+update uniforms. Smooth renders at half resolution with a 4px CSS blur; pixel at full
+resolution with coordinates and hue quantised in the shader. `<html>` carries the page
+background and `<body>` is transparent under color on so the canvas shows through;
+`.nav-container`, `main` and `footer` sit on `--panel-bg` with a backdrop blur (opaque
+and bordered under pixel). Pure helpers `uniformsFor`, `decide`, `ease` are tested in
+`_tests/backdrop.test.cjs`; `_tests/perf.cjs` probes frame time and long tasks.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).
