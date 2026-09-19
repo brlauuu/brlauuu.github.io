@@ -48,6 +48,7 @@
   --syntax-prompt: #009;
   --syntax-output: #aaa;
   --syntax-lineno: #aaa;
+  --panel-bg: rgba(255, 255, 255, 0.85);
 }
 
 /* Dark mode colors */
@@ -97,6 +98,7 @@
   --syntax-prompt: #8b949e;
   --syntax-output: #8b949e;
   --syntax-lineno: #6e7681;
+  --panel-bg: rgba(26, 26, 26, 0.85);
 }
 
 /* Apply color variables to elements */
@@ -807,7 +809,7 @@ footer span {
 [data-color="on"] .tag-chip::before,
 [data-color="on"] .project-card::before,
 [data-color="on"] .share-button::before {
-  animation: rainbow-cycle 20s var(--rainbow-timing) infinite;
+  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 
@@ -840,6 +842,36 @@ footer span {
     color: var(--heading-color);
     animation: none;
   }
+}
+
+/* Backdrop: the page background moves to <html> so the canvas shows through
+   <body>, and the content column sits on a frosted panel. */
+[data-color="on"] {
+  background-color: var(--bg-color);
+}
+
+[data-color="on"] body {
+  background-color: transparent;
+}
+
+[data-color="on"]:not([data-style="pixel"]) .backdrop {
+  filter: blur(4px);
+}
+
+[data-color="on"] .nav-container,
+[data-color="on"] main,
+[data-color="on"] footer {
+  background-color: var(--panel-bg);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 8px;
+}
+
+[data-color="on"] main {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1040,7 +1072,7 @@ footer span {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  animation: rainbow-cycle 20s var(--rainbow-timing) infinite;
+  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 
@@ -1066,4 +1098,19 @@ footer span {
 
 [data-style="pixel"][data-color="on"] .shortcuts::before {
   padding: 2px;
+}
+
+/* Backdrop under pixel: opaque bordered panels, crisp blocks, no blur. */
+[data-color="on"][data-style="pixel"] .nav-container,
+[data-color="on"][data-style="pixel"] main,
+[data-color="on"][data-style="pixel"] footer {
+  background-color: var(--bg-color);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+}
+
+[data-style="pixel"] .backdrop {
+  image-rendering: pixelated;
 }
