@@ -411,6 +411,87 @@ footer span {
   }
 }
 
+/* Tags constellation: hidden on small screens, empty without JavaScript. */
+.constellation {
+  display: none;
+  margin: 0 0 2rem;
+}
+
+@media (min-width: 600px) {
+  .constellation {
+    display: block;
+  }
+}
+
+.constellation svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.constellation .link {
+  stroke: var(--border-color);
+  stroke-width: 1;
+  transition: opacity 0.2s ease;
+}
+
+.constellation .node {
+  cursor: grab;
+  outline: none;
+  transition: opacity 0.2s ease;
+}
+
+.constellation .node:active {
+  cursor: grabbing;
+}
+
+.constellation .node .shape {
+  fill: var(--bg-color);
+  stroke: var(--heading-color);
+  stroke-width: 2;
+}
+
+.constellation .node--post .shape {
+  stroke: var(--text-color);
+  stroke-width: 1.5;
+}
+
+.constellation .label {
+  fill: var(--text-color);
+  font-family: Arial, Helvetica, "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.constellation .node--post .label {
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.constellation .node--post.is-lit .label {
+  opacity: 1;
+}
+
+.constellation .is-dim {
+  opacity: 0.3;
+}
+
+.constellation .node.is-lit .shape {
+  stroke: var(--link-color);
+}
+
+.constellation .link.is-lit {
+  stroke: var(--link-color);
+  stroke-width: 2;
+}
+
+.constellation .node:focus-visible .shape {
+  stroke: var(--link-color);
+  stroke-width: 3;
+}
+
 /* Keyboard shortcut help dialog (opened with "?") */
 .shortcuts {
   border: 1px solid var(--border-color);

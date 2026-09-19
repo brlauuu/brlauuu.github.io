@@ -6,6 +6,9 @@ title: Tags
 
 {% comment %} Get all tags from all posts {% endcomment %}
 {% assign tags = site.tags | sort %}
+{% assign tagged_posts = site.posts | where_exp: "post", "post.tags.size > 0" %}
+<script type="application/json" id="constellation-data">{"tags":[{% for tag in tags %}{"name":{{ tag[0] | jsonify }},"slug":{{ tag[0] | slugify | jsonify }},"count":{{ tag[1] | size }}}{% unless forloop.last %},{% endunless %}{% endfor %}],"posts":[{% for post in tagged_posts %}{"url":{{ post.url | relative_url | jsonify }},"title":{{ post.title | jsonify }},"tags":[{% for t in post.tags %}{{ t | slugify | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}]}{% unless forloop.last %},{% endunless %}{% endfor %}]}</script>
+{% include constellation.html %}
 
 {% if tags.size > 0 %}
 <div class="tags-page">
