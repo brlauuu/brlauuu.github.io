@@ -411,6 +411,72 @@ footer span {
   }
 }
 
+/* Tags constellation: hidden on small screens, empty without JavaScript. */
+.constellation {
+  display: none;
+  margin: 0 0 2rem;
+}
+
+@media (min-width: 600px) {
+  .constellation {
+    display: block;
+  }
+}
+
+.constellation svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.constellation .link {
+  stroke: var(--border-color);
+  stroke-width: 1;
+  transition: opacity 0.2s ease;
+}
+
+.constellation .node {
+  cursor: grab;
+  transition: opacity 0.2s ease;
+}
+
+.constellation .node:active {
+  cursor: grabbing;
+}
+
+.constellation .node .shape {
+  fill: var(--bg-color);
+  stroke: var(--heading-color);
+  stroke-width: 2;
+}
+
+.constellation .node--post .shape {
+  stroke: var(--text-color);
+  stroke-width: 1.5;
+}
+
+.constellation .label {
+  fill: var(--text-color);
+  font-family: Arial, Helvetica, "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.constellation .node--post .label {
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.constellation .node--post.is-lit .label {
+  opacity: 1;
+}
+
+.constellation .is-dim {
+  opacity: 0.3;
+}
+
 /* Keyboard shortcut help dialog (opened with "?") */
 .shortcuts {
   border: 1px solid var(--border-color);
@@ -571,6 +637,13 @@ footer span {
   --rainbow-border: var(--rainbow);
   --link-color: #d81b9a;
   --link-hover-color: #ff2fb3;
+  --rainbow-stop-1: #e0312a;
+  --rainbow-stop-2: #e07800;
+  --rainbow-stop-3: #c99700;
+  --rainbow-stop-4: #1f9d4d;
+  --rainbow-stop-5: #1f8fbf;
+  --rainbow-stop-6: #0a5ed1;
+  --rainbow-stop-7: #8e3fc4;
 }
 
 [data-color="on"][data-theme="dark"] {
@@ -578,6 +651,13 @@ footer span {
   --rainbow-border: linear-gradient(90deg, #ff6b6bbf, #ffa94dbf, #ffe066bf, #69db7cbf, #66d9e8bf, #74c0fcbf, #d0bfffbf);
   --link-color: #3fd6ff;
   --link-hover-color: #8ae6ff;
+  --rainbow-stop-1: #ff6b6b;
+  --rainbow-stop-2: #ffa94d;
+  --rainbow-stop-3: #ffe066;
+  --rainbow-stop-4: #69db7c;
+  --rainbow-stop-5: #66d9e8;
+  --rainbow-stop-6: #74c0fc;
+  --rainbow-stop-7: #d0bfff;
 }
 
 /* Headings and the site title: rainbow text fill. Engines without
@@ -790,6 +870,8 @@ footer span {
   }
 
   .backdrop { transition: none; }
+
+  .constellation .node, .constellation .link, .constellation .node--post .label { transition: none; }
 }
 
 [data-color="on"] h1:not(.catalogue-title),
@@ -898,6 +980,48 @@ footer span {
   border-radius: 8px;
   padding: 0.6rem;
   padding-top: 1.4rem;
+}
+
+/* Constellation under color: gradient strokes and the shared hue cycle. */
+[data-color="on"] .constellation stop:nth-child(1) { stop-color: var(--rainbow-stop-1); }
+[data-color="on"] .constellation stop:nth-child(2) { stop-color: var(--rainbow-stop-2); }
+[data-color="on"] .constellation stop:nth-child(3) { stop-color: var(--rainbow-stop-3); }
+[data-color="on"] .constellation stop:nth-child(4) { stop-color: var(--rainbow-stop-4); }
+[data-color="on"] .constellation stop:nth-child(5) { stop-color: var(--rainbow-stop-5); }
+[data-color="on"] .constellation stop:nth-child(6) { stop-color: var(--rainbow-stop-6); }
+[data-color="on"] .constellation stop:nth-child(7) { stop-color: var(--rainbow-stop-7); }
+
+[data-color="on"] .constellation .node--tag .shape,
+[data-color="on"] .constellation .link {
+  stroke: url(#constellation-rainbow);
+}
+
+[data-color="on"] .constellation svg {
+  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
+  animation-play-state: var(--rainbow-play);
+}
+
+/* Highlight and focus, axis-free but placed after the color-on strokes above so
+   that at equal specificity (0,4,0) the lit and focused node wins the gradient. */
+.constellation .node.is-lit .shape {
+  stroke: var(--link-color);
+}
+
+.constellation .link.is-lit {
+  stroke: var(--link-color);
+  stroke-width: 2;
+}
+
+/* Safari has no :focus-visible outline on SVG <a>, so the thick stroke stays as
+   the fallback beside the real outline. */
+.constellation .node:focus-visible .shape {
+  stroke: var(--link-color);
+  stroke-width: 3;
+}
+
+.constellation .node:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1145,4 +1269,16 @@ footer span {
 
 [data-style="pixel"] .backdrop {
   image-rendering: pixelated;
+}
+
+/* Constellation under pixel: square nodes are drawn by the script; crisp lines, pixel labels, no easing. */
+[data-style="pixel"] .constellation .label {
+  font-family: var(--pixel-font);
+  font-size: 12px;
+}
+
+[data-style="pixel"] .constellation .node,
+[data-style="pixel"] .constellation .link,
+[data-style="pixel"] .constellation .node--post .label {
+  transition: none;
 }

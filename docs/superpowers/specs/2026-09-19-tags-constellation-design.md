@@ -31,8 +31,7 @@ in a group drawn before the nodes.
 - Tag radius: 14–26 px scaled by post count (max count → 26). Post radius: 8 px.
 - Forces per frame: springs from each post to each of its tags (rest length 90 px,
   stiffness 0.02); inverse-square repulsion between all nodes, clamped for distances
-  under 20 px, strength 1800; centring pull 0.005 toward the box centre. Velocity damping
-  0.9. Positions clamped inside the box with a 30 px margin.
+  under 20 px, strength 7000; centring pull 0.0012 toward the box centre, 2.4× stronger on the vertical axis so the layout fills the wide box; a clamped node loses its velocity on that axis so the system settles. These values were tuned by simulation against the real tag data (the spec's first draft of 1800 / 0.005 collapsed eleven nodes into the middle third of the box). Velocity damping 0.9. Positions clamped inside the box with a 30 px margin.
 - Seed positions on a ring (tags on an outer ring, posts inner) so the first frames unfold.
 - Rest detection: when total kinetic energy falls below a threshold the loop switches to a
   low-amplitude wander (a slow sine offset of ±3 px per node) so the graph breathes.
@@ -40,8 +39,17 @@ in a group drawn before the nodes.
   `pointermove` updates it; `pointerup` releases with the last velocity (a flick throws).
   A drag under 4 px counts as a click and is not prevented.
 - Loop runs on `requestAnimationFrame`, stops when the document is hidden and when the
-  container is not displayed (mobile), resumes on visibility.
-- Pure helpers exported for Node tests: `step(nodes, links, box, dt)`, `highlightSet(nodes,
+  container is not displayed (mobile), resumes on visibility. Under pixel style and under
+  reduced motion nothing moves once the layout is at rest, so the loop stops itself there
+  (the container carries `data-running`) and is restarted by a `pointerdown`, a theme
+  change or a visibility resume. Under smooth with motion it keeps running for the wander.
+- The rainbow gradient is declared with `gradientUnits="userSpaceOnUse"` spanning
+  `x1=0`..`x2=800`, the box width, so the spectrum runs across the whole graph rather than
+  per-element, and an axis-aligned line still paints instead of collapsing to nothing.
+- Labels sit to the right of their node, except in the right quarter of the box
+  (`x > 0.75 * box.w`), where they flip to the left (`text-anchor: end`) so they do not run
+  off the edge. The side is written to the DOM only when it changes.
+- Pure helpers exported for Node tests: `step(nodes, links, box)`, `highlightSet(nodes,
   links, id)`, `isClick(dx, dy)`, `seed(tags, posts, box)`.
 
 ## Interaction
@@ -50,7 +58,7 @@ in a group drawn before the nodes.
   other nodes and lines get `is-dim` (opacity 0.3). Hover or focus on a post lights its
   tags. Leaving or blurring clears both.
 - Click on a tag: navigate to `#slug` (the section below), same as the chips. Click on a
-  post: open the post. Touch: first tap lights, second tap on the same node acts.
+  post: open the post. Touch: first tap lights, second tap on the same node acts (Chromium only; on Safari and Firefox the first tap acts, because click events there carry no pointer type).
 - Labels: tag labels always visible beside the node; post labels only when lit.
 
 ## Theme integration (in `assets/css/theme.css`)
@@ -74,7 +82,9 @@ in a group drawn before the nodes.
 
 SVG `<title>` "Tags and posts" and `<desc>` explaining the interaction. Node accessible
 names: "Tag python, 1 post" / post title. Focus order tags then posts (DOM order). Visible
-focus ring (`outline` on the `<a>` via `:focus-visible`, 2 px `--link-color`). The list
+focus ring: `outline: 2px solid var(--link-color)` with a 2 px offset on the `<a>` via
+`:focus-visible`, plus a 3 px `--link-color` stroke on the shape as the fallback for
+browsers (Safari) that do not paint outlines on SVG `<a>`. The list
 below is unchanged and remains the primary structure.
 
 ## Mobile

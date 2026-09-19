@@ -25,11 +25,11 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card)
+_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card, constellation)
 _layouts/        # Custom layouts (default, home)
 assets/
   css/           # Custom CSS (theme.css, projects.css)
-  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js, backdrop.js)
+  js/            # JavaScript files (theme.js, shortcuts.js, project-stats.js, share-button.js, backdrop.js, constellation.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -125,6 +125,49 @@ tags: [tag1, tag2, tag3]
 - Displayed alphabetically on the tags page
 - Shown below the post title with links to tag sections
 - Completely optional - omit the `tags:` line if not needed
+
+### Tags constellation
+
+A force-directed graph of tags and posts sits at the top of the tags page above the list.
+Tags are nodes sized 14–26 px by post count (up to max count), posts are 8 px nodes;
+nodes are linked by springs if the post has that tag. The constellation reads its data
+block from `<script type="application/json" id="constellation-data">` with shape
+`{ "tags": [{ "name", "slug", "count" }], "posts": [{ "url", "title", "tags": [slug] }] }`,
+so adding a tagged post updates the graph without any other change.
+
+Physics live in the `C` constants at the top of `assets/js/constellation.js`: the box is
+800×420 px with a 30 px margin; springs (length 90 px, stiffness 0.02) pull post-to-tag
+pairs; inverse-square repulsion (strength 7000, clamped under 20 px) pushes all nodes;
+centring pull (strength 0.0012, 2.4× stronger on the vertical axis) draws toward the box
+centre so the layout settles as an ellipse rather than a circle; damping 0.9 dissipates
+energy; at rest each node shows a static ±3 px sine offset (the wander) so the graph
+breathes; the loop idles (stops itself) once at rest under pixel style and reduced motion,
+waking on drag, theme change or visibility resume. Dragging pins
+a node to the cursor; a drag under 4 px is a click. Positions are rounded to a 4 px grid
+under pixel style.
+
+DOM contract: `<div class="constellation"><svg>...</svg></div>` contains `<a class="node
+node--tag|node--post">` links with `<circle>` or `<rect>` shapes and `<text>` labels,
+plus `<line>` elements for springs. On hover or focus, the node and its neighbours get
+`is-lit`; everything else gets `is-dim` (0.3 opacity). A tag click jumps to `#slug`,
+a post click opens its URL. Labels sit to the right of their node, flipping to the left
+in the right quarter of the box so they stay inside it. Touch uses two-tap on Chromium,
+but single-tap on Safari and Firefox because click events there carry no pointer type.
+
+Theme integration: tag and post rings stroke `--heading-color` and `--text-color`
+respectively; links stroke `--border-color`; with color on, tag rings and lines use SVG
+`<linearGradient id="constellation-rainbow">` (post rings keep the text color) with stops
+from `--rainbow-stop-1` through `--rainbow-stop-7` (light or dark set chosen by the theme
+axis), in user-space units spanning the box width; the SVG group carries
+the shared `rainbow-cycle` animation. Under pixel style, nodes are `<rect>` shapes with
+`shape-rendering: crispEdges` and labels use `--pixel-font` at 12 px; wander and throw
+are off. Under reduced motion, wander is off and the simulation runs to rest once, then
+only interaction moves nodes.
+
+Tests: `node --test _tests/constellation.test.cjs` runs Node tests of `step`, `highlightSet`,
+`isClick` and `seed`; `node _tests/tools/constellation-check.cjs http://localhost:4000`
+drives the browser. Hidden under 600 px; empty without JavaScript; the tag list below is
+the primary structure.
 
 ### Theme axes
 

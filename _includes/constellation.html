@@ -1,0 +1,18 @@
+{% comment %}
+Force-directed constellation of tags and posts, filled by assets/js/constellation.js
+from the #constellation-data JSON. Empty (zero height) without JavaScript; hidden
+under 600px by CSS.
+{% endcomment %}
+<div class="constellation" id="constellation">
+  <svg viewBox="0 0 800 420" width="100%" role="group" aria-labelledby="constellation-title" aria-describedby="constellation-desc">
+    <title id="constellation-title">Tags and posts</title>
+    <desc id="constellation-desc">Each tag is linked to its posts. Hover or focus a node to highlight its connections; drag to rearrange; activate a tag to jump to its section.</desc>
+    <defs>
+      <linearGradient id="constellation-rainbow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="800" y2="0">
+        <stop offset="0"/><stop offset="0.166"/><stop offset="0.333"/><stop offset="0.5"/><stop offset="0.666"/><stop offset="0.833"/><stop offset="1"/>
+      </linearGradient>
+    </defs>
+    <g class="constellation-links"></g>
+    <g class="constellation-nodes"></g>
+  </svg>
+</div>
