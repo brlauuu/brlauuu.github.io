@@ -5,8 +5,8 @@
     box: { w: 800, h: 420, margin: 30 },
     tagRadius: [14, 26], postRadius: 8,
     springLength: 90, springK: 0.02,
-    repel: 1800, repelMin: 20,
-    center: 0.005, damping: 0.9,
+    repel: 7000, repelMin: 20,
+    center: 0.0012, centerAspect: 2.4, damping: 0.9,
     clickPx: 4, grid: 4, wander: 3, restEnergy: 0.05
   };
 
@@ -67,14 +67,20 @@
     let energy = 0;
     for (const n of nodes) {
       if (n.pinned) { n.vx = 0; n.vy = 0; continue; }
+      // Centring is stronger along the short axis, so the cluster settles as an
+      // ellipse shaped like the box instead of a circle that overflows its height.
       n.fx += (cx - n.x) * C.center;
-      n.fy += (cy - n.y) * C.center;
+      n.fy += (cy - n.y) * C.center * C.centerAspect;
       n.vx = (n.vx + n.fx) * C.damping;
       n.vy = (n.vy + n.fy) * C.damping;
       n.x += n.vx; n.y += n.vy;
       const m = box.margin + n.r;
-      n.x = Math.min(box.w - m, Math.max(m, n.x));
-      n.y = Math.min(box.h - m, Math.max(m, n.y));
+      // Clamping the position without the velocity leaves a node grinding against
+      // the wall for ever, so the into-the-wall component is dropped with it.
+      const cxl = Math.min(box.w - m, Math.max(m, n.x));
+      const cyl = Math.min(box.h - m, Math.max(m, n.y));
+      if (cxl !== n.x) { n.x = cxl; n.vx = 0; }
+      if (cyl !== n.y) { n.y = cyl; n.vy = 0; }
       energy += n.vx * n.vx + n.vy * n.vy;
     }
     return energy;
@@ -249,11 +255,20 @@
       drag.node.pinned = false;
       if (reduced.matches || html.dataset.style === 'pixel') { drag.node.vx = 0; drag.node.vy = 0; }
       const moved = drag.moved;
+      const draggedId = drag.node.id;
       drag = null;
-      if (moved) {
-        // Swallow the click that follows a real drag.
-        nodesG.addEventListener('click', (e) => e.preventDefault(), { capture: true, once: true });
-      }
+      if (!moved) return;
+      // Swallow only the click that a real drag of THIS node synthesises. Without the
+      // timer a cancelled drag would leave the guard armed and eat an unrelated click
+      // much later; without the id check it would eat a click on a different node.
+      let timer = 0;
+      const swallow = (e) => {
+        nodesG.removeEventListener('click', swallow, { capture: true });
+        win.clearTimeout(timer);
+        if (e.target.closest('.node')?.dataset.id === draggedId) e.preventDefault();
+      };
+      nodesG.addEventListener('click', swallow, { capture: true });
+      timer = win.setTimeout(() => nodesG.removeEventListener('click', swallow, { capture: true }), 350);
     };
     nodesG.addEventListener('pointerup', release);
     nodesG.addEventListener('pointercancel', release);
@@ -263,6 +278,10 @@
     nodesG.addEventListener('pointerout', (event) => { if (event.pointerType !== 'touch' && !drag) clearLight(); });
     nodesG.addEventListener('focusin', (event) => { const a = event.target.closest('.node'); if (a) light(a.dataset.id); });
     nodesG.addEventListener('focusout', () => { if (!drag) clearLight(); });
+    // Two-tap gating is Chromium-only: `pointerType` on a click event and
+    // `sourceCapabilities.firesTouchEvents` are both non-standard and absent in Safari
+    // and Firefox, so there the first tap navigates straight away instead of lighting
+    // the node first. Degrading to a plain link is the acceptable fallback.
     nodesG.addEventListener('click', (event) => {
       const a = event.target.closest('.node');
       if (!a) return;
