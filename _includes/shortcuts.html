@@ -1,0 +1,31 @@
+{% comment %}
+Keyboard shortcut help, opened with "?". The rows are the single source of
+truth for assets/js/shortcuts.js: data-shortcut is the key or key sequence,
+data-toggle names a theme axis button, data-href a page.
+{% endcomment %}
+<dialog id="shortcuts" class="shortcuts" aria-labelledby="shortcuts-title">
+  <div class="shortcuts-panel">
+    <h2 id="shortcuts-title" class="shortcuts-title">Keyboard shortcuts</h2>
+    <div class="shortcuts-groups">
+      <section>
+        <h3>Theme</h3>
+        <dl>
+          <div data-shortcut="t" data-toggle="theme"><dt><kbd>t</kbd></dt><dd>Light or dark</dd></div>
+          <div data-shortcut="c" data-toggle="color"><dt><kbd>c</kbd></dt><dd>Color on or off</dd></div>
+          <div data-shortcut="p" data-toggle="style"><dt><kbd>p</kbd></dt><dd>Pixel or smooth</dd></div>
+        </dl>
+      </section>
+      <section>
+        <h3>Go to</h3>
+        <dl>
+          <div data-shortcut="g h" data-href="{{ "/" | relative_url }}"><dt><kbd>g</kbd> <kbd>h</kbd></dt><dd>Home, all posts</dd></div>
+          <div data-shortcut="g a" data-href="{{ "/about" | relative_url }}"><dt><kbd>g</kbd> <kbd>a</kbd></dt><dd>About</dd></div>
+          <div data-shortcut="g r" data-href="{{ "/archive" | relative_url }}"><dt><kbd>g</kbd> <kbd>r</kbd></dt><dd>Archive</dd></div>
+          <div data-shortcut="g t" data-href="{{ "/tags" | relative_url }}"><dt><kbd>g</kbd> <kbd>t</kbd></dt><dd>Tags</dd></div>
+        </dl>
+      </section>
+    </div>
+    <p class="shortcuts-hint"><kbd>?</kbd> shows this list, <kbd>Esc</kbd> closes it.</p>
+    <button type="button" class="shortcuts-close" data-close aria-label="Close">×</button>
+  </div>
+</dialog>

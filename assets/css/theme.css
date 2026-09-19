@@ -393,6 +393,102 @@ footer span {
   }
 }
 
+/* Keyboard shortcut help dialog (opened with "?") */
+.shortcuts {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  width: min(32rem, calc(100vw - 2rem));
+  box-shadow: 0 8px 30px var(--share-shadow);
+}
+
+.shortcuts::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.shortcuts-panel {
+  position: relative;
+  padding: 1.5rem 1.75rem 1.25rem;
+}
+
+.shortcuts-title {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+.shortcuts-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem 2rem;
+}
+
+.shortcuts-groups h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--catalogue-date-color);
+}
+
+.shortcuts dl {
+  margin: 0;
+}
+
+.shortcuts dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0.35rem 0;
+}
+
+.shortcuts dt {
+  min-width: 3.5rem;
+  white-space: nowrap;
+}
+
+.shortcuts dd {
+  margin: 0;
+}
+
+.shortcuts kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--heading-color);
+  font-family: Menlo, Monaco, monospace;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.shortcuts-hint {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--catalogue-date-color);
+}
+
+.shortcuts-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.75rem;
+  border: none;
+  background: none;
+  color: var(--catalogue-date-color);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.shortcuts-close:hover,
+.shortcuts-close:focus {
+  color: var(--heading-color);
+}
+
 /* Theme axis buttons in the nav */
 .nav ul li {
   display: inline-block;
@@ -907,4 +1003,51 @@ footer span {
 [data-style="pixel"][data-color="on"] footer::after {
   top: -2px;
   height: 3px;
+}
+
+/* Shortcut dialog under the other axes. */
+[data-color="on"] .shortcuts {
+  position: relative;
+  border-color: transparent;
+  background: var(--bg-color);
+}
+
+[data-color="on"] .shortcuts::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--rainbow-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rainbow-cycle 20s var(--rainbow-timing) infinite;
+  animation-play-state: var(--rainbow-play);
+}
+
+[data-style="pixel"] .shortcuts,
+[data-style="pixel"] .shortcuts kbd {
+  border-radius: 0;
+}
+
+[data-style="pixel"] .shortcuts {
+  border-width: 2px;
+  box-shadow: 6px 6px 0 var(--heading-color);
+}
+
+[data-style="pixel"] .shortcuts-title,
+[data-style="pixel"] .shortcuts-groups h3,
+[data-style="pixel"] .shortcuts kbd {
+  font-family: var(--pixel-font);
+}
+
+[data-style="pixel"] .shortcuts-title { font-size: 1rem; }
+[data-style="pixel"] .shortcuts-groups h3 { font-size: 0.5rem; }
+[data-style="pixel"] .shortcuts kbd { font-size: 0.75rem; }
+
+[data-style="pixel"][data-color="on"] .shortcuts::before {
+  padding: 2px;
 }
