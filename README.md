@@ -86,7 +86,7 @@ The tags page features a force-directed constellation of tags and posts as dragg
 interactive nodes. The constellation reads its data from `<script type="application/json"
 id="constellation-data">` emitted by `_pages/tags.md`, and is rendered by `assets/js/constellation.js` with styling from `assets/css/theme.css`. It responds to all three
 theme axes, is fully keyboard-accessible, and remains hidden under 600 px width so the
-existing tag list is the primary interface on mobile. Without JavaScript, the page shows
+existing tag list is the primary interface on mobile. Touch interaction uses two-tap on Chromium, but single-tap on Safari and Firefox. Without JavaScript, the page shows
 the tag list only. Check the constellation with `node _tests/tools/constellation-check.cjs http://localhost:4000`.
 
 ## Local preview and checks
@@ -98,6 +98,7 @@ node --test _tests/project-stats.test.cjs
 node --test _tests/theme.test.cjs
 node --test _tests/shortcuts.test.cjs
 node --test _tests/backdrop.test.cjs
+node --test _tests/constellation.test.cjs
 node --check assets/js/project-stats.js
 node --check assets/js/theme.js
 node _tests/tools/perf.cjs http://localhost:4000/ 10

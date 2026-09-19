@@ -148,7 +148,7 @@ DOM contract: `<div class="constellation"><svg>...</svg></div>` contains `<a cla
 node--tag|node--post">` links with `<circle>` or `<rect>` shapes and `<text>` labels,
 plus `<line>` elements for springs. On hover or focus, the node and its neighbours get
 `is-lit`; everything else gets `is-dim` (0.3 opacity). A tag click jumps to `#slug`,
-a post click opens its URL.
+a post click opens its URL. Touch uses two-tap on Chromium, but single-tap on Safari and Firefox because click events there carry no pointer type.
 
 Theme integration: tag and post rings stroke `--heading-color` and `--text-color`
 respectively; links stroke `--border-color`; with color on, rings and lines use SVG

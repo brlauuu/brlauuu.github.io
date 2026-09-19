@@ -49,7 +49,7 @@ in a group drawn before the nodes.
   other nodes and lines get `is-dim` (opacity 0.3). Hover or focus on a post lights its
   tags. Leaving or blurring clears both.
 - Click on a tag: navigate to `#slug` (the section below), same as the chips. Click on a
-  post: open the post. Touch: first tap lights, second tap on the same node acts.
+  post: open the post. Touch: first tap lights, second tap on the same node acts (Chromium only; on Safari and Firefox the first tap acts, because click events there carry no pointer type).
 - Labels: tag labels always visible beside the node; post labels only when lit.
 
 ## Theme integration (in `assets/css/theme.css`)
