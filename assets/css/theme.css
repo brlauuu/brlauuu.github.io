@@ -782,6 +782,31 @@ footer span {
   text-shadow: none;
 }
 
+/* The filter definitions take no space and never paint. */
+.melt-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Melting headings, smooth style only: warping the pixel font turns it to mush. */
+[data-color="on"]:not([data-style="pixel"]) h1,
+[data-color="on"]:not([data-style="pixel"]) h2,
+[data-color="on"]:not([data-style="pixel"]) h3,
+[data-color="on"]:not([data-style="pixel"]) .nav-title,
+[data-color="on"]:not([data-style="pixel"]) .catalogue-title a {
+  --melt: url(#melt-light);
+}
+
+[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h1,
+[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h2,
+[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h3,
+[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) .nav-title,
+[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) .catalogue-title a {
+  --melt: url(#melt-dark);
+}
+
 /* Headings and the site title: rainbow text fill. Engines without
    background-clip: text never enter this block and keep solid headings. */
 @supports ((background-clip: text) or (-webkit-background-clip: text)) {

@@ -108,6 +108,22 @@ function diff(a, b) {
     console.log(`${ok ? 'PASS' : 'FAIL'}  ${theme} heading animation is ${expected} :: ${name}`);
     await ctx.close();
   }
+  // --melt reaches headings only; strips and rings keep the plain hue cycle.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.addInitScript(() => localStorage.setItem('color', 'on'));
+    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    const filters = await page.evaluate(() => ({
+      title: getComputedStyle(document.querySelector('.post-title')).filter,
+      line: getComputedStyle(document.querySelector('.post-line') || document.querySelector('footer'), '::after').filter,
+      lineEl: document.querySelector('.post-line') ? '.post-line' : 'footer',
+    }));
+    const ok = filters.title.includes('url(') && !filters.line.includes('url(');
+    if (!ok) failed++;
+    console.log(`${ok ? 'PASS' : 'FAIL'}  melt on headings only :: ${JSON.stringify(filters)}`);
+    await ctx.close();
+  }
   await browser.close();
   process.exit(failed ? 1 : 0);
 })();

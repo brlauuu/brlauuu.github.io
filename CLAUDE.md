@@ -192,6 +192,12 @@ bone, moss links). The cycle is tokenised: `--cycle-name` and `--cycle-duration`
 `--rainbow-play` under `prefers-reduced-motion`; every keyframe starts its `filter` with
 `var(--melt)` (identity by default) so headings can add the melt filter. Body text carries a
 `--halo` text-shadow (cream in light, black in dark); gradient headings and `pre` opt out.
+Headings `h1`–`h3`, the site title and home-page post titles melt in smooth style: they set
+`--melt` to `url(#melt-light)` or `url(#melt-dark)`, SVG filters defined once in
+`_includes/melt-filter.html` (SMIL-animated turbulence feeding a displacement map; dark adds a
+flickering ink bleed). `assets/js/melt.js` pauses the animations unless color is on, style is
+smooth, motion is allowed and the tab is visible; its `meltState` is tested in
+`_tests/melt.test.cjs`. Pixel style never melts.
 Dark adds a glow on headings via `--cycle-glow-name`; the other cross-axis
 blocks belong to the style axis below.
 **Style axis** (`[data-style="pixel"]`, last layer of `theme.css`): one `@font-face` for
