@@ -81,6 +81,21 @@ function diff(a, b) {
       console.log(`${problems.length ? 'FAIL' : 'PASS'}  ${url} ${width}px ${style} ${theme}/${color}${problems.length ? ' :: ' + problems.join(' | ') : ''}`);
     }
   }
+  // The halo must never paint through transparent gradient headings.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.addInitScript(() => localStorage.setItem('color', 'on'));
+    await page.goto(base + '/about', { waitUntil: 'networkidle' });
+    const shadows = await page.evaluate(() => ({
+      h1: getComputedStyle(document.querySelector('h1')).textShadow,
+      p: getComputedStyle(document.querySelector('main p')).textShadow,
+    }));
+    const ok = shadows.h1 === 'none' && shadows.p !== 'none';
+    if (!ok) failed++;
+    console.log(`${ok ? 'PASS' : 'FAIL'}  halo on body text only :: ${JSON.stringify(shadows)}`);
+    await ctx.close();
+  }
   await browser.close();
   process.exit(failed ? 1 : 0);
 })();

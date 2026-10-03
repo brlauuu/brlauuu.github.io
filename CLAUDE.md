@@ -185,9 +185,14 @@ The look of the site is controlled by three independent switches, each a
 gradient as a text fill, the three thick lines with `border-image`, thin section rules
 with an animated `::after` strip, and rounded elements (tag chips, project cards, share
 button) with a masked `::before` ring; only leaf accents and those pseudo-elements are
-animated, never containers. One `rainbow-cycle` keyframe (20 s hue rotation) is shared
-by every accent and paused by `--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
-adds brighter stops, dimmed card borders and a glow on headings; the other cross-axis
+animated, never containers. Light with color on is an acid trip (candy stops, hot pink
+links); `[data-color="on"][data-theme="dark"]` is abstract dread (oxblood, bruise, moss,
+bone, moss links). The cycle is tokenised: `--cycle-name` and `--cycle-duration` give light
+`rainbow-cycle` over 12 s and dark `dread-pulse` (±20° hue) over 40 s, paused by
+`--rainbow-play` under `prefers-reduced-motion`; every keyframe starts its `filter` with
+`var(--melt)` (identity by default) so headings can add the melt filter. Body text carries a
+`--halo` text-shadow (cream in light, black in dark); gradient headings and `pre` opt out.
+Dark adds a glow on headings via `--cycle-glow-name`; the other cross-axis
 blocks belong to the style axis below.
 **Style axis** (`[data-style="pixel"]`, last layer of `theme.css`): one `@font-face` for
 Silkscreen (`assets/fonts/`, OFL; downloads only when referenced), `--pixel-font` on

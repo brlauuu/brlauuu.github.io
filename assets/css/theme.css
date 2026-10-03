@@ -722,34 +722,64 @@ footer span {
 /* the rainbow. Nothing here applies while data-color is off.         */
 /* ------------------------------------------------------------------ */
 
-/* Light stops are darkened until each sits at or near 3:1 on white, so
-   gradient headings stay readable; the hue order is unchanged. */
+/* Light with color on is an acid trip: candy stops, hot pink links, a cream halo
+   around body text. Fun over readable; headings are exempt from contrast. */
 [data-color="on"] {
-  --rainbow: linear-gradient(90deg, #e0312a, #e07800, #c99700, #1f9d4d, #1f8fbf, #0a5ed1, #8e3fc4);
+  --rainbow: linear-gradient(90deg, #ff2e93, #ff7a00, #ffd400, #7ed321, #00d4ff, #7a3cff, #e81cff);
   --rainbow-border: var(--rainbow);
-  --link-color: #d81b9a;
-  --link-hover-color: #ff2fb3;
-  --rainbow-stop-1: #e0312a;
-  --rainbow-stop-2: #e07800;
-  --rainbow-stop-3: #c99700;
-  --rainbow-stop-4: #1f9d4d;
-  --rainbow-stop-5: #1f8fbf;
-  --rainbow-stop-6: #0a5ed1;
-  --rainbow-stop-7: #8e3fc4;
+  --link-color: #e0007a;
+  --link-hover-color: #ff2e93;
+  --rainbow-stop-1: #ff2e93;
+  --rainbow-stop-2: #ff7a00;
+  --rainbow-stop-3: #ffd400;
+  --rainbow-stop-4: #7ed321;
+  --rainbow-stop-5: #00d4ff;
+  --rainbow-stop-6: #7a3cff;
+  --rainbow-stop-7: #e81cff;
+  --halo: rgba(255, 248, 235, 0.75);
+  --cycle-name: rainbow-cycle;
+  --cycle-glow-name: rainbow-cycle;
+  --cycle-duration: 12s;
+  --melt: hue-rotate(0deg);
 }
 
+/* Dark with color on is the scary part of the fairy tale: oxblood, bruise,
+   moss and bone, a slow narrow pulse instead of a full hue turn. */
 [data-color="on"][data-theme="dark"] {
-  --rainbow: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffe066, #69db7c, #66d9e8, #74c0fc, #d0bfff);
-  --rainbow-border: linear-gradient(90deg, #ff6b6bbf, #ffa94dbf, #ffe066bf, #69db7cbf, #66d9e8bf, #74c0fcbf, #d0bfffbf);
-  --link-color: #3fd6ff;
-  --link-hover-color: #8ae6ff;
-  --rainbow-stop-1: #ff6b6b;
-  --rainbow-stop-2: #ffa94d;
-  --rainbow-stop-3: #ffe066;
-  --rainbow-stop-4: #69db7c;
-  --rainbow-stop-5: #66d9e8;
-  --rainbow-stop-6: #74c0fc;
-  --rainbow-stop-7: #d0bfff;
+  --rainbow: linear-gradient(90deg, #8a1c1c, #6e2350, #5b2a6e, #3f4f2a, #4f6b2a, #d8cfb8, #8a1c1c);
+  --rainbow-border: linear-gradient(90deg, #8a1c1cbf, #6e2350bf, #5b2a6ebf, #3f4f2abf, #4f6b2abf, #d8cfb8bf, #8a1c1cbf);
+  --link-color: #9bbf5a;
+  --link-hover-color: #e8dfc8;
+  --rainbow-stop-1: #8a1c1c;
+  --rainbow-stop-2: #6e2350;
+  --rainbow-stop-3: #5b2a6e;
+  --rainbow-stop-4: #3f4f2a;
+  --rainbow-stop-5: #4f6b2a;
+  --rainbow-stop-6: #d8cfb8;
+  --rainbow-stop-7: #8a1c1c;
+  --halo: rgba(0, 0, 0, 0.85);
+  --cycle-name: dread-pulse;
+  --cycle-glow-name: dread-pulse-glow;
+  --cycle-duration: 40s;
+}
+
+/* A halo around body text keeps it legible on the backdrop. Gradient headings are
+   transparent text, so an inherited shadow would show through them: they opt out,
+   as do code blocks, which keep their solid box. */
+[data-color="on"] body {
+  text-shadow: 0 0 4px var(--halo), 0 0 10px var(--halo);
+}
+
+[data-color="on"] h1,
+[data-color="on"] h2,
+[data-color="on"] h3,
+[data-color="on"] h4,
+[data-color="on"] h5,
+[data-color="on"] h6,
+[data-color="on"] .nav-title,
+[data-color="on"] .catalogue-title a,
+[data-color="on"] pre {
+  text-shadow: none;
 }
 
 /* Headings and the site title: rainbow text fill. Engines without
@@ -945,9 +975,16 @@ footer span {
    pseudo-elements above are animated: a filter on a container would compose
    with its children's and cycle the ordinary links inside it as well.
    Reduced motion pauses it. */
+/* --melt comes first so headings can add the SVG melt filter without a second
+   animation; everything else gets the identity default. */
 @keyframes rainbow-cycle {
-  from { filter: hue-rotate(0deg); }
-  to { filter: hue-rotate(360deg); }
+  from { filter: var(--melt) hue-rotate(0deg); }
+  to { filter: var(--melt) hue-rotate(360deg); }
+}
+
+@keyframes dread-pulse {
+  0%, 100% { filter: var(--melt) hue-rotate(-20deg); }
+  50% { filter: var(--melt) hue-rotate(20deg); }
 }
 
 [data-color="on"] {
@@ -988,7 +1025,18 @@ footer span {
 [data-color="on"] .tag-chip::before,
 [data-color="on"] .project-card::before,
 [data-color="on"] .share-button::before {
-  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
+[data-color="on"][data-theme="dark"] h1:not(.catalogue-title),
+[data-color="on"][data-theme="dark"] h2,
+[data-color="on"][data-theme="dark"] h3,
+[data-color="on"][data-theme="dark"] .nav-title,
+[data-color="on"][data-theme="dark"] .catalogue-title a {
+  animation-name: rainbow-cycle-glow;
+}
+
+@keyframes rainbow-cycle-glow {
+  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+}
   animation-play-state: var(--rainbow-play);
 }
 
@@ -1051,7 +1099,18 @@ footer span {
 }
 
 [data-color="on"] .constellation svg {
-  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
+[data-color="on"][data-theme="dark"] h1:not(.catalogue-title),
+[data-color="on"][data-theme="dark"] h2,
+[data-color="on"][data-theme="dark"] h3,
+[data-color="on"][data-theme="dark"] .nav-title,
+[data-color="on"][data-theme="dark"] .catalogue-title a {
+  animation-name: rainbow-cycle-glow;
+}
+
+@keyframes rainbow-cycle-glow {
+  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+}
   animation-play-state: var(--rainbow-play);
 }
 
@@ -1276,7 +1335,18 @@ footer span {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  animation: rainbow-cycle 12s var(--rainbow-timing) infinite;
+[data-color="on"][data-theme="dark"] h1:not(.catalogue-title),
+[data-color="on"][data-theme="dark"] h2,
+[data-color="on"][data-theme="dark"] h3,
+[data-color="on"][data-theme="dark"] .nav-title,
+[data-color="on"][data-theme="dark"] .catalogue-title a {
+  animation-name: rainbow-cycle-glow;
+}
+
+@keyframes rainbow-cycle-glow {
+  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+}
   animation-play-state: var(--rainbow-play);
 }
 
