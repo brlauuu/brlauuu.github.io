@@ -1,7 +1,8 @@
 {% comment %}
 Keyboard shortcut help, opened with "?". The rows are the single source of
 truth for assets/js/shortcuts.js: data-shortcut is the key or key sequence,
-data-toggle names a theme axis button, data-href a page.
+data-toggle names a theme axis button, data-action (clicks the element whose
+data-action-target matches) or data-href a page.
 {% endcomment %}
 <dialog id="shortcuts" class="shortcuts" aria-labelledby="shortcuts-title">
   <div class="shortcuts-panel">
@@ -13,6 +14,7 @@ data-toggle names a theme axis button, data-href a page.
           <div data-shortcut="t" data-toggle="theme"><dt><kbd>t</kbd></dt><dd>Light or dark</dd></div>
           <div data-shortcut="c" data-toggle="color"><dt><kbd>c</kbd></dt><dd>Color on or off</dd></div>
           <div data-shortcut="p" data-toggle="style"><dt><kbd>p</kbd></dt><dd>Pixel or smooth</dd></div>
+          <div data-shortcut="l" data-action="lang-menu"><dt><kbd>l</kbd></dt><dd>Language menu</dd></div>
         </dl>
       </section>
       <section>
