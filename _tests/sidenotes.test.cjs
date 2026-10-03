@@ -39,3 +39,12 @@ test('citingBlock walks up from the reference to the paragraph or list item that
   assert.equal(citingBlock(inLi), li);
   assert.equal(citingBlock({ tagName: 'A', parentElement: null }), null);
 });
+
+test('nextLineIndex finds the first word below the reference, or -1 on the last line', () => {
+  const { nextLineIndex } = load();
+  // Word tops after a reference whose box ends at 112: two more words on its line, then the next line.
+  assert.equal(nextLineIndex([100, 100, 124, 124], 112), 2);
+  assert.equal(nextLineIndex([100, 100], 112), -1);
+  assert.equal(nextLineIndex([], 112), -1);
+  assert.equal(nextLineIndex([124], 112), 0);
+});

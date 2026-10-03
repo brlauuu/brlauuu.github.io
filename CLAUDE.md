@@ -265,12 +265,15 @@ endnotes list at the end of the document, so the heading must be last to sit abo
 `a.footnote[href*="#fn:"]`, copies the matching `li#fn:N` markup (minus the return arrow)
 into an `<aside class="sidenote" role="note">`, and places it in the right margin
 (`sidenote--wide`, absolutely positioned at the citing block's `offsetTop`, width
-clamped to the available margin, at 1200px and up) or inline after the citing paragraph
-or list item. One note at a time; Esc, outside click, the close button, or the same
+clamped to the available margin, at 1200px and up) or inline on the row right under the
+citing line: `lineBreakTarget` finds the first word after the reference that wraps to the
+next line and splits the text node there (or inserts before an inline element such as a
+link, so the note never lands inside one); a reference on the block's last line puts the
+note after the block. Closing removes the note and `normalize()`s the parent. One note at a time; Esc, outside click, the close button, or the same
 number again closes it; resize re-places it. The active number gets `is-active`. Styles
 in `theme.css` next to the share button, with rainbow left rule under color and square
-pixel variants at the end. Pure helpers `noteIdFor`, `placement`, `citingBlock` are
-tested in `_tests/sidenotes.test.cjs`.
+pixel variants at the end. Pure helpers `noteIdFor`, `placement`, `citingBlock`,
+`nextLineIndex` are tested in `_tests/sidenotes.test.cjs`.
 
 ### Keyboard shortcuts
 

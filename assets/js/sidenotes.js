@@ -1,8 +1,9 @@
 // Side notes for references. Kramdown renders a footnote reference as
 // <sup role="doc-noteref"><a href="#fn:N" class="footnote">N</a></sup> and the
 // note as <li id="fn:N"> in the endnotes list. Clicking a reference shows a copy
-// of its note beside the citing paragraph (wide screens) or right under it
-// (narrow screens) instead of jumping to the list. The list stays for no-JS.
+// of its note beside the citing paragraph (wide screens) or on the row right
+// under the citing line (narrow screens) instead of jumping to the list. The
+// list stays for no-JS.
 (() => {
   const WIDE_MIN = 1200;      // viewport width from which the note goes in the margin
   const NOTE_WIDTH = 260;     // preferred margin note width in px
@@ -28,6 +29,38 @@
     return null;
   }
 
+  // Index of the first word box that starts below the reference, i.e. on the
+  // next line; -1 when the reference sits on the block's last line.
+  function nextLineIndex(tops, refBottom) {
+    return tops.findIndex((top) => top >= refBottom);
+  }
+
+  // Where the inline note goes so it opens on the row under the citing line:
+  // { node, offset } to split a text node there, { before } to insert ahead of
+  // an inline element, or null to fall back to after the block.
+  function lineBreakTarget(doc, block, ref) {
+    const words = [];
+    const walker = doc.createTreeWalker(block, 4 /* NodeFilter.SHOW_TEXT */);
+    for (let t = walker.nextNode(); t; t = walker.nextNode()) {
+      if (ref.contains(t) || !(ref.compareDocumentPosition(t) & 4 /* FOLLOWING */)) continue;
+      const re = /\S+/g;
+      for (let m = re.exec(t.data); m; m = re.exec(t.data)) words.push({ node: t, offset: m.index });
+    }
+    const range = doc.createRange();
+    const tops = words.map(({ node, offset }) => {
+      range.setStart(node, offset);
+      range.setEnd(node, offset + 1);
+      return range.getBoundingClientRect().top;
+    });
+    const i = nextLineIndex(tops, ref.getBoundingClientRect().bottom);
+    if (i < 0) return null;
+    // Climb out of inline elements (links, emphasis) that started on the citing
+    // line, so the note never lands inside a link; stop at one holding the ref.
+    let node = words[i].node;
+    while (node.parentNode !== block && !node.parentNode.contains(ref)) node = node.parentNode;
+    return node === words[i].node ? words[i] : { before: node };
+  }
+
   function init(doc, win) {
     const post = doc.querySelector('.post');
     if (!post) return;
@@ -37,8 +70,16 @@
 
     let aside = null, activeRef = null;
 
+    // Take the note out and mend the text node it split.
+    function detach() {
+      if (!aside || !aside.parentNode) return;
+      const parent = aside.parentNode;
+      aside.remove();
+      parent.normalize();
+    }
+
     function close() {
-      if (aside) aside.remove();
+      detach();
       aside = null;
       if (activeRef) activeRef.classList.remove('is-active');
       activeRef = null;
@@ -48,16 +89,20 @@
       const block = citingBlock(activeRef);
       if (!aside || !block) return;
       const margin = win.innerWidth - post.getBoundingClientRect().right - GAP;
+      detach();
       if (placement(win.innerWidth) === 'wide' && margin >= NOTE_MIN) {
         aside.classList.add('sidenote--wide');
         aside.style.width = `${Math.min(NOTE_WIDTH, margin)}px`;
         aside.style.top = `${block.offsetTop}px`;
-        if (aside.parentElement !== post) post.appendChild(aside);
+        post.appendChild(aside);
       } else {
         aside.classList.remove('sidenote--wide');
         aside.style.width = '';
         aside.style.top = '';
-        if (aside.previousElementSibling !== block) block.insertAdjacentElement('afterend', aside);
+        const target = lineBreakTarget(doc, block, activeRef);
+        if (!target) block.insertAdjacentElement('afterend', aside);
+        else if (target.before) target.before.before(aside);
+        else target.node.splitText(target.offset).before(aside);
       }
     }
 
@@ -86,6 +131,9 @@
       activeRef = ref;
       ref.classList.add('is-active');
       place();
+      // Resize re-inserts the note; let only the first insertion animate.
+      const shown = aside;
+      shown.addEventListener('animationend', () => { shown.style.animation = 'none'; }, { once: true });
       return true;
     }
 
@@ -103,7 +151,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { noteIdFor, placement, citingBlock, WIDE_MIN };
+    module.exports = { noteIdFor, placement, citingBlock, nextLineIndex, WIDE_MIN };
   } else if (typeof document !== 'undefined') {
     init(document, window);
   }

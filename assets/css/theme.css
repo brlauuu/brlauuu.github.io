@@ -236,7 +236,7 @@ pre {
 
 .sidenote {
   position: relative;
-  margin: 0.75rem 0 1rem;
+  margin: 0.75rem 0;
   padding: 0.6rem 2rem 0.6rem 0.9rem;
   border-left: 3px solid var(--link-color);
   border-radius: 0 6px 6px 0;
@@ -244,6 +244,10 @@ pre {
   color: var(--text-color);
   font-size: 0.85rem;
   line-height: 1.5;
+  /* Inline notes sit inside the citing paragraph; do not inherit its text styles. */
+  font-style: normal;
+  font-weight: normal;
+  text-align: left;
   animation: sidenote-in 0.2s ease;
 }
 
