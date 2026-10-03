@@ -38,8 +38,9 @@ layout: default
 
   {% if page.collection == "posts" %}
   {% comment %}
-  When the chosen language is not the post's: a note naming the post's language,
-  or a link to the version in the chosen language (same `ref`) once one exists.
+  When the chosen language is not the post's: a link to the version in the chosen
+  language (same `ref`) when one exists; otherwise the languages it is available in,
+  linking any other version (a Naš post with English chosen also offers Српски).
   {% endcomment %}
   {% assign here = site.data.languages | where: "key", page.lang | first %}
   {% for l in site.data.languages %}{% unless l.key == page.lang %}
@@ -50,6 +51,12 @@ layout: default
     <a href="{{ other.url | relative_url }}">{% include flag.html lang=l.key %} {{ l.name }}</a>
     {%- else -%}
     {{ site.data.i18n.only_in[l.key] }} <span lang="{{ here.code }}">{% include flag.html lang=page.lang %} {{ here.name }}</span>
+    {%- for v in site.data.languages -%}
+    {%- unless v.key == page.lang or v.key == l.key or page.ref == nil -%}
+    {%- assign version = site.posts | where: "ref", page.ref | where: "lang", v.key | first -%}
+    {%- if version %} · <a href="{{ version.url | relative_url }}" lang="{{ v.code }}">{% include flag.html lang=v.key %} {{ v.name }}</a>{% endif -%}
+    {%- endunless -%}
+    {%- endfor -%}
     {%- endif -%}
   </p>
   {% endunless %}{% endfor %}
