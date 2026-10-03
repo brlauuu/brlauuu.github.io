@@ -54,3 +54,27 @@ test('laneFor clamps the column to the viewport', () => {
   const { laneFor } = load();
   assert.deepEqual(laneFor({ left: -20, right: 420, width: 440 }, 390, 1), [0, 390, 60]);
 });
+
+test('dripParams gives two vec4 per drip with every value in range', () => {
+  const { dripParams } = load();
+  const p = dripParams(12, 7);
+  assert.equal(Object.prototype.toString.call(p), '[object Float32Array]');
+  assert.equal(p.length, 12 * 8);
+  for (let i = 0; i < 12; i++) {
+    const [x0, speed, offset, w, maxLen, hue, pad1, pad2] = p.slice(i * 8, i * 8 + 8);
+    assert.ok(x0 >= 0 && x0 <= 1, 'x0');
+    assert.ok(Math.abs(x0 - (i + 0.5) / 12) <= 0.025 + 1e-6, 'x0 stays near its column');
+    assert.ok(speed >= 1 / 60 - 1e-6 && speed <= 1 / 25 + 1e-6, 'speed is 25-60 s per cycle');
+    assert.ok(offset >= 0 && offset < 1, 'phase offset');
+    assert.ok(w >= 0.010 - 1e-6 && w <= 0.020 + 1e-6, 'base width');
+    assert.ok(maxLen >= 0.25 - 1e-6 && maxLen <= 0.45 + 1e-6, 'max length');
+    assert.ok(hue >= 0 && hue < 1, 'hue offset');
+    assert.equal(pad1, 0); assert.equal(pad2, 0);
+  }
+});
+
+test('dripParams is deterministic per seed and differs between seeds', () => {
+  const { dripParams } = load();
+  assert.deepEqual(Array.from(dripParams(12, 7)), Array.from(dripParams(12, 7)));
+  assert.notDeepEqual(Array.from(dripParams(12, 7)), Array.from(dripParams(12, 8)));
+});

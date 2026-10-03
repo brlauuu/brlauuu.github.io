@@ -214,7 +214,8 @@ Body text never changes font.
 
 **Backdrop** (`assets/js/backdrop.js`): a fixed canvas behind the page drawn by one
 fragment shader while `data-color="on"`: light is an acid trip (domain-warped candy
-marbling, twelve glossy drips running down from the top edge, the pointer stirring the paint),
+marbling, twelve glossy drips that swell a bead at the top edge, stretch, and fall as teardrops into a pool, with
+per-drip constants precomputed in JS by `dripParams` and read from a 12x2 texture; the pointer stirring the paint),
 dark is abstract dread (ink plumes, fog, a breathing vignette, candle flicker, a candle glow at
 the pointer). Inside the reading column (`u_lane`, from `main`'s rect via the tested `laneFor`)
 the field desaturates, pulls toward the page background and halves its warp. The script owns the element too: it creates
@@ -222,14 +223,15 @@ the field desaturates, pulls toward the page background and halves its warp. The
 removes it 300 ms after color turns off (matching the background transition), so the canvas
 exists only while color is on and color-off pages composite exactly as they did before.
 Uniforms: time (an accumulator, so pause and resume never jump), resolution, eased pointer
-and strength, `u_light` (theme band), `u_grid` (0 smooth, 4 pixel), `u_intensity`, `u_lane`.
-Started/stopped by `themechange`; theme and style flips only update uniforms. Smooth renders
-at quarter resolution (the upscale is the softness, no CSS blur); pixel at full resolution
+and strength, `u_light` (theme band), `u_grid` (0 smooth, 1 pixel), `u_intensity`, `u_lane`.
+Started/stopped by `themechange`; theme and style flips only update uniforms. Both styles render
+at quarter resolution: smooth lets the upscale be the softness (no CSS blur); pixel passes
+`u_grid` = 1 canvas px (one 4 px cell) and the canvas is upscaled with `image-rendering: pixelated`,
 with coordinates and hue quantised in the shader. `<html>` carries the page background and
 `<body>` is transparent under color on so the canvas shows through. There are no panels:
 color never changes layout, and `node _tests/tools/layout-invariance.cjs <base url>` fails if
 a theme or color flip moves any text within a style. Pure helpers
-`uniformsFor`, `decide`, `ease` are tested in `_tests/backdrop.test.cjs`;
+`uniformsFor`, `decide`, `ease`, `laneFor`, `dripParams` are tested in `_tests/backdrop.test.cjs`;
 `_tests/tools/perf.cjs` probes frame time and long tasks and `_tests/tools/backdrop-check.cjs`
 drives the color button in a browser. `_tests/tools/contrast-sample.cjs` checks body text stays ≥ 3:1 on the lane.
 
