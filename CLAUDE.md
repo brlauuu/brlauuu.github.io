@@ -211,9 +211,9 @@ and strength, `u_light` (theme band), `u_grid` (0 smooth, 4 pixel), `u_intensity
 Started/stopped by `themechange`; theme and style flips only update uniforms. Smooth renders
 at quarter resolution (the upscale is the softness, no CSS blur); pixel at full resolution
 with coordinates and hue quantised in the shader. `<html>` carries the page background and
-`<body>` is transparent under color on so the canvas shows through; `.nav-container`, `main`,
-`footer` and `.project-sidebar` sit on `--panel-bg` at 92 % opacity, and only the nav and the
-footer add a `backdrop-filter: blur(4px)` (opaque and bordered under pixel). Pure helpers
+`<body>` is transparent under color on so the canvas shows through. There are no panels:
+color never changes layout, and `node _tests/tools/layout-invariance.cjs <base url>` fails if
+a theme or color flip moves any text within a style. Pure helpers
 `uniformsFor`, `decide`, `ease` are tested in `_tests/backdrop.test.cjs`;
 `_tests/tools/perf.cjs` probes frame time and long tasks and `_tests/tools/backdrop-check.cjs`
 drives the color button in a browser.
