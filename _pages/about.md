@@ -3,6 +3,7 @@ permalink: /about
 layout: post
 title: About
 title_key: about
+content_lang: en
 ---
 
 Hello! I'm Đorđe, here you'll find some of my thoughts. Thoughts I had to write instead of [screaming them into a hole in the ground](https://en.wikipedia.org/wiki/The_Goat%27s_Ears_of_the_Emperor_Trojan).

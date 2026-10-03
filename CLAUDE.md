@@ -264,8 +264,9 @@ A fourth switch, `data-lang` on `<html>` (`en`, `yu` Naš in Latin, `sr` Срп�
 storage key `lang`, default `en`, never the browser language), set before first paint by
 `_includes/head.html` and changed by the nav menu (`_includes/lang-menu.html`,
 `assets/js/lang.js`, shortcut `l`). Posts carry `lang:` in front matter (default `en` from
-`_config.yml`); post pages fix `<html lang>` to the post's (`data-content-lang`), other pages
-follow the choice (`en`, `sh`, `sr-Cyrl`).
+`_config.yml`); post pages fix `<html lang>` to the post's (`data-content-lang`), and so do
+pages whose body has one language via `content_lang:` in front matter (About is `en`); other
+pages follow the choice (`en`, `sh`, `sr-Cyrl`). The nav and titles still switch on every page.
 
 Nothing is swapped by script. Liquid writes every string in all three languages
 (`_data/i18n.yml` through `{% include t.html key="..." %}`, dates through `date.html`), each
