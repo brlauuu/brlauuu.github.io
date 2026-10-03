@@ -116,12 +116,23 @@ function diff(a, b) {
     await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     const filters = await page.evaluate(() => ({
       title: getComputedStyle(document.querySelector('.post-title')).filter,
-      line: getComputedStyle(document.querySelector('.post-line') || document.querySelector('footer'), '::after').filter,
-      lineEl: document.querySelector('.post-line') ? '.post-line' : 'footer',
+      line: getComputedStyle(document.querySelector('.post-line')).filter,
     }));
     const ok = filters.title.includes('url(') && !filters.line.includes('url(');
     if (!ok) failed++;
     console.log(`${ok ? 'PASS' : 'FAIL'}  melt on headings only :: ${JSON.stringify(filters)}`);
+    await ctx.close();
+  }
+  // SMIL melt runs with color on in smooth style and freezes under reduced motion.
+  for (const reduced of [false, true]) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+    const page = await ctx.newPage();
+    await page.addInitScript(() => localStorage.setItem('color', 'on'));
+    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    const paused = await page.evaluate(() => document.querySelector('svg.melt-filters').animationsPaused());
+    const ok = paused === reduced;
+    if (!ok) failed++;
+    console.log(`${ok ? 'PASS' : 'FAIL'}  melt ${reduced ? 'paused under reduced motion' : 'running with color on'} :: paused=${paused}`);
     await ctx.close();
   }
   await browser.close();
