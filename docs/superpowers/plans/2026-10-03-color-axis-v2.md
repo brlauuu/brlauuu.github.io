@@ -322,7 +322,7 @@ Expected: no output.
 - [ ] **Step 7: Run the invariance check**
 
 ```bash
-pkill -f 'jekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
+pkill -f '[j]ekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
 node _tests/tools/layout-invariance.cjs http://localhost:4132; echo exit=$?
 ```
 
@@ -568,7 +568,7 @@ void main() {
 - [ ] **Step 7: Check that the shader compiles and draws in a browser**
 
 ```bash
-pkill -f 'jekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
+pkill -f '[j]ekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
 node _tests/tools/backdrop-check.cjs http://localhost:4132; echo exit=$?
 ```
 
@@ -653,7 +653,7 @@ vec3 dread(vec2 p, vec2 uv, float t, float calm, vec2 m, float ms) {
 - [ ] **Step 3: Browser check and look**
 
 ```bash
-pkill -f 'jekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
+pkill -f '[j]ekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
 node _tests/tools/backdrop-check.cjs http://localhost:4132; echo exit=$?
 COLOR=on node _tests/screenshot.cjs http://localhost:4132/2026-01-28/industrialized-gambling dark /tmp/claude-shots-dread.png full
 ```
@@ -852,7 +852,7 @@ Append to `_tests/tools/layout-invariance.cjs`, before `await browser.close();`:
 ```
 
 ```bash
-pkill -f 'jekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
+pkill -f '[j]ekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
 node _tests/tools/layout-invariance.cjs http://localhost:4132; echo exit=$?
 ```
 
@@ -1073,7 +1073,7 @@ Append to `_tests/tools/layout-invariance.cjs`, before `await browser.close();`:
 - [ ] **Step 9: Run everything and look**
 
 ```bash
-pkill -f 'jekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
+pkill -f '[j]ekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
 node --test _tests/*.test.cjs 2>&1 | grep -E '^# (pass|fail)'
 node _tests/tools/layout-invariance.cjs http://localhost:4132; echo exit=$?
 for t in light dark; do COLOR=on node _tests/screenshot.cjs http://localhost:4132/2026-01-28/industrialized-gambling $t /tmp/claude-shots-melt-$t.png; done
@@ -1181,7 +1181,7 @@ const base = (process.argv[2] ?? 'http://localhost:4132').replace(/\/$/, '');
 - [ ] **Step 2: Run it**
 
 ```bash
-pkill -f 'jekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
+pkill -f '[j]ekyll serve --port 4132'; bundle exec jekyll serve --port 4132 --no-watch > /tmp/claude-jekyll.log 2>&1 & sleep 15
 node _tests/tools/contrast-sample.cjs http://localhost:4132; echo exit=$?
 ```
 
@@ -1211,7 +1211,7 @@ for u in / /archive /about /2026-01-28/industrialized-gambling /2020-12-09/Pecul
     cmp -s $S/off-m$n-$t.png $S/off-b$n-$t.png && echo "same $u $t" || echo "DIFF $u $t"
   done
 done
-pkill -f 'jekyll serve --port 4133'; git worktree remove --force $S/master-src
+pkill -f '[j]ekyll serve --port 4133'; git worktree remove --force $S/master-src
 ```
 
 Expected: all `same`, except `/` may differ by the live GitHub sidebar (check the diff box is inside the sidebar). Any other DIFF is a regression: the usual cause is the melt SVG; confirm `.melt-filters` has zero size.
@@ -1264,7 +1264,7 @@ node _tests/tools/layout-invariance.cjs http://localhost:4132; echo invariance=$
 node _tests/tools/backdrop-check.cjs http://localhost:4132; echo backdrop=$?
 node _tests/tools/constellation-check.cjs http://localhost:4132; echo constellation=$?
 node _tests/tools/contrast-sample.cjs http://localhost:4132; echo contrast=$?
-pkill -f 'jekyll serve --port 4132'
+pkill -f '[j]ekyll serve --port 4132'
 git add _tests/tools/contrast-sample.cjs CLAUDE.md assets/js/backdrop.js
 git commit -m "Contrast sampling tool and backdrop docs for color axis v2
 
