@@ -2,8 +2,9 @@
 layout: post
 title: "A Peculiar Case of BLAT Output"
 author: "Đorđe Relić"
-lang: en
 tags: [bioinformatics, sequence-alignment, tools]
+ref: Peculiar-case-of-BLAT-output
+redirect_from: /2020-12-09/Peculiar-case-of-BLAT-output
 ---
 
 In this blog post, I will discuss how I used BLAT to solve a protein sequence alignment task.

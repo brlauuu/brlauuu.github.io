@@ -2,8 +2,9 @@
 layout: post
 title: "The bottleneck moved: the effect of agent-assisted software engineering in the pharma industry"
 author: "Đorđe Relić"
-lang: en
 tags: [software development, pharma, biotech, ai, opinion]
+ref: the-bottleneck-moved
+redirect_from: /2026-10-03/the-bottleneck-moved
 ---
 
 As in all industries, software development in the pharma/biotech industry is changing rapidly and irreversibly. As someone whose core work is focused on designing and developing software in this industry, I've been observing how my work has changed, but also how it is yet to change. In this, I'll offer a combination of indisputable facts but also my opinions on what are the current problems and what would be necessary to change them.

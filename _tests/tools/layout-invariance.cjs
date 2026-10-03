@@ -12,8 +12,8 @@ const base = (process.argv[2] ?? 'http://localhost:4132').replace(/\/$/, '');
 
 const PAGES = [
   '/', '/archive', '/tags', '/about',
-  '/2026-01-28/industrialized-gambling', '/2026-10-03/the-bottleneck-moved',
-  '/2020-12-09/Peculiar-case-of-BLAT-output', '/2021-02-02/motevowrapper',
+  '/en/2026-01-28/industrialized-gambling', '/en/2026-10-03/the-bottleneck-moved',
+  '/en/2020-12-09/Peculiar-case-of-BLAT-output', '/en/2021-02-02/motevowrapper',
 ];
 const WIDTHS = [1280, 390];
 const STYLES = ['smooth', 'pixel'];
@@ -102,7 +102,7 @@ function diff(a, b) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await ctx.newPage();
     await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.goto(base + '/en/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     const name = await page.evaluate(() => getComputedStyle(document.querySelector('main h2')).animationName);
     const ok = name === expected;
     if (!ok) failed++;
@@ -116,7 +116,7 @@ function diff(a, b) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await ctx.newPage();
     await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.goto(base + '/en/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     const at = (ms) => page.evaluate((time) => {
       document.getAnimations().forEach((a) => { a.currentTime = time; });
       return getComputedStyle(document.querySelector('main h2')).filter;
@@ -132,7 +132,7 @@ function diff(a, b) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await ctx.newPage();
     await page.addInitScript(() => localStorage.setItem('color', 'on'));
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.goto(base + '/en/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     const filters = await page.evaluate(() => ({
       title: getComputedStyle(document.querySelector('.post-title')).filter,
       line: getComputedStyle(document.querySelector('.post-line')).filter,
@@ -147,7 +147,7 @@ function diff(a, b) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
     const page = await ctx.newPage();
     await page.addInitScript(() => localStorage.setItem('color', 'on'));
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.goto(base + '/en/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     const paused = await page.evaluate(() => document.querySelector('svg.melt-filters').animationsPaused());
     const ok = paused === reduced;
     if (!ok) failed++;

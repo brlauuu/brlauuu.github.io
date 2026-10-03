@@ -2,8 +2,9 @@
 layout: post
 title: "Industrialized gambling will have a geopolitical effect"
 author: "Đorđe Relić"
-lang: en
 tags: [geopolitics, opinion, gambling, scaling markets]
+ref: industrialized-gambling
+redirect_from: /2026-01-28/industrialized-gambling
 ---
 
 Following the rapid development of online gambling and prediction markets in the United States made me think quite a bit about where this is heading and I came to have quite a pessimistic expectation.

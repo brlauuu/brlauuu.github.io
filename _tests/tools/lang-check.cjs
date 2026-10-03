@@ -47,7 +47,7 @@ const shownLangs = (page, sel) => page.$$eval(sel, (els) => els.filter((e) => e.
   const afterFlip = await page.$$eval('.constellation .node--post', (els) => els.map((e) => e.getAttribute('href')));
   ok('a theme flip keeps the yu graph', afterFlip.length === nodeHrefs.length && afterFlip.every((h) => h === yuPost));
 
-  await page.goto(`${base}/2026-10-03/the-bottleneck-moved`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/en/2026-10-03/the-bottleneck-moved`, { waitUntil: 'networkidle' });
   ok('an en post keeps lang en', (await attr('lang')) === 'en');
   ok('the post notes its language', (await shown(page, '.post-lang-note')).join().includes('Dostupno samo na'));
 

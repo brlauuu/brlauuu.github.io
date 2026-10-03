@@ -54,12 +54,13 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
 ## Content Structure
 
 ### Blog Posts
-- Location: `_posts/` for English, `_posts/yu/` for Naš (Latin) and `_posts/sr/` for Српски
-  (Cyrillic). `_config.yml` defaults give folder posts their `lang` and `locale: sr_RS`
-  (og:locale has no Serbo-Croatian code) and a `/yu/` or `/sr/` URL prefix, so one post can
-  exist in both scripts on the same date; English posts use `locale: en_US` and no prefix.
-  The two versions of a post share `ref:`, so each links to the other. `_tests/front-matter.test.cjs` fails on an unknown `lang` or one
-  that contradicts the folder.
+- Location: `_posts/en/` for English, `_posts/yu/` for Naš (Latin) and `_posts/sr/` for Српски
+  (Cyrillic). `_config.yml` defaults give each folder's posts their `lang`, an `/en/`, `/yu/` or
+  `/sr/` URL prefix, and for yu/sr `locale: sr_RS` (og:locale has no Serbo-Croatian code;
+  English uses the site's `en_US`). Every post exists in all three languages under one slug;
+  the versions share `ref:` (the slug), so each links to the others. English posts that
+  predate the prefix carry `redirect_from:` their old URL (jekyll-redirect-from).
+  `_tests/front-matter.test.cjs` fails on an unknown `lang` or one that contradicts the folder.
 - Naming: `YYYY-MM-DD-title.md`
 - Format: Markdown with YAML front matter
 - Required front matter:
@@ -68,7 +69,7 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
   layout: post
   title: "Post Title"
   author: "Đorđe Relić"
-  lang: en                  # Optional: set by the folder (`en` in _posts/)
+  ref: post-slug            # Shared by all language versions of the post
   tags: [tag1, tag2, tag3]  # Optional - posts can have tags or no tags
   ---
   ```

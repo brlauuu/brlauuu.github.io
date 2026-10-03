@@ -6,7 +6,7 @@ const path = require('node:path');
 const dir = path.join(__dirname, '../_posts');
 const LANGS = ['en', 'yu', 'sr'];
 // _config.yml gives posts in these folders their language; elsewhere it is en.
-const FOLDER_LANGS = { yu: 'yu', sr: 'sr' };
+const FOLDER_LANGS = { en: 'en', yu: 'yu', sr: 'sr' };
 
 // Every post under _posts, with the language its folder implies.
 function posts() {
