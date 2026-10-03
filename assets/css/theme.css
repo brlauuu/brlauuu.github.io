@@ -183,6 +183,13 @@ h1.post-title {
   color: var(--title-color);
 }
 
+/* Tale's 4rem title is too large beside the 800px reading column. */
+.post-title,
+.tags-header-title {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
 /* Small screens: Tale keeps the 4rem title and justified text at every width,
    which clips long title words and opens wide gaps between words. */
 @media (max-width: 599px) {
@@ -1205,7 +1212,11 @@ footer span {
 }
 
 [data-style="pixel"] .post-title,
-[data-style="pixel"] .tags-header-title { font-size: 2rem; }
+[data-style="pixel"] .tags-header-title { font-size: 2.25rem; }
+@media (max-width: 599px) {
+  [data-style="pixel"] .post-title,
+  [data-style="pixel"] .tags-header-title { font-size: 2rem; }
+}
 [data-style="pixel"] .catalogue-title { font-size: 1.5rem; }
 [data-style="pixel"] h1 { font-size: 1.5rem; }
 [data-style="pixel"] h2,
