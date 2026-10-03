@@ -109,11 +109,14 @@ All in CSS, keyed on `html[data-lang]`:
 ## Post pages
 
 - The post body is never hidden.
-- When the chosen language differs from the post's, a short note under the header reads
-  `only_in` plus the post language's flag and name. If a post with the same `ref` exists
-  in the chosen language, the note links to it instead (text: that version's flag and
-  name). The note is one element per language, shown by CSS like the strings.
-- Previous/next arrows, the feed and the sitemap stay language-agnostic.
+- Every post exists in all three languages under one `ref` (#54, #55), so a post page
+  switches by navigating (#56): choosing another language opens that version with
+  `location.replace`, keeping the hash. Opening a post in another language than the
+  stored choice redirects to the chosen version before first paint; with nothing stored
+  the page stays. The versions are `<link rel="alternate" hreflang>` tags in the head,
+  read through `data-lang-version` and `data-path`. The language note is gone.
+- Previous/next arrows step through posts in the post's language; the feed and the
+  sitemap stay language-agnostic.
 
 ## Testing
 

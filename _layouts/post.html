@@ -36,32 +36,6 @@ layout: default
   </div>
   {% endif %}
 
-  {% if page.collection == "posts" %}
-  {% comment %}
-  When the chosen language is not the post's: a link to the version in the chosen
-  language (same `ref`) when one exists; otherwise the languages it is available in,
-  linking any other version (a Naš post with English chosen also offers Српски).
-  {% endcomment %}
-  {% assign here = site.data.languages | where: "key", page.lang | first %}
-  {% for l in site.data.languages %}{% unless l.key == page.lang %}
-    {% assign other = nil %}
-    {% if page.ref %}{% assign other = site.posts | where: "ref", page.ref | where: "lang", l.key | first %}{% endif %}
-  <p class="post-lang-note" data-t="{{ l.key }}" lang="{{ l.code }}">
-    {%- if other -%}
-    <a href="{{ other.url | relative_url }}">{% include flag.html lang=l.key %} {{ l.name }}</a>
-    {%- else -%}
-    {{ site.data.i18n.only_in[l.key] }} <span lang="{{ here.code }}">{% include flag.html lang=page.lang %} {{ here.name }}</span>
-    {%- for v in site.data.languages -%}
-    {%- unless v.key == page.lang or v.key == l.key or page.ref == nil -%}
-    {%- assign version = site.posts | where: "ref", page.ref | where: "lang", v.key | first -%}
-    {%- if version %} · <a href="{{ version.url | relative_url }}" lang="{{ v.code }}">{% include flag.html lang=v.key %} {{ v.name }}</a>{% endif -%}
-    {%- endunless -%}
-    {%- endfor -%}
-    {%- endif -%}
-  </p>
-  {% endunless %}{% endfor %}
-  {% endif %}
-
   <div class="post-line"></div>
 
   {{ content }}
@@ -70,12 +44,28 @@ layout: default
     {% include disqus.html %}
   {% endif %}
 
+  {% comment %}
+  Newer (left) and older (right) posts in this post's language. page.next and
+  page.previous run through every language, and the next one is usually this
+  post's own translation.
+  {% endcomment %}
+  {% assign newer = nil %}{% assign older = nil %}
+  {% if page.collection == "posts" %}
+    {% assign same_lang = site.posts | where: "lang", page.lang %}
+    {% for p in same_lang %}
+      {% if p.url == page.url %}
+        {% assign i_newer = forloop.index0 | minus: 1 %}{% assign i_older = forloop.index0 | plus: 1 %}
+        {% unless forloop.first %}{% assign newer = same_lang[i_newer] %}{% endunless %}
+        {% unless forloop.last %}{% assign older = same_lang[i_older] %}{% endunless %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
   <div class="pagination">
-    {% if page.next.url %}
-      <a href="{{ page.next.url | prepend: site.baseurl }}" class="left arrow">&#8592;</a>
+    {% if newer %}
+      <a href="{{ newer.url | prepend: site.baseurl }}" class="left arrow">&#8592;</a>
     {% endif %}
-    {% if page.previous.url %}
-      <a href="{{ page.previous.url | prepend: site.baseurl }}" class="right arrow">&#8594;</a>
+    {% if older %}
+      <a href="{{ older.url | prepend: site.baseurl }}" class="right arrow">&#8594;</a>
     {% endif %}
 
     <a href="#" class="top">Top</a>

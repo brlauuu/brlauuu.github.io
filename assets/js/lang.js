@@ -2,6 +2,9 @@
 // _includes/head.html sets it before first paint; this file wires the nav menu
 // (_includes/lang-menu.html), persists the choice and emits `themechange`.
 // Text in every language is already in the page; CSS shows the active one.
+// On a post, choosing another language opens that language's version of it
+// instead (the <link data-lang-version> tags in head.html), replacing this
+// history entry so Back does not bounce between versions.
 (() => {
   const LANGS = ['en', 'yu', 'sr'];
   const CODES = { en: 'en', yu: 'sh', sr: 'sr-Cyrl' };
@@ -21,6 +24,13 @@
     return index;
   }
 
+  // Path of the post's version in `lang`, or null when this is not a post, it is
+  // already in `lang`, or no such version exists. `versions` maps key to path.
+  function versionFor(lang, contentLang, versions) {
+    if (!contentLang || contentLang === lang) return null;
+    return versions[lang] || null;
+  }
+
   // True when focus moved to something outside an open menu (Tab past the last
   // option). A null target (a click on empty page) is left to the outside-click
   // listener, which must not hand focus back to the button.
@@ -28,13 +38,16 @@
     return Boolean(menu && menu.open && relatedTarget && !menu.contains(relatedTarget));
   }
 
-  function init(doc, storage) {
+  function init(doc, storage, location) {
     const html = doc.documentElement;
     const read = (key) => { try { return storage.getItem(key); } catch { return null; } };
     const write = (key, value) => { try { storage.setItem(key, value); } catch { /* private mode or blocked storage */ } };
     const menu = doc.querySelector('[data-lang-menu]');
     const summary = menu ? menu.querySelector('summary') : null;
     const options = menu ? Array.from(menu.querySelectorAll('[data-set-lang]')) : [];
+    const versions = {};
+    Array.from(doc.querySelectorAll('link[data-lang-version]'))
+      .forEach((l) => { versions[l.dataset.langVersion] = l.dataset.path; });
 
     const current = () => ({
       theme: html.getAttribute('data-theme'),
@@ -57,6 +70,13 @@
     }
 
     function choose(lang) {
+      const version = versionFor(lang, html.getAttribute('data-content-lang'), versions);
+      if (version && location) {
+        write('lang', lang);
+        close(false);
+        location.replace(version + location.search + location.hash);
+        return;
+      }
       const changed = html.getAttribute('data-lang') !== lang;
       apply(lang);
       write('lang', lang);
@@ -99,10 +119,10 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { LANGS, CODES, NAMES, resolveLang, menuStep, shouldCloseOnFocusOut, init };
+    module.exports = { LANGS, CODES, NAMES, resolveLang, menuStep, versionFor, shouldCloseOnFocusOut, init };
   } else if (typeof document !== 'undefined') {
     let storage = null;
     try { storage = window.localStorage; } catch { /* storage access denied */ }
-    init(document, storage ?? { getItem() { return null; }, setItem() {} });
+    init(document, storage ?? { getItem() { return null; }, setItem() {} }, window.location);
   }
 })();

@@ -15,6 +15,16 @@
   <script defer src="/_vercel/insights/script.js"></script>
   {% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ site.url }}/feed.xml" title="{{ site.title }}" />
+  {%- if page.collection == "posts" and page.ref %}
+  <!-- Every language version of this post (shared ref), this one included. lang.js and the
+       script below read data-path, so switching never leaves the current host. -->
+  {%- for l in site.data.languages %}
+  {%- assign version = site.posts | where: "ref", page.ref | where: "lang", l.key | first %}
+  {%- if version %}
+  <link rel="alternate" hreflang="{{ l.code }}" href="{{ version.url | absolute_url }}" data-lang-version="{{ l.key }}" data-path="{{ version.url | relative_url }}">
+  {%- endif %}
+  {%- endfor %}
+  {%- endif %}
 
   <!-- Set the four theme axes before first paint so the page never flashes the wrong look.
        Keep in sync with assets/js/theme.js and assets/js/lang.js. -->
@@ -35,6 +45,14 @@
       // attribute (data-content-lang); other pages take the chosen language's.
       var lang = null;
       try { lang = storage && storage.getItem('lang'); } catch (e) {}
+      // A post opened in another language than the stored choice redirects to the
+      // chosen version. Only a stored choice redirects, so crawlers and first-time
+      // visitors stay on the link they followed.
+      var here = html.getAttribute('data-content-lang');
+      var version = document.querySelector('link[data-lang-version="' + lang + '"]');
+      if ((lang === 'en' || lang === 'yu' || lang === 'sr') && here && here !== lang && version) {
+        location.replace(version.getAttribute('data-path') + location.search + location.hash);
+      }
       if (lang !== 'yu' && lang !== 'sr') lang = 'en';
       html.setAttribute('data-lang', lang);
       if (!html.hasAttribute('data-content-lang')) html.setAttribute('lang', { en: 'en', yu: 'sh', sr: 'sr-Cyrl' }[lang]);

@@ -1,11 +1,12 @@
-// Usage: node _tests/tools/lang-check.cjs <base url> <path of a yu post>
-// Needs at least one yu post with tags in the build (add a throwaway one locally).
+// Usage: node _tests/tools/lang-check.cjs <base url>
 // Drives the language menu and checks filtering, translated text, <html lang>,
-// persistence, the keyboard, no-JS English and the menu at 375 px.
+// persistence, switching between a post's versions, the arrival redirect, the
+// keyboard, no-JS English and the menu at 375 px.
 // Prints ok/FAIL per check and exits non-zero on any FAIL.
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 const base = (process.argv[2] ?? 'http://localhost:4141').replace(/\/$/, '');
-const yuPost = process.argv[3];
+const post = '2026-10-03/the-bottleneck-moved';
+const path = (page) => new URL(page.url()).pathname;
 let failed = 0;
 const ok = (name, cond, extra = '') => { if (!cond) failed++; console.log(`${cond ? 'ok  ' : 'FAIL'} ${name}${extra ? ` (${extra})` : ''}`); };
 const shown = (page, sel) => page.$$eval(sel, (els) => els.filter((e) => e.getClientRects().length > 0).map((e) => e.innerText.trim()));
@@ -36,20 +37,24 @@ const shownLangs = (page, sel) => page.$$eval(sel, (els) => els.filter((e) => e.
 
   await page.goto(`${base}/archive`, { waitUntil: 'networkidle' });
   ok('archive hides en years', (await shownLangs(page, '.archive-year')).every((l) => l.split(' ').includes('yu')));
-  ok('archive shows the yu note', (await shown(page, '.lang-empty')).join().includes('Arhiva je još prazna'));
+  ok('archive lists yu years', (await shownLangs(page, '.archive-year')).length > 0);
+  ok('archive shows no empty note', (await shown(page, '.lang-empty')).length === 0);
 
   await page.goto(`${base}/tags`, { waitUntil: 'networkidle' });
   ok('tags list only yu posts', (await shownLangs(page, '.tag-posts li')).every((l) => l === 'yu'));
   const nodeHrefs = await page.$$eval('.constellation .node--post', (els) => els.map((e) => e.getAttribute('href')));
-  ok('constellation holds only yu posts', nodeHrefs.length > 0 && nodeHrefs.every((h) => h === yuPost), nodeHrefs.join(','));
+  ok('constellation holds only yu posts', nodeHrefs.length > 0 && nodeHrefs.every((h) => h.startsWith('/yu/')), nodeHrefs.join(','));
   await page.click('[data-toggle="theme"]');
   await page.waitForTimeout(300);
   const afterFlip = await page.$$eval('.constellation .node--post', (els) => els.map((e) => e.getAttribute('href')));
-  ok('a theme flip keeps the yu graph', afterFlip.length === nodeHrefs.length && afterFlip.every((h) => h === yuPost));
+  ok('a theme flip keeps the yu graph', afterFlip.length === nodeHrefs.length && afterFlip.every((h) => h.startsWith('/yu/')));
 
-  await page.goto(`${base}/en/2026-10-03/the-bottleneck-moved`, { waitUntil: 'networkidle' });
-  ok('an en post keeps lang en', (await attr('lang')) === 'en');
-  ok('the post notes its language', (await shown(page, '.post-lang-note')).join().includes('Dostupno samo na'));
+  await page.goto(`${base}/en/${post}`, { waitUntil: 'networkidle' });
+  ok('an en post redirects to the chosen yu version', path(page) === `/yu/${post}`, path(page));
+  ok('the yu post has lang sh', (await attr('lang')) === 'sh');
+  ok('the post has no language note', (await page.$$('.post-lang-note')).length === 0);
+  const arrows = await page.$$eval('.pagination .arrow', (els) => els.map((e) => e.getAttribute('href')));
+  ok('arrows stay in yu', arrows.length > 0 && arrows.every((h) => h.startsWith('/yu/')), arrows.join(','));
 
   const focusOnOption = () => page.waitForFunction(() => document.activeElement?.dataset?.setLang);
   const isOpen = () => page.$eval('.lang-menu', (d) => d.open);
@@ -88,12 +93,34 @@ const shownLangs = (page, sel) => page.$$eval(sel, (els) => els.filter((e) => e.
   await page.keyboard.press('l');
   await focusOnOption();
   await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Enter');
-  ok('the note switches to Cyrillic', (await shown(page, '.post-lang-note')).join().includes('Доступно само на'));
+  await Promise.all([page.waitForURL(`**/sr/${post}`), page.keyboard.press('Enter')]);
+  ok('choosing sr opens the sr version', path(page) === `/sr/${post}`, path(page));
+  ok('the sr post has lang sr-Cyrl', (await attr('lang')) === 'sr-Cyrl');
+  ok('the choice is stored', (await page.evaluate(() => localStorage.getItem('lang'))) === 'sr');
+  await page.goBack({ waitUntil: 'networkidle' });
+  ok('Back skips the version switched from', path(page) === '/tags', path(page));
+
+  await page.goto(`${base}/en/${post}#fn:1`, { waitUntil: 'networkidle' });
+  ok('the redirect keeps the hash', page.url().endsWith(`/sr/${post}#fn:1`), page.url());
 
   await page.evaluate(() => localStorage.setItem('lang', 'klingon'));
   await page.reload({ waitUntil: 'networkidle' });
   ok('an unknown stored value falls back to en', (await attr('data-lang')) === 'en');
+  ok('an unknown stored value does not redirect', path(page) === `/sr/${post}`, path(page));
+
+  const fresh = await browser.newPage();
+  await fresh.goto(`${base}/sr/${post}`, { waitUntil: 'networkidle' });
+  ok('a first visit stays on the version it opened', path(fresh) === `/sr/${post}`, path(fresh));
+  await fresh.click('.lang-menu summary');
+  await fresh.click('[data-set-lang="sr"]');
+  ok('choosing the post\'s own language stays', path(fresh) === `/sr/${post}` && (await fresh.getAttribute('html', 'data-lang')) === 'sr');
+  await fresh.click('.lang-menu summary');
+  await Promise.all([fresh.waitForURL(`**/en/${post}`), fresh.click('[data-set-lang="en"]')]);
+  ok('choosing en from a fresh sr visit opens the en version', path(fresh) === `/en/${post}`, path(fresh));
+  await fresh.goto(`${base}/about`, { waitUntil: 'networkidle' });
+  await fresh.click('.lang-menu summary');
+  await fresh.click('[data-set-lang="yu"]');
+  ok('About switches in place', path(fresh) === '/about' && (await fresh.getAttribute('html', 'data-lang')) === 'yu');
 
   const phone = await browser.newPage({ viewport: { width: 375, height: 800 } });
   await phone.goto(`${base}/`, { waitUntil: 'networkidle' });
