@@ -317,6 +317,9 @@ The site is served from two places, both built automatically on every push to `m
   requests get Vercel preview deployments. `_config.vercel.yml` sets `vercel: true` and nothing
   else, so canonical, feed and sitemap URLs still point at github.io. Both files are excluded from
   the built site.
+- **Vercel Web Analytics** is on for the Vercel project. `_includes/head.html` adds
+  `/_vercel/insights/script.js` only when `site.vercel` is set, so github.io pages carry no
+  analytics and request nothing.
 
 ## Important Notes
 
