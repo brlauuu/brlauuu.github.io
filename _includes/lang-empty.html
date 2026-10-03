@@ -1,0 +1,19 @@
+{%- comment -%}
+One note per language whose list is empty. include.all: every post the page
+could list (no_posts when a language has none); include.shown: what the page
+lists; include.key: the note when a language has posts but none listed here;
+include.href: link target for {a}…{/a} in that note.
+{%- endcomment -%}
+{%- for l in site.data.languages -%}
+{%- assign total = include.all | where: "lang", l.key | size -%}
+{%- assign shown = include.shown | where: "lang", l.key | size -%}
+{%- if total == 0 -%}
+<p class="lang-empty" data-t="{{ l.key }}" lang="{{ l.code }}"><em>{{ site.data.i18n.no_posts[l.key] }}</em></p>
+{%- elsif shown == 0 and include.key -%}
+{%- comment -%} Liquid's tokenizer ends a {{ }} at the first "}", so the {a} markers go through variables. {%- endcomment -%}
+{%- assign a_open = "{a}" -%}
+{%- assign a_close = "{/a}" -%}
+{%- capture open -%}<a href="{{ include.href }}">{%- endcapture -%}
+<p class="lang-empty" data-t="{{ l.key }}" lang="{{ l.code }}"><em>{{ site.data.i18n[include.key][l.key] | replace: a_open, open | replace: a_close, "</a>" }}</em></p>
+{%- endif -%}
+{%- endfor -%}

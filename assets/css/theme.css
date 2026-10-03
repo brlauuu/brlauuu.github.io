@@ -311,6 +311,22 @@ pre {
   vertical-align: -1px;
 }
 
+/* Per-language empty notes on list pages (lang-empty.html). */
+.lang-empty-home .lang-empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.lang-empty-home .lang-empty em {
+  font-style: normal;
+}
+
+/* The notes wrapper is always the last child of .catalogue, so Tale's
+   .catalogue-item:last-child rule no longer reaches the last post. */
+.catalogue-item:nth-last-child(2) {
+  border: 0;
+}
+
 @keyframes sidenote-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
@@ -755,6 +771,14 @@ footer span {
   display: none;
 }
 
+/* Tale sets line-height 1.5 on every element, so a language span inside a
+   heading would grow the heading's line box; let it follow the heading. */
+h1 > [data-t],
+h2 > [data-t],
+h3 > [data-t] {
+  line-height: inherit;
+}
+
 /* Language menu (lang.js): a flag button and a panel under it. */
 .lang-menu {
   position: relative;
@@ -1057,6 +1081,7 @@ footer span {
 }
 
 [data-color="on"] .catalogue-item:last-child::after,
+[data-color="on"] .catalogue-item:nth-last-child(2)::after,
 [data-color="on"] .tag-section:last-child::after {
   content: none;
 }
