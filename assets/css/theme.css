@@ -563,6 +563,11 @@ footer span {
   overflow: visible;
 }
 
+/* No tagged posts in the chosen language: the list's empty note says so. */
+.constellation[data-empty="true"] {
+  display: none;
+}
+
 .constellation .link {
   stroke: var(--border-color);
   stroke-width: 1;
