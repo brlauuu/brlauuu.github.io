@@ -36,3 +36,21 @@ test('ease moves toward the target and converges', () => {
   assert.ok(Math.abs(v - 10) < 1e-3);
   assert.equal(ease(3, 3, 1, 0.1), 3);
 });
+
+test('laneFor maps the column rect to canvas pixels with a soft edge', () => {
+  const { laneFor } = load();
+  assert.deepEqual(laneFor({ left: 340, right: 940, width: 600 }, 1280, 0.25), [85, 235, 15]);
+  assert.deepEqual(laneFor({ left: 100, right: 500, width: 400 }, 1280, 1), [100, 500, 60]);
+});
+
+test('laneFor falls back to the full width without a usable rect', () => {
+  const { laneFor } = load();
+  assert.deepEqual(laneFor(null, 1280, 0.25), [0, 320, 15]);
+  assert.deepEqual(laneFor({ left: 0, right: 0, width: 0 }, 390, 1), [0, 390, 60]);
+  assert.deepEqual(laneFor({ left: NaN, right: NaN, width: NaN }, 390, 1), [0, 390, 60]);
+});
+
+test('laneFor clamps the column to the viewport', () => {
+  const { laneFor } = load();
+  assert.deepEqual(laneFor({ left: -20, right: 420, width: 440 }, 390, 1), [0, 390, 60]);
+});

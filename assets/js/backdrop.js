@@ -5,6 +5,7 @@
   const INTENSITY = 1.0;      // the one knob: amplitude of everything
   const GRID_CSS_PX = 4;      // pixel style cell size in CSS pixels
   const REMOVE_MS = 300;    // matches the body background transition
+  const LANE_SOFT_CSS_PX = 60; // soft edge of the calm reading lane
 
   function uniformsFor({ theme, style }) {
     return { light: theme === 'dark' ? 0 : 1, grid: style === 'pixel' ? GRID_CSS_PX : 0 };
@@ -18,6 +19,17 @@
   // Exponential approach: after `tau` seconds about 63% of the gap is closed.
   function ease(current, target, dt, tau) {
     return current + (target - current) * (1 - Math.exp(-dt / tau));
+  }
+
+  // The reading column in canvas pixels: [left, right, soft edge]. Without a usable
+  // rect (no main, zero width) the whole width is the lane, so text is never on the
+  // wild part of the field by accident.
+  function laneFor(rect, viewWidth, scale) {
+    const soft = LANE_SOFT_CSS_PX * scale;
+    if (!rect || !(rect.width > 0)) return [0, viewWidth * scale, soft];
+    const left = Math.max(0, Math.min(viewWidth, rect.left));
+    const right = Math.max(left, Math.min(viewWidth, rect.right));
+    return [left * scale, right * scale, soft];
   }
 
   const VERTEX = `
@@ -37,10 +49,77 @@ uniform float u_pointerStrength;
 uniform float u_light;
 uniform float u_grid;
 uniform float u_intensity;
+uniform vec3 u_lane;          // reading column: left, right, soft edge (canvas px)
 
 vec3 hsl2rgb(vec3 c) {
   vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
   return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+}
+
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+}
+
+float fbm(vec2 p) {
+  float v = 0.0, a = 0.5;
+  for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
+  return v;
+}
+
+// 1 inside the reading column, 0 outside, with a soft edge.
+float laneMask(float x) {
+  float e = max(u_lane.z, 1.0);
+  return smoothstep(u_lane.x - e, u_lane.x + e, x) * (1.0 - smoothstep(u_lane.y - e, u_lane.y + e, x));
+}
+
+// Light: candy marbling (domain-warped noise) stirred by the pointer, with drips.
+vec3 acid(vec2 p, vec2 uv, float aspect, float t, float calm, vec2 m, float ms) {
+  vec2 sw = p - m;
+  float stir = ms * exp(-dot(sw, sw) * 20.0);
+  float ang = stir * 2.5;
+  p = m + mat2(cos(ang), -sin(ang), sin(ang), cos(ang)) * sw;
+  float amp = mix(1.0, 0.5, calm) * u_intensity;
+  vec2 q = vec2(fbm(p * 2.0 + vec2(0.0, t * 0.03)), fbm(p * 2.0 + vec2(5.2, 1.3) - t * 0.025));
+  vec2 r = vec2(fbm(p * 2.0 + 4.0 * amp * q + vec2(1.7, 9.2) + t * 0.02),
+                fbm(p * 2.0 + 4.0 * amp * q + vec2(8.3, 2.8)));
+  float f = fbm(p * 2.0 + 4.0 * amp * r);
+  float hue = fract(f * 1.6 + q.x * 0.4 + t * 0.01);
+  if (u_grid > 0.0) hue = floor(hue * 12.0) / 12.0;
+  vec3 col = hsl2rgb(vec3(hue, 0.95, 0.6 + 0.08 * sin(f * 6.0)));
+
+  // Drips: twelve columns, each a capsule from the top edge with a bulging tip,
+  // thinning as it stretches; fades into a pool at the bottom and starts again.
+  float edge = u_grid > 0.0 ? 0.0 : 0.004;
+  float yt = 1.0 - uv.y;                       // distance from the top, 0..1
+  for (int i = 0; i < 12; i++) {
+    float fi = float(i);
+    float x0 = (fi + 0.5) / 12.0 + (hash(vec2(fi, 1.0)) - 0.5) * 0.05;
+    float speed = 0.015 + 0.02 * hash(vec2(fi, 2.0));
+    float phase = fract(t * speed + hash(vec2(fi, 3.0)));
+    float len = phase * 1.15;
+    float w = (0.010 + 0.010 * hash(vec2(fi, 4.0))) * mix(1.0, 0.6, phase);
+    float dx = (uv.x - x0) * aspect;
+    float body = length(vec2(dx, yt - clamp(yt, 0.0, len))) - w;
+    float tip = length(vec2(dx, yt - len)) - w * 1.4;
+    float d = min(body, tip);
+    float fade = 1.0 - smoothstep(0.85, 1.0, phase);
+    float cover = (edge > 0.0 ? smoothstep(edge, -edge, d) : step(d, 0.0)) * fade;
+    float pool = smoothstep(1.0, 0.0, length(vec2(dx / (w * 5.0), (1.0 - yt) / 0.02)))
+               * smoothstep(0.8, 1.0, phase);
+    float dripHue = fract(hash(vec2(fi, 5.0)) + t * 0.02);
+    if (u_grid > 0.0) dripHue = floor(dripHue * 12.0) / 12.0;
+    vec3 paint = hsl2rgb(vec3(dripHue, 1.0, 0.55));
+    float rim = smoothstep(-0.006, 0.0, d) * cover;
+    float gloss = smoothstep(-w * 0.7, -w * 0.4, dx) * smoothstep(-w * 0.1, -w * 0.35, dx) * cover;
+    col = mix(col, paint * (1.0 - 0.35 * rim), max(cover, pool));
+    col = mix(col, vec3(1.0), gloss * 0.55);
+  }
+  return col;
 }
 
 void main() {
@@ -48,34 +127,15 @@ void main() {
   if (u_grid > 0.0) frag = (floor(frag / u_grid) + 0.5) * u_grid;
   float aspect = u_resolution.x / u_resolution.y;
   vec2 uv = frag / u_resolution;
-  vec2 q = vec2(uv.x * aspect, uv.y);      // pointer space, unshifted
-  vec2 p = q;
-  float t = u_time;
-
-  p.y += t * 0.02;                          // the drip: slow downward drift
-  float v = sin(p.x * 3.0 + t * 0.15);
-  v += sin(p.y * 2.5 + t * 0.11);
-  v += sin((p.x + p.y) * 2.0 + t * 0.09);
-  v += sin(length(p - vec2(0.5 * aspect, 0.5)) * 4.0 - t * 0.13);
-
-  for (int i = 0; i < 4; i++) {           // four wandering blobs that merge
-    float fi = float(i);
-    vec2 c = vec2(0.5 * aspect + 0.4 * aspect * sin(t * 0.05 * (fi + 1.0) + fi),
-                  0.5 + 0.4 * cos(t * 0.07 * (fi + 1.3) + fi * 2.0));
-    float d = length(p - c);
-    v += 1.2 * exp(-d * d * 6.0);
-  }
-
+  vec2 p = vec2(uv.x * aspect, uv.y);
   vec2 m = vec2(u_pointer.x / u_resolution.x * aspect, u_pointer.y / u_resolution.y);
-  float dm = length(q - m);
-  float bulge = u_pointerStrength * exp(-dm * dm * 25.0);   // radius about a fifth of the view
-  v += bulge * 2.0;
-
-  float hue = fract(v * 0.12 * u_intensity + t * 0.025 + bulge * 0.3);
-  if (u_grid > 0.0) hue = floor(hue * 12.0) / 12.0;
-  float light = mix(0.26, 0.86, u_light) + 0.06 * sin(v);  // dark 0.20-0.32, light 0.80-0.92
-  float sat = mix(0.75, 0.6, u_light);
-  gl_FragColor = vec4(hsl2rgb(vec3(hue, sat, light)), 1.0);
+  float calm = laneMask(frag.x);
+  vec3 col = acid(p, uv, aspect, u_time, calm, m, u_pointerStrength);
+  // Quiet lane: desaturate and pull toward the page background.
+  float luma = dot(col, vec3(0.299, 0.587, 0.114));
+  col = mix(col, vec3(luma), 0.45 * calm);
+  col = mix(col, vec3(1.0), 0.35 * calm);
+  gl_FragColor = vec4(col, 1.0);
 }`;
 
   function compile(gl, type, source) {
@@ -97,6 +157,7 @@ void main() {
     let light = 1, lightTarget = 1, grid = 0;
     const pointer = { x: 0, y: 0, tx: 0, ty: 0, strength: 0, strengthTarget: 0 };
     let needResize = true;
+    let lane = [0, 1, 0];
 
     // The viewport without the scrollbar, so the canvas never forces one.
     const viewW = () => html.clientWidth;
@@ -138,7 +199,7 @@ void main() {
       gl.enableVertexAttribArray(aPos);
       gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
       loc = {};
-      for (const name of ['u_time', 'u_resolution', 'u_pointer', 'u_pointerStrength', 'u_light', 'u_grid', 'u_intensity']) {
+      for (const name of ['u_time', 'u_resolution', 'u_pointer', 'u_pointerStrength', 'u_light', 'u_grid', 'u_intensity', 'u_lane']) {
         loc[name] = gl.getUniformLocation(program, name);
       }
       return true;
@@ -150,6 +211,8 @@ void main() {
       canvas.width = Math.max(1, Math.round(w * scale));
       canvas.height = Math.max(1, Math.round(h * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);
+      const main = doc.querySelector('main');
+      lane = laneFor(main ? main.getBoundingClientRect() : null, w, canvas.width / w);
       needResize = false;
     }
 
@@ -172,6 +235,7 @@ void main() {
       gl.uniform1f(loc.u_light, light);
       gl.uniform1f(loc.u_grid, grid * scale);
       gl.uniform1f(loc.u_intensity, INTENSITY);
+      gl.uniform3f(loc.u_lane, lane[0], lane[1], lane[2]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
@@ -267,7 +331,7 @@ void main() {
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { uniformsFor, decide, ease, INTENSITY };
+    module.exports = { uniformsFor, decide, ease, laneFor, INTENSITY };
   } else if (typeof document !== 'undefined') {
     init(document, window);
   }
