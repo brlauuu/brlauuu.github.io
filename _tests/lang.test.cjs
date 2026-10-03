@@ -34,6 +34,17 @@ test('menuStep moves through the options and wraps at both ends', () => {
   assert.equal(menuStep(0, 'ArrowDown', 0), -1);
 });
 
+test('shouldCloseOnFocusOut closes only for a target outside an open menu', () => {
+  const { shouldCloseOnFocusOut } = load();
+  const inside = {};
+  const menu = { open: true, contains: (n) => n === inside };
+  assert.equal(shouldCloseOnFocusOut(menu, {}), true);
+  assert.equal(shouldCloseOnFocusOut(menu, inside), false);
+  assert.equal(shouldCloseOnFocusOut(menu, null), false);
+  assert.equal(shouldCloseOnFocusOut({ ...menu, open: false }, {}), false);
+  assert.equal(shouldCloseOnFocusOut(null, {}), false);
+});
+
 function fakeDom({ stored = {}, brokenStorage = false, contentLang = null } = {}) {
   const attrs = { 'data-theme': 'light', 'data-color': 'off', 'data-style': 'smooth', 'data-lang': 'en', lang: 'en' };
   if (contentLang) attrs['data-content-lang'] = contentLang;

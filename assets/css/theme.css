@@ -776,11 +776,15 @@ footer span {
   display: none;
 }
 
-/* Tale sets line-height 1.5 on every element, so a language span inside a
-   heading would grow the heading's line box; let it follow the heading. */
+/* Tale sets line-height 1.5 on every element, so a language span would change
+   the line box wherever master had bare text under another line-height. This
+   is a closed list of those places on purpose: a general [data-t] rule would
+   break spans that master already gave 1.5 (.post-info, <time>). */
 h1 > [data-t],
 h2 > [data-t],
-h3 > [data-t] {
+h3 > [data-t],
+.tag-count > [data-t],
+.catalogue-pinned > [data-t] {
   line-height: inherit;
 }
 
@@ -848,6 +852,14 @@ h3 > [data-t] {
   bottom: auto;
   margin: 0;
   text-align: left;
+}
+
+.nav .nav-toggles:focus-within {
+  opacity: 1;
+}
+
+.nav .nav-toggles:has(> .lang-menu[open]) {
+  opacity: 1;
 }
 
 .nav .lang-menu-list li {

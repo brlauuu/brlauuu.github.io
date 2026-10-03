@@ -21,6 +21,13 @@
     return index;
   }
 
+  // True when focus moved to something outside an open menu (Tab past the last
+  // option). A null target (a click on empty page) is left to the outside-click
+  // listener, which must not hand focus back to the button.
+  function shouldCloseOnFocusOut(menu, relatedTarget) {
+    return Boolean(menu && menu.open && relatedTarget && !menu.contains(relatedTarget));
+  }
+
   function init(doc, storage) {
     const html = doc.documentElement;
     const read = (key) => { try { return storage.getItem(key); } catch { return null; } };
@@ -61,9 +68,18 @@
     if (!menu) return { choose, current };
 
     options.forEach((o) => o.addEventListener('click', () => choose(o.dataset.setLang)));
+    // Set when the menu closed because the user went elsewhere, so focus stays there.
+    let leftMenu = false;
     // Opening moves focus to the active option so the arrows start from it.
     menu.addEventListener('toggle', () => {
-      if (!menu.open) return;
+      if (!menu.open) {
+        // Closed by the l shortcut with focus inside: focus would fall to <body>.
+        const active = doc.activeElement;
+        const lost = !active || active === doc.body;
+        if (!leftMenu && summary && (menu.contains(active) || lost)) summary.focus();
+        leftMenu = false;
+        return;
+      }
       (options.find((o) => o.getAttribute('aria-current') === 'true') || options[0]).focus();
     });
     menu.addEventListener('keydown', (event) => {
@@ -73,14 +89,17 @@
       const to = menuStep(at, event.key, options.length);
       if (to !== at && to >= 0) { event.preventDefault(); options[to].focus(); }
     });
+    menu.addEventListener('focusout', (event) => {
+      if (shouldCloseOnFocusOut(menu, event.relatedTarget)) { leftMenu = true; close(false); }
+    });
     doc.addEventListener('click', (event) => {
-      if (menu.open && !menu.contains(event.target)) close(false);
+      if (menu.open && !menu.contains(event.target)) { leftMenu = true; close(false); }
     });
     return { choose, current };
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { LANGS, CODES, NAMES, resolveLang, menuStep, init };
+    module.exports = { LANGS, CODES, NAMES, resolveLang, menuStep, shouldCloseOnFocusOut, init };
   } else if (typeof document !== 'undefined') {
     let storage = null;
     try { storage = window.localStorage; } catch { /* storage access denied */ }

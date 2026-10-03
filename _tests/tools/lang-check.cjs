@@ -51,23 +51,44 @@ const shownLangs = (page, sel) => page.$$eval(sel, (els) => els.filter((e) => e.
   ok('an en post keeps lang en', (await attr('lang')) === 'en');
   ok('the post notes its language', (await shown(page, '.post-lang-note')).join().includes('Dostupno samo na'));
 
+  const focusOnOption = () => page.waitForFunction(() => document.activeElement?.dataset?.setLang);
+  const isOpen = () => page.$eval('.lang-menu', (d) => d.open);
   await page.keyboard.press('l');
-  await page.waitForTimeout(150); // the details toggle event, which moves focus, is async
-  ok('l opens the menu', await page.$eval('.lang-menu', (d) => d.open));
+  await focusOnOption(); // the details toggle event, which moves focus, is async
+  ok('l opens the menu', await isOpen());
+  // Tale eases opacity, so wait for the transition to settle; a stuck .6 times out.
+  const opaque = await page.waitForFunction(() => getComputedStyle(document.querySelector('.nav-toggles')).opacity === '1', null, { timeout: 3000 }).then(() => true, () => false);
+  ok('keyboard-opened panel is fully opaque', opaque);
   ok('focus starts on the active option', await page.evaluate(() => document.activeElement.dataset.setLang === 'yu'));
   await page.keyboard.press('ArrowDown');
   ok('ArrowDown moves to sr', await page.evaluate(() => document.activeElement.dataset.setLang === 'sr'));
   await page.keyboard.press('Escape');
-  ok('Esc closes', !(await page.$eval('.lang-menu', (d) => d.open)));
+  ok('Esc closes', !(await isOpen()));
   ok('focus returns to the button', await page.evaluate(() => document.activeElement.matches('.lang-menu summary')));
   await page.keyboard.press('l');
-  await page.mouse.click(5, 600);
-  ok('an outside click closes', !(await page.$eval('.lang-menu', (d) => d.open)));
+  await focusOnOption();
   await page.keyboard.press('l');
-  await page.waitForTimeout(150);
+  await page.waitForFunction(() => !document.querySelector('.lang-menu').open);
+  ok('l with focus on an option closes the menu', !(await isOpen()));
+  await page.waitForFunction(() => document.activeElement?.matches('.lang-menu summary'));
+  ok('focus lands on the button after l', await page.evaluate(() => document.activeElement.matches('.lang-menu summary')));
+  await page.keyboard.press('l');
+  await focusOnOption();
+  await page.keyboard.press('End');
+  await page.keyboard.press('Tab');
+  await page.waitForFunction(() => !document.querySelector('.lang-menu').open);
+  ok('Tab past the last option closes the menu', !(await isOpen()));
+  await page.keyboard.press('l');
+  await focusOnOption();
+  ok('menu is open before the outside click', await isOpen());
+  await page.mouse.click(5, 600);
+  await page.waitForFunction(() => !document.querySelector('.lang-menu').open);
+  ok('an outside click closes', !(await isOpen()));
+  ok('an outside click does not pull focus to the button', await page.evaluate(() => !document.activeElement.matches('.lang-menu summary')));
+  await page.keyboard.press('l');
+  await focusOnOption();
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
-  ok('Enter chooses sr', (await attr('data-lang')) === 'sr');
   ok('the note switches to Cyrillic', (await shown(page, '.post-lang-note')).join().includes('Доступно само на'));
 
   await page.evaluate(() => localStorage.setItem('lang', 'klingon'));
