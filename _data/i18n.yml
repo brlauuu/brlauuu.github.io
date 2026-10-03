@@ -1,0 +1,21 @@
+# Site text in every language, read by _includes/t.html and the list pages.
+# {a}…{/a} marks a link the caller supplies.
+# (yu and sr always say the same thing)
+archive:       { en: "Archive", yu: "Arhiva", sr: "Архива" }
+tags:          { en: "Tags", yu: "Kategorije", sr: "Категорије" }
+about:         { en: "About", yu: "O meni", sr: "О мени" }
+written_by:    { en: "Written by", yu: "Autor", sr: "Аутор" }
+"on":          { en: "on&nbsp;", yu: "", sr: "" }
+words:         { en: "&nbsp;words, ~", yu: "&nbsp;reči, ~", sr: "&nbsp;речи, ~" }
+min_read:      { en: "&nbsp;min read", yu: "&nbsp;min čitanja", sr: "&nbsp;мин читања" }
+tags_label:    { en: "Tags: ", yu: "Kategorije: ", sr: "Категорије: " }
+tag_index:     { en: "Tag index", yu: "Indeks kategorija", sr: "Индекс категорија" }
+pinned:        { en: "Pinned", yu: "Prikačeno", sr: "Прикачено" }
+no_posts:      { en: "No posts in this language yet.", yu: "Još nema članaka na ovom jeziku.", sr: "Још нема чланака на овом језику." }
+no_recent:     { en: "No recent posts. Check out the {a}archive{/a} for older articles.", yu: "Nema novih članaka. Starije potražite u {a}arhivi{/a}.", sr: "Нема нових чланака. Старије потражите у {a}архиви{/a}." }
+archive_empty: { en: "No archived posts yet. Posts older than one year will appear here.", yu: "Arhiva je još prazna. Članci stariji od godinu dana pojaviće se ovde.", sr: "Архива је још празна. Чланци старији од годину дана појавиће се овде." }
+only_in:       { en: "Only available in:", yu: "Dostupno samo na:", sr: "Доступно само на:" }
+months:
+  en: [January, February, March, April, May, June, July, August, September, October, November, December]
+  yu: [januar, februar, mart, april, maj, jun, jul, avgust, septembar, oktobar, novembar, decembar]
+  sr: [јануар, фебруар, март, април, мај, јун, јул, август, септембар, октобар, новембар, децембар]

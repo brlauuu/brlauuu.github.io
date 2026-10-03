@@ -18,6 +18,13 @@ permalink: /:year-:month-:day/:title
 paginate: 5
 paginate_path: "/page:num/"
 
+# Posts default to English; set lang: yu or lang: sr in front matter otherwise.
+defaults:
+  - scope:
+      type: posts
+    values:
+      lang: en
+
 # Plugins
 plugins:
   - jekyll-paginate

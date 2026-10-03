@@ -2,6 +2,7 @@
 layout: post
 title: "Industrialized gambling will have a geopolitical effect"
 author: "Đorđe Relić"
+lang: en
 tags: [geopolitics, opinion, gambling, scaling markets]
 ---
 

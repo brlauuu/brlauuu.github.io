@@ -727,6 +727,20 @@ footer span {
   display: block;
 }
 
+/* Language axis (lang.js). [data-t] marks content in exactly one language;
+   [data-langs] lists the languages a post or a group holds. Hiding rules only,
+   so every element keeps its own display. Without JavaScript nothing sets
+   data-lang, and English shows. */
+:root:not([data-lang="yu"]) [data-t="yu"],
+:root:not([data-lang="sr"]) [data-t="sr"],
+[data-lang="yu"] [data-t="en"],
+[data-lang="sr"] [data-t="en"],
+:root:not([data-lang="yu"]):not([data-lang="sr"]) [data-langs]:not([data-langs~="en"]),
+[data-lang="yu"] [data-langs]:not([data-langs~="yu"]),
+[data-lang="sr"] [data-langs]:not([data-langs~="sr"]) {
+  display: none;
+}
+
 /* ------------------------------------------------------------------ */
 /* Color axis: rainbow accents. Body text, page background and code   */
 /* blocks stay neutral; everything that is already an accent carries  */

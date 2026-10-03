@@ -1,4 +1,4 @@
-// Three independent theme axes on <html>: data-theme, data-color, data-style.
+// Three independent theme axes on <html>: data-theme, data-color, data-style (data-lang is lang.js's).
 // The inline script in _includes/head.html sets them before first paint;
 // this file wires the nav buttons, persists choices and emits `themechange`.
 (() => {
@@ -31,7 +31,13 @@
     const buttons = Array.from(doc.querySelectorAll('[data-toggle]')).filter((button) => axes[button.dataset.toggle]);
     let themeChosen = axes.theme.values.includes(read('theme'));
 
-    const current = () => Object.fromEntries(Object.keys(axes).map((axis) => [axis, html.getAttribute(`data-${axis}`)]));
+    // The language axis is owned by lang.js; it rides along so every listener
+    // sees all four axes in one detail.
+    const current = () => {
+      const entries = Object.keys(axes).map((axis) => [axis, html.getAttribute(`data-${axis}`)]);
+      entries.push(['lang', html.getAttribute('data-lang')]);
+      return Object.fromEntries(entries);
+    };
 
     function apply(axis, value) {
       html.setAttribute(`data-${axis}`, value);

@@ -51,7 +51,7 @@ test('label describes the action for the current value', () => {
 });
 
 function fakeDom({ stored = {}, systemDark = false, brokenStorage = false } = {}) {
-  const attrs = {};
+  const attrs = { 'data-lang': 'en' };
   const html = {
     getAttribute: (name) => attrs[name] ?? null,
     setAttribute: (name, value) => { attrs[name] = value; }
@@ -84,7 +84,7 @@ function fakeDom({ stored = {}, systemDark = false, brokenStorage = false } = {}
 
 test('init sets all three attributes from storage or defaults and labels the buttons', () => {
   const { attrs, buttons } = fakeDom({ stored: { theme: 'dark', style: 'pixel' } });
-  assert.deepEqual(attrs, { 'data-theme': 'dark', 'data-color': 'off', 'data-style': 'pixel' });
+  assert.deepEqual(attrs, { 'data-lang': 'en', 'data-theme': 'dark', 'data-color': 'off', 'data-style': 'pixel' });
   assert.equal(buttons[0].attrs['aria-label'], 'Switch to light');
   assert.equal(buttons[1].attrs['aria-label'], 'Turn color on');
   assert.equal(buttons[2].attrs['aria-label'], 'Switch to smooth style');
@@ -100,7 +100,7 @@ test('clicking a button flips only its axis, persists it, relabels it and emits 
   assert.equal(buttons[1].attrs['aria-label'], 'Turn color off');
   assert.equal(events.length, 1);
   assert.equal(events[0].type, 'themechange');
-  assert.deepEqual(events[0].detail, { theme: 'light', color: 'on', style: 'smooth' });
+  assert.deepEqual(events[0].detail, { theme: 'light', color: 'on', style: 'smooth', lang: 'en' });
 });
 
 test('system theme changes apply only until the visitor chooses a theme', () => {
@@ -118,7 +118,7 @@ test('a blocked storage still lets the buttons work for the session', () => {
   assert.equal(attrs['data-theme'], 'dark');
   buttons[2].onclick();
   assert.equal(attrs['data-style'], 'pixel');
-  assert.deepEqual(controller.current(), { theme: 'dark', color: 'off', style: 'pixel' });
+  assert.deepEqual(controller.current(), { theme: 'dark', color: 'off', style: 'pixel', lang: 'en' });
 });
 
 test('an explicit theme choice survives system changes even when storage is blocked', () => {

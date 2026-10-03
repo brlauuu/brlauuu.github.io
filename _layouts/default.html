@@ -1,5 +1,10 @@
 <!DOCTYPE html>
+{%- if page.collection == "posts" -%}
+{%- assign content_lang = site.data.languages | where: "key", page.lang | first -%}
+<html lang="{{ content_lang.code }}" data-content-lang="{{ page.lang }}">
+{%- else -%}
 <html lang="en">
+{%- endif %}
 
   {% include head.html %}
 
