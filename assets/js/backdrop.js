@@ -122,6 +122,30 @@ vec3 acid(vec2 p, vec2 uv, float aspect, float t, float calm, vec2 m, float ms) 
   return col;
 }
 
+// Dark: near-black ink plumes, drifting fog, a breathing vignette, an irregular
+// candle flicker, and a candle glow that follows the pointer.
+vec3 dread(vec2 p, vec2 uv, float t, float calm, vec2 m, float ms) {
+  float amp = mix(1.0, 0.5, calm) * u_intensity;
+  vec2 q = vec2(fbm(p * 1.5 + vec2(0.0, -t * 0.02)), fbm(p * 1.5 + vec2(3.1, 7.7) + t * 0.015));
+  float ink = fbm(p * 1.8 + 3.0 * amp * q + vec2(t * 0.01, 0.0));
+  vec3 bruise = vec3(0.20, 0.06, 0.24);
+  vec3 oxblood = vec3(0.30, 0.03, 0.05);
+  vec3 moss = vec3(0.10, 0.16, 0.06);
+  vec3 col = mix(bruise, oxblood, smoothstep(0.35, 0.65, ink));
+  col = mix(col, moss, smoothstep(0.55, 0.8, q.y) * 0.7);
+  col *= 0.35 + 0.65 * smoothstep(0.25, 0.75, ink);
+  float fog = fbm(vec2(p.x * 0.8 + t * 0.03, p.y * 2.5));
+  col += vec3(0.05, 0.05, 0.07) * smoothstep(0.45, 0.8, fog);
+  vec2 c = uv - 0.5;
+  col *= 1.0 - smoothstep(0.3, 0.85 + 0.05 * sin(t * 0.25), length(c * vec2(1.1, 1.0)));
+  float flicker = 1.0 - 0.12 * smoothstep(0.6, 1.0, noise(vec2(t * 0.7, 3.0)));
+  float dm = length(p - m);
+  float glow = ms * exp(-dm * dm * 12.0) * (0.85 + 0.15 * noise(vec2(t * 6.0, 1.0)));
+  col = col * flicker + glow * (vec3(0.55, 0.32, 0.12) + col * 2.0);
+  if (u_grid > 0.0) col = floor(col * 12.0 + 0.5) / 12.0;
+  return col;
+}
+
 void main() {
   vec2 frag = gl_FragCoord.xy;
   if (u_grid > 0.0) frag = (floor(frag / u_grid) + 0.5) * u_grid;
@@ -130,11 +154,16 @@ void main() {
   vec2 p = vec2(uv.x * aspect, uv.y);
   vec2 m = vec2(u_pointer.x / u_resolution.x * aspect, u_pointer.y / u_resolution.y);
   float calm = laneMask(frag.x);
-  vec3 col = acid(p, uv, aspect, u_time, calm, m, u_pointerStrength);
-  // Quiet lane: desaturate and pull toward the page background.
+  vec3 col;
+  if (u_light > 0.999) col = acid(p, uv, aspect, u_time, calm, m, u_pointerStrength);
+  else if (u_light < 0.001) col = dread(p, uv, u_time, calm, m, u_pointerStrength);
+  else col = mix(dread(p, uv, u_time, calm, m, u_pointerStrength),
+                 acid(p, uv, aspect, u_time, calm, m, u_pointerStrength), u_light);
+  // Quiet lane: desaturate and pull toward the page background of the mood.
+  vec3 bg = mix(vec3(0.102), vec3(1.0), u_light);     // #1a1a1a and #fff
   float luma = dot(col, vec3(0.299, 0.587, 0.114));
   col = mix(col, vec3(luma), 0.45 * calm);
-  col = mix(col, vec3(1.0), 0.35 * calm);
+  col = mix(col, bg, 0.35 * calm);
   gl_FragColor = vec4(col, 1.0);
 }`;
 
