@@ -25,6 +25,20 @@ defaults:
       type: posts
     values:
       lang: en
+  # Posts in _posts/yu/ (Naš, Latin) and _posts/sr/ (Српски, Cyrillic) get their
+  # language from the folder. og:locale has no Serbo-Croatian code, so both use sr_RS.
+  - scope:
+      path: "_posts/yu"
+      type: posts
+    values:
+      lang: yu
+      locale: sr_RS
+  - scope:
+      path: "_posts/sr"
+      type: posts
+    values:
+      lang: sr
+      locale: sr_RS
 
 # Plugins
 plugins:

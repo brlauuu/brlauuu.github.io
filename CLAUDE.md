@@ -54,7 +54,11 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
 ## Content Structure
 
 ### Blog Posts
-- Location: `_posts/`
+- Location: `_posts/` for English, `_posts/yu/` for Naš (Latin) and `_posts/sr/` for Српски
+  (Cyrillic). `_config.yml` defaults give folder posts their `lang` and `locale: sr_RS`
+  (og:locale has no Serbo-Croatian code); English posts use `locale: en_US`. Folders don't
+  change URLs or categories. `_tests/front-matter.test.cjs` fails on an unknown `lang` or one
+  that contradicts the folder.
 - Naming: `YYYY-MM-DD-title.md`
 - Format: Markdown with YAML front matter
 - Required front matter:
@@ -63,10 +67,13 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
   layout: post
   title: "Post Title"
   author: "Đorđe Relić"
-  lang: en                  # `en`, `yu` or `sr`; defaults to `en`
+  lang: en                  # Optional: set by the folder (`en` in _posts/)
   tags: [tag1, tag2, tag3]  # Optional - posts can have tags or no tags
   ---
   ```
+- **Feed**: `feed.xml` in the root is jekyll-feed 0.17.0's template, copied so each entry's
+  `xml:lang` is the language code (`en`, `sh`, `sr-Cyrl`) instead of the `lang` key; jekyll-feed
+  skips its own feed while that file exists
 - **Reading time**: `_layouts/post.html` shows the word count and minutes to read (200 words/min, rounded up) under the date, counted from the rendered body without the footnote list; pages that use the post layout don't show it
 - **Tags**: Posts can optionally include tags for categorization
   - Add tags as an array in the front matter: `tags: [python, bioinformatics]`
