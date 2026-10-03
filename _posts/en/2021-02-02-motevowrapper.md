@@ -2,8 +2,9 @@
 layout: post
 title: "MotEvo wrapper"
 author: "Đorđe Relić"
-lang: en
 tags: [python, bioinformatics, tools]
+ref: motevowrapper
+redirect_from: /2021-02-02/motevowrapper
 ---
 
 For one of my projects, I used MotEvo, [MotEvo](https://pubmed.ncbi.nlm.nih.gov/22334039/) (Arnold et al. 2012)[^1] is a Bayesian probabilistic model for prediction of transcription factor binding sites (TFBSs) for a given set of position weight matrices (PWMs) and DNA sequences. It was developed by van Nimwegen lab at the Biozentrum (University of Basel, Switzerland) and it can be acquired [here](https://swissregulon.unibas.ch/sr/software).

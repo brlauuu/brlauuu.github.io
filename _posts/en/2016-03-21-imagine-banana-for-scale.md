@@ -2,6 +2,8 @@
 layout: post
 title: "Imagine Banana for scale"
 author: "Đorđe Relić"
+ref: imagine-banana-for-scale
+redirect_from: /2016-03-21/imagine-banana-for-scale
 ---
 
 Imagine @ EPFL Hackathon took place last weekend at EPFL INN library. I tried to convince several people to join me on this one but failed. Either they had better things to do or the tickets were just too expensive so I had to go alone and form a team there. Going there without a team actually was a good thing. I met great people, worked on a project I had no clue before going there, used the technology I really wanted but never came around to use it and spent 24 hours doing the thing I really enjoy – coding.

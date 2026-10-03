@@ -49,7 +49,7 @@ const base = (process.argv[2] ?? 'http://localhost:4132').replace(/\/$/, '');
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
     await page.emulateMedia({ reducedMotion: 'reduce' });   // a still frame: stable pixels
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.goto(base + '/en/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1500);
     await sample(page, `${theme} ${width}px`);
     await page.close();
@@ -60,7 +60,7 @@ const base = (process.argv[2] ?? 'http://localhost:4132').replace(/\/$/, '');
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.addInitScript(() => { localStorage.setItem('theme', 'light'); localStorage.setItem('color', 'on'); });
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.goto(base + '/en/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1500);
     await page.click('[data-toggle="theme"]');
     await page.waitForTimeout(500);

@@ -25,6 +25,14 @@ defaults:
       type: posts
     values:
       lang: en
+  # English posts live in _posts/en/ under an /en/ URL prefix; their pre-prefix
+  # URLs redirect via redirect_from in each post (jekyll-redirect-from).
+  - scope:
+      path: "_posts/en"
+      type: posts
+    values:
+      lang: en
+      permalink: /en/:year-:month-:day/:title
   # Posts in _posts/yu/ (Naš, Latin) and _posts/sr/ (Српски, Cyrillic) get their
   # language from the folder and a /yu/ or /sr/ URL prefix (a post can exist in both
   # scripts on one date). og:locale has no Serbo-Croatian code, so both use sr_RS.
@@ -50,6 +58,7 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
+  - jekyll-redirect-from
 
 # Social links (for footer)
 social:
