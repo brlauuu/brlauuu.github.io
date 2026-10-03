@@ -185,6 +185,30 @@ h1.post-title {
   color: var(--title-color);
 }
 
+/* Small screens: Tale keeps the 4rem title and justified text at every width,
+   which clips long title words and opens wide gaps between words. */
+@media (max-width: 599px) {
+  .post-title,
+  .tags-header-title {
+    font-size: 2.25rem;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+  }
+
+  .post p {
+    text-align: left;
+  }
+}
+
+/* Long links and inline code wrap; code blocks scroll inside their box. */
+.post {
+  overflow-wrap: break-word;
+}
+
+pre {
+  overflow-x: auto;
+}
+
 /* Navigation title and links */
 .nav-title,
 .nav-container h2 {
