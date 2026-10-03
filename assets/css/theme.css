@@ -784,15 +784,23 @@ footer span {
   box-shadow: 0 8px 30px var(--share-shadow);
 }
 
+/* Tale's `.nav { overflow: auto }` would clip the panel (and add a scrollbar)
+   since it hangs below the nav bar. `overflow: auto` also made .nav a block
+   formatting context, which kept .nav-container's 1rem margins inside the nav;
+   `display: flow-root` restores that so the nav box and its shadow line stay put. */
+/* The panel hangs over the page, and Tale's `.nav li { opacity: .6 }` traps its
+   z-index in the nav item's stacking context, so the nav as a whole must rise
+   above later positioned content such as .post or clicks would miss the panel. */
+.nav {
+  position: relative;
+  z-index: 20;
+  overflow: visible;
+  display: flow-root;
+}
+
 /* The panel is a <ul> inside the nav's <ul>, so Tale's `.nav ul` and `.nav li`
    rules reach it (bottom anchor, top margin, centred text, item padding and
    opacity). The extra .nav class outranks them. */
-/* Tale's `.nav { overflow: auto }` would clip the panel (and add a scrollbar)
-   since it hangs below the nav bar. Nothing in the nav floats, so visible is safe. */
-.nav {
-  overflow: visible;
-}
-
 .nav .lang-menu-list {
   bottom: auto;
   margin: 0;
