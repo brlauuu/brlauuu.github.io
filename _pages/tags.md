@@ -2,6 +2,7 @@
 permalink: /tags
 layout: post
 title: Tags
+title_key: tags
 ---
 
 {% comment %} Get all tags from all posts {% endcomment %}

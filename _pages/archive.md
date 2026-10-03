@@ -2,6 +2,7 @@
 permalink: /archive
 layout: post
 title: Archive
+title_key: archive
 ---
 
 {% comment %}

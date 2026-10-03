@@ -4,7 +4,7 @@ layout: default
 
 <div class="post">
   <div class="post-info">
-    <span>Written by</span>
+    {% include t.html key="written_by" %}
     {% if page.author %}
         {{ page.author }}
     {% else %}
@@ -13,7 +13,7 @@ layout: default
 
     {% if page.date %}
       <br>
-      <span>on&nbsp;</span><time datetime="{{ page.date }}">{{ page.date | date: "%B %d, %Y" }}</time>
+      {% include t.html key="on" %}{% include date.html date=page.date %}
     {% endif %}
 
     {% if page.collection == "posts" %}
@@ -21,19 +21,38 @@ layout: default
       {% assign words = content | split: '<div class="footnotes"' | first | strip_html | number_of_words %}
       {% assign minutes = words | divided_by: 200.0 | ceil | at_least: 1 %}
       <br>
-      {{ words }}<span>&nbsp;words, about&nbsp;</span>{{ minutes }}<span>&nbsp;min read</span>
+      {{ words }}{% include t.html key="words" %}{{ minutes }}{% include t.html key="min_read" %}
     {% endif %}
   </div>
 
-  <h1 class="post-title">{{ page.title }}</h1>
+  <h1 class="post-title">{% if page.title_key %}{% include t.html key=page.title_key %}{% else %}{{ page.title }}{% endif %}</h1>
 
   {% if page.tags and page.tags.size > 0 %}
   <div class="post-tags" style="margin: 1rem 0; font-size: 0.9rem;">
-    <span>Tags: </span>
+    {% include t.html key="tags_label" %}
     {% for tag in page.tags %}
       <a href="{{ site.baseurl }}/tags#{{ tag | slugify }}" style="margin-right: 0.5rem;">{{ tag }}</a>
     {% endfor %}
   </div>
+  {% endif %}
+
+  {% if page.collection == "posts" %}
+  {% comment %}
+  When the chosen language is not the post's: a note naming the post's language,
+  or a link to the version in the chosen language (same `ref`) once one exists.
+  {% endcomment %}
+  {% assign here = site.data.languages | where: "key", page.lang | first %}
+  {% for l in site.data.languages %}{% unless l.key == page.lang %}
+    {% assign other = nil %}
+    {% if page.ref %}{% assign other = site.posts | where: "ref", page.ref | where: "lang", l.key | first %}{% endif %}
+  <p class="post-lang-note" data-t="{{ l.key }}" lang="{{ l.code }}">
+    {%- if other -%}
+    <a href="{{ other.url | relative_url }}">{% include flag.html lang=l.key %} {{ l.name }}</a>
+    {%- else -%}
+    {{ site.data.i18n.only_in[l.key] }} <span lang="{{ here.code }}">{% include flag.html lang=page.lang %} {{ here.name }}</span>
+    {%- endif -%}
+  </p>
+  {% endunless %}{% endfor %}
   {% endif %}
 
   <div class="post-line"></div>

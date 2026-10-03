@@ -1,0 +1,13 @@
+{%- comment -%}
+One string from _data/i18n.yml in every language; CSS shows the active one.
+include.href turns {a}…{/a} in the string into a link to that address.
+{%- endcomment -%}
+{%- assign strings = site.data.i18n[include.key] -%}
+{%- for l in site.data.languages -%}
+{%- assign text = strings[l.key] -%}
+{%- if include.href -%}
+{%- capture open -%}<a href="{{ include.href }}">{%- endcapture -%}
+{%- assign text = text | replace: "{a}", open | replace: "{/a}", "</a>" -%}
+{%- endif -%}
+<span lang="{{ l.code }}" data-t="{{ l.key }}">{{ text }}</span>
+{%- endfor -%}
