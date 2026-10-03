@@ -108,14 +108,14 @@ vec3 acid(vec2 p, vec2 uv, float aspect, float t, float calm, vec2 m, float ms) 
     float tip = length(vec2(dx, yt - len)) - w * 1.4;
     float d = min(body, tip);
     float fade = 1.0 - smoothstep(0.85, 1.0, phase);
-    float cover = (edge > 0.0 ? smoothstep(edge, -edge, d) : step(d, 0.0)) * fade;
-    float pool = smoothstep(1.0, 0.0, length(vec2(dx / (w * 5.0), (1.0 - yt) / 0.02)))
+    float cover = (edge > 0.0 ? 1.0 - smoothstep(-edge, edge, d) : step(d, 0.0)) * fade;
+    float pool = (1.0 - smoothstep(0.0, 1.0, length(vec2(dx / (w * 5.0), (1.0 - yt) / 0.02))))
                * smoothstep(0.8, 1.0, phase);
     float dripHue = fract(hash(vec2(fi, 5.0)) + t * 0.02);
     if (u_grid > 0.0) dripHue = floor(dripHue * 12.0) / 12.0;
     vec3 paint = hsl2rgb(vec3(dripHue, 1.0, 0.55));
     float rim = smoothstep(-0.006, 0.0, d) * cover;
-    float gloss = smoothstep(-w * 0.7, -w * 0.4, dx) * smoothstep(-w * 0.1, -w * 0.35, dx) * cover;
+    float gloss = smoothstep(-w * 0.7, -w * 0.4, dx) * (1.0 - smoothstep(-w * 0.35, -w * 0.1, dx)) * cover;
     col = mix(col, paint * (1.0 - 0.35 * rim), max(cover, pool));
     col = mix(col, vec3(1.0), gloss * 0.55);
   }
