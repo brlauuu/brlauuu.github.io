@@ -321,9 +321,10 @@ pre {
   font-style: normal;
 }
 
-/* The notes wrapper is always the last child of .catalogue, so Tale's
-   .catalogue-item:last-child rule no longer reaches the last post. */
-.catalogue-item:nth-last-child(2) {
+/* The last entry of each language (marked in home.html) is the last one
+   visible when that language is chosen, so it drops the separator that
+   Tale's :last-child rule can no longer reach. */
+.catalogue-item.is-lang-last {
   border: 0;
 }
 
@@ -1097,8 +1098,7 @@ h3 > [data-t],
   pointer-events: none;
 }
 
-[data-color="on"] .catalogue-item:last-child::after,
-[data-color="on"] .catalogue-item:nth-last-child(2)::after,
+[data-color="on"] .catalogue-item.is-lang-last::after,
 [data-color="on"] .tag-section:last-child::after {
   content: none;
 }

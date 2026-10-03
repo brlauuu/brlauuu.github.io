@@ -17,21 +17,34 @@ Current time minus 31536000 seconds (365 days)
 {% endfor %}
 {% capture archive_url %}{{ "/archive" | relative_url }}{% endcapture %}
 
-<div class="catalogue">
-  {% comment %} First, show sticky posts if any {% endcomment %}
-  {% for post in site.posts %}
-    {% if post.sticky %}
-      {% include catalogue_item.html sticky='true' %}
-    {% endif %}
-  {% endfor %}
+{% comment %}
+The list in render order: sticky posts, then the rest of the last year. Other
+languages' entries are hidden by CSS, so :last-child can't find the last
+visible one; instead the last entry of each language is found here and loses
+its separator (lang_last holds their URLs between bars).
+{% endcomment %}
+{% assign entries = "" | split: "" %}
+{% for post in site.posts %}{% if post.sticky %}{% assign entries = entries | push: post %}{% endif %}{% endfor %}
+{% for post in recent_posts %}{% unless post.sticky %}{% assign entries = entries | push: post %}{% endunless %}{% endfor %}
+{% assign seen_langs = "" %}
+{% assign lang_last = "|" %}
+{% assign reversed_entries = entries | reverse %}
+{% for post in reversed_entries %}
+  {% capture lang_mark %}|{{ post.lang }}|{% endcapture %}
+  {% unless seen_langs contains lang_mark %}
+    {% assign seen_langs = seen_langs | append: lang_mark %}
+    {% assign lang_last = lang_last | append: post.url | append: "|" %}
+  {% endunless %}
+{% endfor %}
 
-  {% comment %} Then, show only posts from the last year {% endcomment %}
-  {% for post in site.posts %}
-    {% assign post_time = post.date | date: "%s" | plus: 0 %}
-    {% if post_time >= one_year_ago %}
-      {% unless post.sticky %}
-        {% include catalogue_item.html %}
-      {% endunless %}
+<div class="catalogue">
+  {% for post in entries %}
+    {% capture url_mark %}|{{ post.url }}|{% endcapture %}
+    {% if lang_last contains url_mark %}{% assign is_last = true %}{% else %}{% assign is_last = false %}{% endif %}
+    {% if post.sticky %}
+      {% include catalogue_item.html sticky='true' last=is_last %}
+    {% else %}
+      {% include catalogue_item.html last=is_last %}
     {% endif %}
   {% endfor %}
 
