@@ -343,6 +343,25 @@ To customize the Tale theme:
 - Add custom CSS in `assets/css/` directory
 - Tale's default typography is optimized for readability
 
+### Translations (rule: every post in all three languages)
+
+Every post must exist in `_posts/en/`, `_posts/yu/` and `_posts/sr/` under one filename, and a
+PR that adds or changes a post includes all three versions; nothing translates posts
+automatically. `master` rejects a change that breaks this: branch protection requires the
+`test` check, and `_tests/translations.test.cjs` fails when a post misses a language or its
+versions disagree (code, links, headings, footnotes, `ref`, or a Српски text that is not its
+Naš twin in Cyrillic, foreign names staying in Latin).
+
+- A version written by a model carries the tag `AI translated (<model>)` /
+  `Prevedeno pomoću VI (<model>)` / `Преведено помоћу ВИ (<model>)` as its last tag until the
+  author proofreads it and removes the tag. A Naš↔Српски copy of an untagged text is not a
+  translation and is not tagged.
+- External links, code, inline code and footnote markers are never changed in a translation;
+  only prose, link text, headings, alt text and footnote text are translated.
+- `_tests/lib/posts.mjs` holds the checks (no dependencies), tested in
+  `_tests/posts-lib.test.cjs`. `.github/workflows/test.yml` runs `node --test _tests/*.test.cjs`
+  on pull requests and pushes to `master`.
+
 ## Deployment
 
 The site is served from two places, both built automatically on every push to `master`:

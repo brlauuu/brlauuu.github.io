@@ -1,0 +1,21 @@
+# Unit tests, including the check that every post exists in en / yu / sr and
+# that its versions agree (_tests/translations.test.cjs).
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --test _tests/*.test.cjs
