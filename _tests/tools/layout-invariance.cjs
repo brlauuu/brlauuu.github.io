@@ -48,7 +48,8 @@ async function measure(browser, url, width, theme, color, style) {
   await page.addInitScript((axes) => {
     for (const [k, v] of Object.entries(axes)) localStorage.setItem(k, v);
   }, { theme, color, style });
-  await page.goto(base + url, { waitUntil: 'networkidle' });
+  const response = await page.goto(base + url, { waitUntil: 'networkidle' });
+  if (!response || !response.ok()) throw new Error(`${url} -> ${response ? response.status() : 'no response'}`);
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(300);
   const rects = await page.evaluate(collect);
@@ -106,6 +107,24 @@ function diff(a, b) {
     const ok = name === expected;
     if (!ok) failed++;
     console.log(`${ok ? 'PASS' : 'FAIL'}  ${theme} heading animation is ${expected} :: ${name}`);
+    await ctx.close();
+  }
+  // The cycle must actually move the filter, melt included (url() filters do not
+  // interpolate, so this runs through the animated --hue). Light spans 12 s, dark
+  // pulses over 40 s.
+  for (const [theme, t1, t2] of [['light', 3000, 6000], ['dark', 5000, 15000]]) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
+    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    const at = (ms) => page.evaluate((time) => {
+      document.getAnimations().forEach((a) => { a.currentTime = time; });
+      return getComputedStyle(document.querySelector('main h2')).filter;
+    }, ms);
+    const f1 = await at(t1), f2 = await at(t2);
+    const ok = f1 !== f2 && f1.includes('url(') && f2.includes('url(');
+    if (!ok) failed++;
+    console.log(`${ok ? 'PASS' : 'FAIL'}  ${theme} heading filter changes over time :: ${f1} -> ${f2}`);
     await ctx.close();
   }
   // --melt reaches headings only; strips and rings keep the plain hue cycle.

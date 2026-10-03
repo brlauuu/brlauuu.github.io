@@ -37,6 +37,14 @@ test('ease moves toward the target and converges', () => {
   assert.equal(ease(3, 3, 1, 0.1), 3);
 });
 
+test('nextLight eases normally and snaps to the target under reduced motion', () => {
+  const { nextLight } = load();
+  const eased = nextLight(0, 1, 0.1, false);
+  assert.ok(eased > 0 && eased < 1, `expected a partial step, got ${eased}`);
+  assert.equal(nextLight(0, 1, 0.1, true), 1);
+  assert.equal(nextLight(1, 0, 0, true), 0);
+});
+
 test('laneFor maps the column rect to canvas pixels with a soft edge', () => {
   const { laneFor } = load();
   assert.deepEqual(laneFor({ left: 340, right: 940, width: 600 }, 1280, 0.25), [85, 235, 15]);

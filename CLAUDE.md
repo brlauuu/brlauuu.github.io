@@ -159,7 +159,7 @@ respectively; links stroke `--border-color`; with color on, tag rings and lines 
 `<linearGradient id="constellation-rainbow">` (post rings keep the text color) with stops
 from `--rainbow-stop-1` through `--rainbow-stop-7` (light or dark set chosen by the theme
 axis), in user-space units spanning the box width; the SVG group carries
-the shared `rainbow-cycle` animation. Under pixel style, nodes are `<rect>` shapes with
+the shared hue cycle (`var(--cycle-name)`). Under pixel style, nodes are `<rect>` shapes with
 `shape-rendering: crispEdges` and labels use `--pixel-font` at 12 px; wander and throw
 are off. Under reduced motion, wander is off and the simulation runs to rest once, then
 only interaction moves nodes.
@@ -189,8 +189,11 @@ animated, never containers. Light with color on is an acid trip (candy stops, ho
 links); `[data-color="on"][data-theme="dark"]` is abstract dread (oxblood, bruise, moss,
 bone, moss links). The cycle is tokenised: `--cycle-name` and `--cycle-duration` give light
 `rainbow-cycle` over 12 s and dark `dread-pulse` (±20° hue) over 40 s, paused by
-`--rainbow-play` under `prefers-reduced-motion`; every keyframe starts its `filter` with
-`var(--melt)` (identity by default) so headings can add the melt filter. Body text carries a
+`--rainbow-play` under `prefers-reduced-motion`; the keyframes animate only the
+registered `--hue` angle (`@property`), and each animated element carries a static
+`filter: var(--melt) hue-rotate(var(--hue))` (identity `--melt` by default; a `url()` filter
+list does not interpolate, so it cannot live in the keyframes), plus `var(--glow)` on dark
+headings. Body text carries a
 `--halo` text-shadow (cream in light, black in dark); gradient headings and `pre` opt out.
 Headings `h1`–`h3`, the site title and home-page post titles melt in smooth style: they set
 `--melt` to `url(#melt-light)` or `url(#melt-dark)`, SVG filters defined once in

@@ -33,6 +33,12 @@
   }
 
   // Per-drip constants, computed once so the shader does no hashing. Two vec4 per
+  // Theme flips ease the light mix; under reduced motion no frames follow a flip,
+  // so it snaps instead of stopping half-blended.
+  function nextLight(current, target, dt, reduced) {
+    return reduced ? target : ease(current, target, dt, 0.15);
+  }
+
   // drip: (x0, speed in cycles/s, phase offset, base width) and (max length as a
   // fraction of the height, hue offset, 0, 0). Deterministic for a given seed.
   const DRIP_SEED = 7;
@@ -156,6 +162,7 @@ vec3 acid(vec2 p, vec2 uv, float aspect, float t, float calm, vec2 m, float ms) 
     float w = a.w;
     float dx = (uv.x - a.x) * aspect;
     float ph = fract(t * a.y + a.z);
+    if (u_time == 0.0) ph = min(ph, 0.6);        // still frame: beads hang, none fall or pool
     // Early out: the widest part is the bead (1.6 w); the pool at the bottom is wider.
     if (abs(dx) > (ph > 0.9 ? w * 3.5 : w * 1.6 + 0.006)) continue;
     float stub = 1.5 * w;
@@ -346,7 +353,7 @@ void main() {
       last = now;
       // An accumulator, so pausing and resuming never jumps and the value stays small.
       if (!reduced.matches) elapsed = (elapsed + dt) % 86400;
-      light = ease(light, lightTarget, dt, 0.15);
+      light = nextLight(light, lightTarget, dt, reduced.matches);
       pointer.x = ease(pointer.x, pointer.tx, dt, 0.1);
       pointer.y = ease(pointer.y, pointer.ty, dt, 0.1);
       pointer.strength = ease(pointer.strength, pointer.strengthTarget, dt, pointer.strengthTarget > pointer.strength ? 0.15 : 0.6);
@@ -454,7 +461,7 @@ void main() {
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { uniformsFor, decide, ease, laneFor, dripParams, INTENSITY };
+    module.exports = { uniformsFor, decide, ease, nextLight, laneFor, dripParams, INTENSITY };
   } else if (typeof document !== 'undefined') {
     init(document, window);
   }

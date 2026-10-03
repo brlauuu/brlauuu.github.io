@@ -250,11 +250,12 @@ Rules removed because they move text today:
 
 `assets/js/backdrop.js` keeps its lifecycle, resolution policy, pointer easing,
 visibility pause and reduced-motion still frame. The fragment shader is replaced, and
-one uniform is added: `u_lane` (vec2, left and right edge of the reading column in
-canvas pixels), computed by the pure helper `laneFor(rect, viewWidth, scale)` from
+one uniform is added: `u_lane` (vec3: left and right edge of the reading column in
+canvas pixels, and the soft edge width), computed by the pure helper `laneFor(rect, viewWidth, scale)` from
 `main`'s bounding rect on start and on resize, clamped to the viewport, falling back
 to the full width when `main` is missing. `u_light` picks the mood and cross-fades
-over 0.5 s as today.
+over 0.5 s as today. Pixel style renders at quarter resolution with a 1-canvas-pixel
+grid (4 CSS px cells) and `image-rendering: pixelated`.
 
 Light (acid trip):
 

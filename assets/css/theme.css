@@ -761,6 +761,7 @@ footer span {
   --cycle-name: dread-pulse;
   --cycle-glow-name: dread-pulse-glow;
   --cycle-duration: 40s;
+  --glow: drop-shadow(0 0 8px rgba(216, 207, 184, 0.25));
 }
 
 /* A halo around body text keeps it legible on the backdrop. Gradient headings are
@@ -1000,16 +1001,24 @@ footer span {
    pseudo-elements above are animated: a filter on a container would compose
    with its children's and cycle the ordinary links inside it as well.
    Reduced motion pauses it. */
-/* --melt comes first so headings can add the SVG melt filter without a second
-   animation; everything else gets the identity default. */
+/* The keyframes animate only the registered --hue angle. A filter list holding
+   url() is not interpolated, so the filter itself is static on each animated
+   element: var(--melt) first (the SVG melt on headings, identity elsewhere),
+   then hue-rotate(var(--hue)). */
+@property --hue {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 @keyframes rainbow-cycle {
-  from { filter: var(--melt) hue-rotate(0deg); }
-  to { filter: var(--melt) hue-rotate(360deg); }
+  from { --hue: 0deg; }
+  to { --hue: 360deg; }
 }
 
 @keyframes dread-pulse {
-  0%, 100% { filter: var(--melt) hue-rotate(-20deg); }
-  50% { filter: var(--melt) hue-rotate(20deg); }
+  0%, 100% { --hue: -20deg; }
+  50% { --hue: 20deg; }
 }
 
 [data-color="on"] {
@@ -1050,6 +1059,7 @@ footer span {
 [data-color="on"] .tag-chip::before,
 [data-color="on"] .project-card::before,
 [data-color="on"] .share-button::before {
+  filter: var(--melt) hue-rotate(var(--hue));
   animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
@@ -1061,17 +1071,18 @@ footer span {
 [data-color="on"][data-theme="dark"] h3,
 [data-color="on"][data-theme="dark"] .nav-title,
 [data-color="on"][data-theme="dark"] .catalogue-title a {
+  filter: var(--melt) hue-rotate(var(--hue)) var(--glow);
   animation-name: var(--cycle-glow-name);
 }
 
 @keyframes rainbow-cycle-glow {
-  from { filter: var(--melt) hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-  to { filter: var(--melt) hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  from { --hue: 0deg; }
+  to { --hue: 360deg; }
 }
 
 @keyframes dread-pulse-glow {
-  0%, 100% { filter: var(--melt) hue-rotate(-20deg) drop-shadow(0 0 8px rgba(216, 207, 184, 0.25)); }
-  50% { filter: var(--melt) hue-rotate(20deg) drop-shadow(0 0 8px rgba(216, 207, 184, 0.25)); }
+  0%, 100% { --hue: -20deg; }
+  50% { --hue: 20deg; }
 }
 
 /* Print: solid headings, no gradient fill and no animation. */
@@ -1118,6 +1129,7 @@ footer span {
 }
 
 [data-color="on"] .constellation svg {
+  filter: var(--melt) hue-rotate(var(--hue));
   animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
@@ -1343,6 +1355,7 @@ footer span {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+  filter: var(--melt) hue-rotate(var(--hue));
   animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }

@@ -13,12 +13,7 @@ const base = (process.argv[2] ?? 'http://localhost:4132').replace(/\/$/, '');
     args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
   });
   let failed = 0;
-  for (const theme of ['light', 'dark']) for (const width of [1280, 390]) {
-    const page = await browser.newPage({ viewport: { width, height: 900 } });
-    await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
-    await page.emulateMedia({ reducedMotion: 'reduce' });   // a still frame: stable pixels
-    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1500);
+  async function sample(page, label) {
     const textRgb = await page.evaluate(() => getComputedStyle(document.querySelector('.post p')).color);
     await page.addStyleTag({ content: '.post p, .post p * { color: transparent !important; }' });
     for (let i = 0; i < 3; i++) {
@@ -47,8 +42,29 @@ const base = (process.argv[2] ?? 'http://localhost:4132').replace(/\/$/, '');
       }, { data: png.toString('base64'), text: textRgb });
       const ok = ratio >= 3;
       if (!ok) failed++;
-      console.log(`${ok ? 'PASS' : 'FAIL'}  ${theme} ${width}px paragraph ${i + 1}: ${ratio.toFixed(2)}:1`);
+      console.log(`${ok ? 'PASS' : 'FAIL'}  ${label} paragraph ${i + 1}: ${ratio.toFixed(2)}:1`);
     }
+  }
+  for (const theme of ['light', 'dark']) for (const width of [1280, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 900 } });
+    await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
+    await page.emulateMedia({ reducedMotion: 'reduce' });   // a still frame: stable pixels
+    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1500);
+    await sample(page, `${theme} ${width}px`);
+    await page.close();
+  }
+  // Reduced motion + a theme flip: the backdrop must snap to the new theme, not
+  // stop half-blended (a mid-grey lane under the text).
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.addInitScript(() => { localStorage.setItem('theme', 'light'); localStorage.setItem('color', 'on'); });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1500);
+    await page.click('[data-toggle="theme"]');
+    await page.waitForTimeout(500);
+    await sample(page, 'light->dark flip, reduced motion');
     await page.close();
   }
   await browser.close();
