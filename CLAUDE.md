@@ -66,6 +66,7 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
   tags: [tag1, tag2, tag3]  # Optional - posts can have tags or no tags
   ---
   ```
+- **Reading time**: `_layouts/post.html` shows the word count and minutes to read (200 words/min, rounded up) under the date, counted from the rendered body without the footnote list; pages that use the post layout don't show it
 - **Tags**: Posts can optionally include tags for categorization
   - Add tags as an array in the front matter: `tags: [python, bioinformatics]`
   - Tags are displayed below the post title

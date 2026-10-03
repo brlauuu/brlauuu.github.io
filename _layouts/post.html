@@ -15,6 +15,14 @@ layout: default
       <br>
       <span>on&nbsp;</span><time datetime="{{ page.date }}">{{ page.date | date: "%B %d, %Y" }}</time>
     {% endif %}
+
+    {% if page.collection == "posts" %}
+      {% comment %} Body words only: the footnote list is references, not reading. 200 words per minute. {% endcomment %}
+      {% assign words = content | split: '<div class="footnotes"' | first | strip_html | number_of_words %}
+      {% assign minutes = words | divided_by: 200.0 | ceil | at_least: 1 %}
+      <br>
+      {{ words }}<span>&nbsp;words, about&nbsp;</span>{{ minutes }}<span>&nbsp;min read</span>
+    {% endif %}
   </div>
 
   <h1 class="post-title">{{ page.title }}</h1>
