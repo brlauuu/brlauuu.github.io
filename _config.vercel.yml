@@ -1,0 +1,3 @@
+# Layered over _config.yml by the Vercel build only (see vercel.json).
+# GitHub Pages never reads this file, so brlauuu.github.io stays canonical.
+vercel: true

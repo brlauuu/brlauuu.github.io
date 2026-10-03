@@ -308,7 +308,18 @@ To customize the Tale theme:
 
 ## Deployment
 
-This site deploys automatically via GitHub Pages when pushing to the `master` branch. No manual build or deployment steps are required.
+The site is served from two places, both built automatically on every push to `master`:
+
+- **GitHub Pages** at https://brlauuu.github.io, the canonical address (`url` in `_config.yml`).
+- **Vercel** at https://brlauuu.dev (project `brlauuu-dev-redirect`, Git integration). `vercel.json`
+  runs `bundle install` and `bundle exec jekyll build --config _config.yml,_config.vercel.yml` into
+  `_site`, with `cleanUrls` so extensionless links like `/tags` resolve as they do on Pages. Pull
+  requests get Vercel preview deployments. `_config.vercel.yml` sets `vercel: true` and nothing
+  else, so canonical, feed and sitemap URLs still point at github.io. Both files are excluded from
+  the built site.
+- **Vercel Web Analytics** is on for the Vercel project. `_includes/head.html` adds
+  `/_vercel/insights/script.js` only when `site.vercel` is set, so github.io pages carry no
+  analytics and request nothing.
 
 ## Important Notes
 

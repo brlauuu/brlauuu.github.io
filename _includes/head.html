@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="{{ "/assets/css/projects.css" | relative_url }}">
   <script src="{{ "/assets/js/project-stats.js" | relative_url }}" defer></script>
   {% endif %}
+  {% if site.vercel %}
+  <!-- Vercel Web Analytics: only the Vercel build sets site.vercel (see _config.vercel.yml). -->
+  <script defer src="/_vercel/insights/script.js"></script>
+  {% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ site.url }}/feed.xml" title="{{ site.title }}" />
 
   <!-- Set the three theme axes before first paint so the page never flashes the wrong look.
