@@ -1,0 +1,13 @@
+{%- comment -%}
+A 24×16 flag for one language, simplified to read at 16 px. include.lang is
+en, yu or sr; include.t adds data-t so CSS shows it only for that language.
+{%- endcomment -%}
+{%- capture t -%}{% if include.t %} data-t="{{ include.lang }}"{% endif %}{%- endcapture -%}
+{%- case include.lang -%}
+{%- when "en" -%}
+<svg class="flag"{{ t }} width="24" height="16" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><rect width="24" height="16" fill="#fff"/><path fill="#b22234" d="M0 0h24v2.286H0zM0 4.571h24v2.286H0zM0 9.143h24v2.286H0zM0 13.714h24V16H0z"/><rect width="10" height="8.571" fill="#3c3b6e"/></svg>
+{%- when "yu" -%}
+<svg class="flag"{{ t }} width="24" height="16" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><rect width="24" height="5.334" fill="#003893"/><rect y="5.333" width="24" height="5.334" fill="#fff"/><rect y="10.666" width="24" height="5.334" fill="#de0000"/><path d="M12 2.8l1.234 3.501 3.711.092-2.948 2.256 1.06 3.558L12 10.1l-3.057 2.107 1.06-3.558-2.948-2.256 3.711-.092z" fill="#de0000" stroke="#fcd116" stroke-width="0.7" stroke-linejoin="round"/></svg>
+{%- when "sr" -%}
+<svg class="flag"{{ t }} width="24" height="16" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><rect width="24" height="5.334" fill="#c6363c"/><rect y="5.333" width="24" height="5.334" fill="#0c4076"/><rect y="10.666" width="24" height="5.334" fill="#fff"/></svg>
+{%- endcase -%}
