@@ -1,7 +1,13 @@
 <!DOCTYPE html>
-{%- if page.collection == "posts" -%}
-{%- assign content_lang = site.data.languages | where: "key", page.lang | first -%}
-<html lang="{{ content_lang.code }}" data-content-lang="{{ page.lang }}">
+{%- comment -%}
+Pages whose body has one language fix <html lang> at build time: posts by
+their lang, other pages by content_lang (About is English). The rest follow
+the chosen language (head.html).
+{%- endcomment -%}
+{%- if page.collection == "posts" -%}{%- assign content_key = page.lang -%}{%- else -%}{%- assign content_key = page.content_lang -%}{%- endif -%}
+{%- if content_key -%}
+{%- assign content_lang = site.data.languages | where: "key", content_key | first -%}
+<html lang="{{ content_lang.code }}" data-content-lang="{{ content_key }}">
 {%- else -%}
 <html lang="en">
 {%- endif %}
