@@ -213,12 +213,16 @@ The font fallback stack is monospace rather than the site's sans stack, on purpo
 Body text never changes font.
 
 **Backdrop** (`assets/js/backdrop.js`): a fixed canvas behind the page drawn by one
-fragment shader while `data-color="on"`. The script owns the element too: it creates
+fragment shader while `data-color="on"`: light is an acid trip (domain-warped candy
+marbling, twelve glossy drips running down from the top edge, the pointer stirring the paint),
+dark is abstract dread (ink plumes, fog, a breathing vignette, candle flicker, a candle glow at
+the pointer). Inside the reading column (`u_lane`, from `main`'s rect via the tested `laneFor`)
+the field desaturates, pulls toward the page background and halves its warp. The script owns the element too: it creates
 `<canvas class="backdrop" aria-hidden="true">` as the first child of `<body>` on start and
 removes it 300 ms after color turns off (matching the background transition), so the canvas
 exists only while color is on and color-off pages composite exactly as they did before.
 Uniforms: time (an accumulator, so pause and resume never jump), resolution, eased pointer
-and strength, `u_light` (theme band), `u_grid` (0 smooth, 4 pixel), `u_intensity`.
+and strength, `u_light` (theme band), `u_grid` (0 smooth, 4 pixel), `u_intensity`, `u_lane`.
 Started/stopped by `themechange`; theme and style flips only update uniforms. Smooth renders
 at quarter resolution (the upscale is the softness, no CSS blur); pixel at full resolution
 with coordinates and hue quantised in the shader. `<html>` carries the page background and
@@ -227,7 +231,7 @@ color never changes layout, and `node _tests/tools/layout-invariance.cjs <base u
 a theme or color flip moves any text within a style. Pure helpers
 `uniformsFor`, `decide`, `ease` are tested in `_tests/backdrop.test.cjs`;
 `_tests/tools/perf.cjs` probes frame time and long tasks and `_tests/tools/backdrop-check.cjs`
-drives the color button in a browser.
+drives the color button in a browser. `_tests/tools/contrast-sample.cjs` checks body text stays ≥ 3:1 on the lane.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).
