@@ -93,13 +93,14 @@ title, `<title>` and SEO tags, the feed and the sitemap.
 All in CSS, keyed on `html[data-lang]`:
 
 - Post entries on the home page (`catalogue_item.html`), Archive and Tags carry
-  `data-post-lang`; entries of another language are hidden.
+  `data-langs="<lang>"`; entries of another language are hidden.
 - Groups that could empty out (Archive year sections, Tags sections and their index
   links) carry `data-langs="en yu"`, computed by Liquid at build time, and are hidden when
   the active language is not in the list.
 - Each list page writes, at build time, a `no_posts` note for every language with no
   posts there (home: no posts from the last year in that language) marked
-  `data-empty-for="<lang>"`; CSS shows the note only for the active language.
+  `data-t="<lang>"`, like any one-language text; CSS shows the note only for the active
+  language.
 - Constellation: each post in `#constellation-data` carries `lang`. `constellation.js`
   builds the graph from the active language's posts and the tags they use, and rebuilds
   (reseeds) on a `themechange` whose `lang` changed. With no posts it shows nothing; the
