@@ -159,7 +159,7 @@ respectively; links stroke `--border-color`; with color on, tag rings and lines 
 `<linearGradient id="constellation-rainbow">` (post rings keep the text color) with stops
 from `--rainbow-stop-1` through `--rainbow-stop-7` (light or dark set chosen by the theme
 axis), in user-space units spanning the box width; the SVG group carries
-the shared `rainbow-cycle` animation. Under pixel style, nodes are `<rect>` shapes with
+the shared hue cycle (`var(--cycle-name)`). Under pixel style, nodes are `<rect>` shapes with
 `shape-rendering: crispEdges` and labels use `--pixel-font` at 12 px; wander and throw
 are off. Under reduced motion, wander is off and the simulation runs to rest once, then
 only interaction moves nodes.
@@ -185,9 +185,23 @@ The look of the site is controlled by three independent switches, each a
 gradient as a text fill, the three thick lines with `border-image`, thin section rules
 with an animated `::after` strip, and rounded elements (tag chips, project cards, share
 button) with a masked `::before` ring; only leaf accents and those pseudo-elements are
-animated, never containers. One `rainbow-cycle` keyframe (20 s hue rotation) is shared
-by every accent and paused by `--rainbow-play` under `prefers-reduced-motion`. `[data-color="on"][data-theme="dark"]`
-adds brighter stops, dimmed card borders and a glow on headings; the other cross-axis
+animated, never containers. Light with color on is an acid trip (candy stops, hot pink
+links); `[data-color="on"][data-theme="dark"]` is abstract dread (oxblood, bruise, moss,
+bone, moss links). The cycle is tokenised: `--cycle-name` and `--cycle-duration` give light
+`rainbow-cycle` over 12 s and dark `dread-pulse` (±20° hue) over 40 s, paused by
+`--rainbow-play` under `prefers-reduced-motion`; the keyframes animate only the
+registered `--hue` angle (`@property`), and each animated element carries a static
+`filter: var(--melt) hue-rotate(var(--hue))` (identity `--melt` by default; a `url()` filter
+list does not interpolate, so it cannot live in the keyframes), plus `var(--glow)` on dark
+headings. Body text carries a
+`--halo` text-shadow (cream in light, black in dark); gradient headings and `pre` opt out.
+Headings `h1`–`h3`, the site title and home-page post titles melt in smooth style: they set
+`--melt` to `url(#melt-light)` or `url(#melt-dark)`, SVG filters defined once in
+`_includes/melt-filter.html` (SMIL-animated turbulence feeding a displacement map; dark adds a
+flickering ink bleed). `assets/js/melt.js` pauses the animations unless color is on, style is
+smooth, motion is allowed and the tab is visible; its `meltState` is tested in
+`_tests/melt.test.cjs`. Pixel style never melts.
+Dark adds a glow on headings via `--cycle-glow-name`; the other cross-axis
 blocks belong to the style axis below.
 **Style axis** (`[data-style="pixel"]`, last layer of `theme.css`): one `@font-face` for
 Silkscreen (`assets/fonts/`, OFL; downloads only when referenced), `--pixel-font` on
@@ -202,21 +216,27 @@ The font fallback stack is monospace rather than the site's sans stack, on purpo
 Body text never changes font.
 
 **Backdrop** (`assets/js/backdrop.js`): a fixed canvas behind the page drawn by one
-fragment shader while `data-color="on"`. The script owns the element too: it creates
+fragment shader while `data-color="on"`: light is an acid trip (domain-warped candy
+marbling, twelve glossy drips that swell a bead at the top edge, stretch, and fall as teardrops into a pool, with
+per-drip constants precomputed in JS by `dripParams` and read from a 12x2 texture; the pointer stirring the paint),
+dark is abstract dread (ink plumes, fog, a breathing vignette, candle flicker, a candle glow at
+the pointer). Inside the reading column (`u_lane`, from `main`'s rect via the tested `laneFor`)
+the field desaturates, pulls toward the page background and halves its warp. The script owns the element too: it creates
 `<canvas class="backdrop" aria-hidden="true">` as the first child of `<body>` on start and
 removes it 300 ms after color turns off (matching the background transition), so the canvas
 exists only while color is on and color-off pages composite exactly as they did before.
 Uniforms: time (an accumulator, so pause and resume never jump), resolution, eased pointer
-and strength, `u_light` (theme band), `u_grid` (0 smooth, 4 pixel), `u_intensity`.
-Started/stopped by `themechange`; theme and style flips only update uniforms. Smooth renders
-at quarter resolution (the upscale is the softness, no CSS blur); pixel at full resolution
+and strength, `u_light` (theme band), `u_grid` (0 smooth, 1 pixel), `u_intensity`, `u_lane`.
+Started/stopped by `themechange`; theme and style flips only update uniforms. Both styles render
+at quarter resolution: smooth lets the upscale be the softness (no CSS blur); pixel passes
+`u_grid` = 1 canvas px (one 4 px cell) and the canvas is upscaled with `image-rendering: pixelated`,
 with coordinates and hue quantised in the shader. `<html>` carries the page background and
-`<body>` is transparent under color on so the canvas shows through; `.nav-container`, `main`,
-`footer` and `.project-sidebar` sit on `--panel-bg` at 92 % opacity, and only the nav and the
-footer add a `backdrop-filter: blur(4px)` (opaque and bordered under pixel). Pure helpers
-`uniformsFor`, `decide`, `ease` are tested in `_tests/backdrop.test.cjs`;
+`<body>` is transparent under color on so the canvas shows through. There are no panels:
+color never changes layout, and `node _tests/tools/layout-invariance.cjs <base url>` fails if
+a theme or color flip moves any text within a style. Pure helpers
+`uniformsFor`, `decide`, `ease`, `laneFor`, `dripParams` are tested in `_tests/backdrop.test.cjs`;
 `_tests/tools/perf.cjs` probes frame time and long tasks and `_tests/tools/backdrop-check.cjs`
-drives the color button in a browser.
+drives the color button in a browser. `_tests/tools/contrast-sample.cjs` checks body text stays ≥ 3:1 on the lane.
 
 **Files:**
 - `_includes/head.html` sets the three attributes before first paint (no flash).

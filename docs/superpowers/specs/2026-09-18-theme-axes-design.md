@@ -218,6 +218,149 @@ pointer moved; reduced motion; a color-off byte diff against master.
 README and CLAUDE.md describe the renderer, the `themechange` wiring, the panel and
 the intensity knob. The cross-axis list below gains the panel and grid rules.
 
+## Color axis v2: acid trip and dread
+
+Color on stops being "the site, with rainbow accents" and becomes a mood: fun first,
+readable second. Light with color on is an acid trip, cheerful and melting. Dark with
+color on is the scary part of a fairy tale, abstract dread with no figures. This section
+supersedes the Backdrop's Field, Palettes, Pointer and Panel subsections and the
+color-axis palettes above; the Renderer, Pixel quantisation, Performance budget and the
+canvas lifecycle stay as written. Color off is unchanged, byte for byte.
+
+### Layout invariance
+
+Within one style, flipping theme or color never moves text. Every effect in this
+section is paint only: color, `background`, `text-shadow`, `filter`, absolutely
+positioned `::before`/`::after` overlays, and the canvas. No color-axis or theme rule
+may set padding, margin, border width or style, font, weight, size, letter spacing,
+line height, `display` or `position` on anything that holds or wraps text
+(pseudo-element overlays excepted). Smooth to pixel may move text; that pair is never compared.
+
+Rules removed because they move text today:
+
+- The panel: background, `backdrop-filter`, 1.5 rem side padding and radius on
+  `.nav-container`, `main`, `footer`; the padding on `.project-sidebar`; the 2 px
+  border under pixel; the matching print overrides.
+- `display: inline-block` on `.pagination .top`; its strip becomes an overlay that
+  needs no box (positioned against `.pagination`).
+- Headings keep `width: fit-content` only if the invariance check passes; otherwise
+  the gradient is sized with `background-size` on an unchanged box.
+
+### Backdrop shader
+
+`assets/js/backdrop.js` keeps its lifecycle, resolution policy, pointer easing,
+visibility pause and reduced-motion still frame. The fragment shader is replaced, and
+one uniform is added: `u_lane` (vec3: left and right edge of the reading column in
+canvas pixels, and the soft edge width), computed by the pure helper `laneFor(rect, viewWidth, scale)` from
+`main`'s bounding rect on start and on resize, clamped to the viewport, falling back
+to the full width when `main` is missing. `u_light` picks the mood and cross-fades
+over 0.5 s as today. Pixel style renders at quarter resolution with a 1-canvas-pixel
+grid (4 CSS px cells) and `image-rendering: pixelated`.
+
+Light (acid trip):
+
+- Marbling: domain-warped value noise, two to three warp steps, mapped to a candy
+  palette (hot pink, tangerine, lemon, lime, electric cyan, violet), hue drifting slowly.
+- Drips: about 12 columns at fixed x, each with its own speed and phase. A drip is a
+  rounded body with a bulging tip that thins as it stretches downward, with a glossy
+  highlight on one side and a soft darker rim; brighter than the marble beneath. At
+  the bottom it fades into a pool and restarts from the top. Hard-edged under pixel.
+- Pointer: stirs the marble; the warp field swirls around the eased pointer and
+  settles back after it leaves.
+
+Dark (abstract dread):
+
+- Near-black base; slow ink-in-water plumes in bruise purple, oxblood and moss, low
+  lightness; a fog layer drifting sideways.
+- Vignette: edges fall to true black and breathe slowly.
+- Candle flicker: an irregular, low-amplitude brightness waver every few seconds.
+- Pointer: a warm flickering candle glow about one fifth of the viewport wide that
+  pushes the dark back and lifts the hidden hues, closing in again slowly behind it.
+
+Quiet lane (both moods): inside `u_lane`, with a 60 px soft edge, saturation drops to
+about 55 %, lightness is pulled about 35 % toward the theme background and warp
+amplitude halves. Time runs at the same speed inside and out.
+
+Reduced motion: one still frame; no falling drips, no flicker, no pointer effect.
+Light shows a frozen marble with drips hanging; dark shows still ink and vignette.
+
+Performance: same budget as the Backdrop section, measured against the current
+shader's `perf.cjs` numbers on the same machine. If over, remove a warp step before
+removing an element of the look.
+
+### Text
+
+Melt (smooth only). `_includes/melt-filter.html`, rendered once by the default layout,
+is a zero-size, `aria-hidden` inline `<svg>` defining two filters:
+
+- `#melt-light`: `feTurbulence` (low horizontal, higher vertical base frequency)
+  driving `feDisplacementMap`, biased so glyph bottoms sag and smear downward; the
+  turbulence animates on a 12 s loop.
+- `#melt-dark`: a smaller displacement plus a blurred, darkened copy merged under the
+  crisp glyph, reading as ink bleeding into wet paper, with an irregular slow opacity
+  flicker.
+
+Both declare a filter region large enough that smears are not clipped. Applied with
+`filter: url(#melt-light|dark)` to `h1`–`h3`, `.post-title`, `.nav-title` and
+`.catalogue-title a`; `h4`–`h6` stay crisp. The gradient text fill is unchanged under
+the filter. Pixel style applies no melt filter.
+
+`assets/js/melt.js` pauses the SVG animations (`pauseAnimations()`) when they cannot
+be seen or must not move: color off, pixel style, reduced motion, hidden tab. Its pure
+helper `meltState({ color, style, reduced, hidden })` returns `'run'` or `'pause'` and
+is tested in `_tests/melt.test.cjs`. It listens for `themechange`, the reduced-motion
+media query and `visibilitychange`.
+
+Halo. A new token `--halo` and a `text-shadow` on body text, lists, tag links, dates,
+footer and nav links: light `0 0 4px` + `0 0 10px` of cream at about 75 %, dark the
+same shape in black. Code blocks keep their solid box and get no halo.
+
+### Accent palettes
+
+Variable names stay; only values change, so every consumer (headings, rules, chips,
+card rings, share button, constellation stops) follows.
+
+- Light: `--rainbow` and `--rainbow-stop-1..7` become the candy palette, brighter than
+  today's darkened stops; links hot pink. `rainbow-cycle` stays at 12 s.
+- Dark: `--rainbow` and the stops become a dread gradient (oxblood, bruise purple,
+  moss, bone, back to oxblood); links moss, hover bone. The cycle is driven by two new
+  tokens, `--cycle-name` and `--cycle-duration`: dark uses a `dread-pulse` keyframe
+  (hue shift within about ±20°) over 40 s instead of a full turn.
+
+### Contrast floor
+
+Headings are exempt. Body text with its halo stays at or above 3:1 against the lane,
+checked by sampling screenshot pixels behind paragraphs in both moods.
+
+### Files
+
+- `assets/css/theme.css`: panel rules removed (including pixel and print
+  variants), pagination strip as overlay, mood token blocks rewritten, `--halo` and
+  halo rule, melt filter rules (smooth only), cycle tokens and `dread-pulse`.
+- `assets/js/backdrop.js`: new fragment shader, `u_lane`, `laneFor` exported.
+- `_includes/melt-filter.html`, `assets/js/melt.js`: new.
+- `_layouts/default.html`: renders the filter include and loads `melt.js`.
+- `CLAUDE.md`: color axis and backdrop paragraphs rewritten; the stale 20 s cycle
+  corrected.
+
+### Testing
+
+- `_tests/tools/layout-invariance.cjs <base-url>`: for every page at 1280 and 390 px,
+  in smooth and in pixel, records the client rects of every text node
+  (`Range.getClientRects()`), images, `pre` blocks and the share button under light
+  color-off, then under the other three theme × color combinations, and fails on any
+  difference over 0.5 px. Written first and shown failing on master (the panel).
+- Node: `laneFor` (missing `main`, scaling, clamping) and `meltState` (all
+  combinations); the existing suite keeps passing.
+- Screenshots: every page, light and dark color-on, smooth and pixel, 1280 and 390 px,
+  plus reduced motion; reviewed one by one and attached to the PR as a contact sheet.
+  Color-off screenshots byte-identical to master.
+- `perf.cjs` against the current shader; contrast sampling as above.
+
+### Out of scope
+
+Color off, new toggles or icons, figurative imagery, sound.
+
 ## Cross-axis rules
 
 These are the only places one axis knows about another:

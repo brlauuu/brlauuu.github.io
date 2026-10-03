@@ -53,17 +53,22 @@ the same names. `assets/css/theme.css` defines the light and dark variables;
 `assets/js/theme.js` handles the buttons and emits `themechange` on `document`.
 The design is in `docs/superpowers/specs/2026-09-18-theme-axes-design.md`.
 
-With color on, headings, the site title, lines, borders, tag chips, project cards and the
-share button carry a rainbow gradient (`--rainbow` in `theme.css`, brighter stops in dark)
-and links turn magenta (light) or cyan (dark). Body text and code blocks stay neutral. The
-hue cycles once every 12 seconds; `prefers-reduced-motion` pauses it.
+With color on the page gets a mood. Light is an acid trip: hot pink links, candy gradients
+on headings, lines, borders, tag chips, project cards and the share button, and a hue that
+cycles once every 12 seconds. Dark is dread: oxblood, bruise and bone gradients, moss links,
+and a slow pulse of plus or minus 20 degrees over 40 seconds. Body text and code blocks stay
+neutral, with a soft halo (`--halo`) so they read on the backdrop. In smooth style headings
+melt (an SVG displacement filter, `assets/js/melt.js`); pixel style never melts.
+`prefers-reduced-motion` freezes the cycle and the melt.
 
-With color on, a WebGL plasma (`assets/js/backdrop.js`) runs behind the page and reacts
-to the pointer; the content sits on a panel. The script creates its canvas when color turns
-on and removes it 300 ms after color turns off, so nothing sits behind the page otherwise.
-It follows light/dark (palette band) and pixel (chunky blocks, opaque panels), pauses when
-the tab is hidden, freezes under `prefers-reduced-motion`, and shows nothing without WebGL.
-`INTENSITY` at the top of the script is the one knob.
+A WebGL backdrop (`assets/js/backdrop.js`) runs behind the page and reacts to the pointer.
+Light is marbling with drips that bead, stretch and fall; dark is ink, fog, a vignette and a
+candle glow at the pointer. There are no panels: a quiet reading lane calms the backdrop
+behind the text column. The script creates its canvas when color turns on and removes it
+300 ms after color turns off, so nothing sits behind the page otherwise. It follows
+light/dark and pixel (chunky blocks), pauses when the tab is hidden, shows one still frame
+under `prefers-reduced-motion`, and shows nothing without WebGL. `INTENSITY` at the top of
+the script is the one knob.
 
 With pixel style on, headings and the site chrome use Silkscreen (SIL Open Font License,
 self-hosted in `assets/fonts/`, downloaded only when pixel is on), corners are square,
