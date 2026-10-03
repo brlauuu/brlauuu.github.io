@@ -1025,18 +1025,7 @@ footer span {
 [data-color="on"] .tag-chip::before,
 [data-color="on"] .project-card::before,
 [data-color="on"] .share-button::before {
-[data-color="on"][data-theme="dark"] h1:not(.catalogue-title),
-[data-color="on"][data-theme="dark"] h2,
-[data-color="on"][data-theme="dark"] h3,
-[data-color="on"][data-theme="dark"] .nav-title,
-[data-color="on"][data-theme="dark"] .catalogue-title a {
-  animation-name: rainbow-cycle-glow;
-}
-
-@keyframes rainbow-cycle-glow {
-  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-}
+  animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 
@@ -1047,12 +1036,17 @@ footer span {
 [data-color="on"][data-theme="dark"] h3,
 [data-color="on"][data-theme="dark"] .nav-title,
 [data-color="on"][data-theme="dark"] .catalogue-title a {
-  animation-name: rainbow-cycle-glow;
+  animation-name: var(--cycle-glow-name);
 }
 
 @keyframes rainbow-cycle-glow {
-  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  from { filter: var(--melt) hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+  to { filter: var(--melt) hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
+}
+
+@keyframes dread-pulse-glow {
+  0%, 100% { filter: var(--melt) hue-rotate(-20deg) drop-shadow(0 0 8px rgba(216, 207, 184, 0.25)); }
+  50% { filter: var(--melt) hue-rotate(20deg) drop-shadow(0 0 8px rgba(216, 207, 184, 0.25)); }
 }
 
 /* Print: solid headings, no gradient fill and no animation. */
@@ -1099,18 +1093,7 @@ footer span {
 }
 
 [data-color="on"] .constellation svg {
-[data-color="on"][data-theme="dark"] h1:not(.catalogue-title),
-[data-color="on"][data-theme="dark"] h2,
-[data-color="on"][data-theme="dark"] h3,
-[data-color="on"][data-theme="dark"] .nav-title,
-[data-color="on"][data-theme="dark"] .catalogue-title a {
-  animation-name: rainbow-cycle-glow;
-}
-
-@keyframes rainbow-cycle-glow {
-  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-}
+  animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 
@@ -1335,18 +1318,7 @@ footer span {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-[data-color="on"][data-theme="dark"] h1:not(.catalogue-title),
-[data-color="on"][data-theme="dark"] h2,
-[data-color="on"][data-theme="dark"] h3,
-[data-color="on"][data-theme="dark"] .nav-title,
-[data-color="on"][data-theme="dark"] .catalogue-title a {
-  animation-name: rainbow-cycle-glow;
-}
-
-@keyframes rainbow-cycle-glow {
-  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px rgba(255, 255, 255, 0.22)); }
-}
+  animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
   animation-play-state: var(--rainbow-play);
 }
 

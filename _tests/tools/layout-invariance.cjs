@@ -96,6 +96,18 @@ function diff(a, b) {
     console.log(`${ok ? 'PASS' : 'FAIL'}  halo on body text only :: ${JSON.stringify(shadows)}`);
     await ctx.close();
   }
+  // The hue cycle must actually run, with the mood's keyframes.
+  for (const [theme, expected] of [['light', 'rainbow-cycle'], ['dark', 'dread-pulse-glow']]) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.addInitScript((t) => { localStorage.setItem('theme', t); localStorage.setItem('color', 'on'); }, theme);
+    await page.goto(base + '/2026-01-28/industrialized-gambling', { waitUntil: 'networkidle' });
+    const name = await page.evaluate(() => getComputedStyle(document.querySelector('main h2')).animationName);
+    const ok = name === expected;
+    if (!ok) failed++;
+    console.log(`${ok ? 'PASS' : 'FAIL'}  ${theme} heading animation is ${expected} :: ${name}`);
+    await ctx.close();
+  }
   await browser.close();
   process.exit(failed ? 1 : 0);
 })();
