@@ -1,0 +1,14 @@
+# The site's languages, in menu order. key: front matter and data-lang value;
+# code: the HTML lang attribute; badge: short label in the menu.
+- key: en
+  name: English
+  badge: US
+  code: en
+- key: yu
+  name: Naš
+  badge: YU
+  code: sh
+- key: sr
+  name: Српски
+  badge: СР
+  code: sr-Cyrl

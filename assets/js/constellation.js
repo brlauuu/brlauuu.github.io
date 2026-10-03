@@ -99,6 +99,20 @@
     return Math.hypot(dx, dy) < C.clickPx;
   }
 
+  // The posts of one language and the tags they use, counted for that language.
+  // A post without lang is English, like the front matter default.
+  function forLang(data, lang) {
+    const posts = (data.posts || []).filter((p) => (p.lang || 'en') === lang);
+    const counts = new Map();
+    for (const p of posts) for (const slug of p.tags || []) counts.set(slug, (counts.get(slug) || 0) + 1);
+    const tags = (data.tags || []).filter((t) => counts.has(t.slug)).map((t) => ({ ...t, count: counts.get(t.slug) }));
+    return { tags, posts };
+  }
+
+  function langChanged(current, detail) {
+    return Boolean(detail && detail.lang && detail.lang !== current);
+  }
+
   const SVG = 'http://www.w3.org/2000/svg';
 
   function init(doc, win) {
@@ -116,8 +130,22 @@
     const html = doc.documentElement;
     const box = C.box;
 
-    const { nodes, links } = seed(parsed.tags, parsed.posts || [], box);
-    const byId = new Map(nodes.map((n) => [n.id, n]));
+    // The graph of the active language. Arrays are refilled in place on a
+    // language change so every closure below keeps reading the current graph.
+    const nodes = [], links = [];
+    const byId = new Map();
+    let lang = null;
+    function load(next) {
+      lang = next;
+      const data = forLang(parsed, lang);
+      const graph = seed(data.tags, data.posts, box);
+      nodes.splice(0, nodes.length, ...graph.nodes);
+      links.splice(0, links.length, ...graph.links);
+      byId.clear();
+      nodes.forEach((n, i) => { byId.set(n.id, n); n.phase = i * 1.7; });
+      container.dataset.empty = nodes.length ? 'false' : 'true';
+    }
+    load(html.dataset.lang || 'en');
     const el = new Map();      // node id -> <a>
     const lineEl = [];         // parallel to links
 
@@ -198,7 +226,6 @@
       });
     }
 
-    nodes.forEach((n, i) => { n.phase = i * 1.7; });
     let atRest = false, frame = 0, running = false, litId = null, built = false, hoverId = null, settled = false;
 
     function light(id) {
@@ -248,7 +275,7 @@
     }
 
     function start() {
-      if (running || !wide.matches) return;
+      if (running || !wide.matches || !nodes.length) return;
       if (!built) { build(); built = true; }   // nothing in the DOM until the graph is shown
       if (reduced.matches) {
         // Settle once, not on every resume, or each restart would teleport the graph.
@@ -345,7 +372,21 @@
       }
     });
 
-    doc.addEventListener('themechange', () => { if (!built) return; reshape(); if (!running) { render(0); start(); } });
+    // A language switch swaps the whole graph; everything else only restyles it.
+    function relang(next) {
+      stop();
+      drag = null; hoverId = null; litId = null;
+      linksG.replaceChildren(); nodesG.replaceChildren();
+      el.clear(); lineEl.length = 0;
+      built = false; settled = false; atRest = false;
+      load(next);
+      start();
+    }
+
+    doc.addEventListener('themechange', (event) => {
+      if (langChanged(lang, event.detail)) { relang(event.detail.lang); return; }
+      if (!built) return; reshape(); if (!running) { render(0); start(); }
+    });
     doc.addEventListener('visibilitychange', () => { if (doc.hidden) stop(); else start(); });
     wide.addEventListener?.('change', (e) => { if (e.matches) start(); else stop(); });
     reduced.addEventListener?.('change', () => { stop(); settled = false; start(); });
@@ -355,7 +396,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { C, radiusFor, seed, step, highlightSet, isClick };
+    module.exports = { C, radiusFor, seed, step, highlightSet, isClick, forLang, langChanged };
   } else if (typeof document !== 'undefined') {
     init(document, window);
   }

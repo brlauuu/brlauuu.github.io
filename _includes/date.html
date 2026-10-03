@@ -1,0 +1,15 @@
+{%- comment -%}
+A date in every language; CSS shows the active one. include.format is "full"
+(October 03, 2026 / 3. oktobar 2026.) or "month_day" (October 3 / 3. oktobar).
+{%- endcomment -%}
+{%- assign d = include.date -%}
+{%- assign month_index = d | date: "%-m" | minus: 1 -%}
+{%- for l in site.data.languages -%}
+{%- if l.key == "en" -%}
+{%- if include.format == "month_day" -%}{%- assign text = d | date: "%B %-d" -%}{%- else -%}{%- assign text = d | date: "%B %d, %Y" -%}{%- endif -%}
+{%- else -%}
+{%- assign month = site.data.i18n.months[l.key][month_index] -%}
+{%- capture text -%}{{ d | date: "%-d" }}. {{ month }}{% unless include.format == "month_day" %} {{ d | date: "%Y" }}.{% endunless %}{%- endcapture -%}
+{%- endif -%}
+<time{% if include.class %} class="{{ include.class }}"{% endif %} datetime="{{ d | date_to_xmlschema }}" lang="{{ l.code }}" data-t="{{ l.key }}">{{ text }}</time>
+{%- endfor -%}

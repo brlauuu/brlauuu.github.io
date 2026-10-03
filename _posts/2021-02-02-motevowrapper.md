@@ -2,6 +2,7 @@
 layout: post
 title: "MotEvo wrapper"
 author: "Đorđe Relić"
+lang: en
 tags: [python, bioinformatics, tools]
 ---
 

@@ -1,0 +1,15 @@
+{%- comment -%}
+Language menu in the nav (assets/js/lang.js). The button shows the active
+language's flag; the panel lists every language. Without JavaScript the
+<details> still opens but choosing does nothing and the site stays English.
+{%- endcomment -%}
+<details class="lang-menu" data-lang-menu>
+  <summary class="lang-menu-button" aria-label="Language" aria-controls="lang-menu-list" data-action-target="lang-menu">
+    {%- for l in site.data.languages %}{% include flag.html lang=l.key t=true %}{% endfor -%}
+  </summary>
+  <ul class="lang-menu-list" id="lang-menu-list">
+    {%- for l in site.data.languages %}
+    <li><button type="button" class="lang-option" data-set-lang="{{ l.key }}" aria-current="{% if l.key == 'en' %}true{% else %}false{% endif %}">{% include flag.html lang=l.key %}<span class="lang-badge">{{ l.badge }}</span><span class="lang-name" lang="{{ l.code }}">{{ l.name }}</span></button></li>
+    {%- endfor %}
+  </ul>
+</details>

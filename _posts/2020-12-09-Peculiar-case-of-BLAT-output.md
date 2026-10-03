@@ -2,6 +2,7 @@
 layout: post
 title: "A Peculiar Case of BLAT Output"
 author: "Đorđe Relić"
+lang: en
 tags: [bioinformatics, sequence-alignment, tools]
 ---
 

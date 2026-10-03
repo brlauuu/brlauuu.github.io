@@ -1,0 +1,2 @@
+{%- comment -%} The size of include.posts per language, as a .tag-count; CSS shows the active one. {%- endcomment -%}
+<span class="tag-count">{%- for l in site.data.languages -%}<span data-t="{{ l.key }}">{{ include.posts | where: "lang", l.key | size }}</span>{%- endfor -%}</span>

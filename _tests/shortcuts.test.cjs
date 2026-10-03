@@ -64,3 +64,10 @@ test('bindings are read from the dialog rows', () => {
   ];
   assert.deepEqual(readBindings(rows), { t: { toggle: 'theme' }, 'g h': { href: '/' }, 'g a': { href: '/about' } });
 });
+
+test('rows with data-action bind to that action', () => {
+  const { readBindings, step } = load();
+  const read = readBindings([{ dataset: { shortcut: 'l', action: 'lang-menu' } }, { dataset: { shortcut: 't', toggle: 'theme' } }]);
+  assert.deepEqual(read, { l: { action: 'lang-menu' }, t: { toggle: 'theme' } });
+  assert.deepEqual(step(read, null, 'l'), { action: { action: 'lang-menu' }, pending: null });
+});

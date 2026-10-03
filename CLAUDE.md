@@ -25,11 +25,11 @@ This is a Jekyll-based personal blog hosted on GitHub Pages, using the Tale them
 ```
 _posts/          # Blog posts (YYYY-MM-DD-title.md format)
 _pages/          # Static pages (about, archive)
-_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card, constellation)
+_includes/       # Custom HTML includes (head, navigation, theme-toggle, shortcuts, catalogue_item, project-card, constellation, lang-menu, flag, t, date, lang-counts, lang-empty)
 _layouts/        # Custom layouts (default, home)
 assets/
   css/           # Custom CSS (theme.css, projects.css)
-  js/            # JavaScript files (theme.js, shortcuts.js, sidenotes.js, project-stats.js, share-button.js, backdrop.js, constellation.js)
+  js/            # JavaScript files (theme.js, shortcuts.js, sidenotes.js, project-stats.js, share-button.js, backdrop.js, constellation.js, lang.js)
 _config.yml      # Jekyll configuration
 index.html       # Homepage with recent posts
 ```
@@ -63,6 +63,7 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
   layout: post
   title: "Post Title"
   author: "Đorđe Relić"
+  lang: en                  # `en`, `yu` or `sr`; defaults to `en`
   tags: [tag1, tag2, tag3]  # Optional - posts can have tags or no tags
   ---
   ```
@@ -214,7 +215,8 @@ transitions off and hovers that translate by a pixel. Cross-axis with color
 padding, and 3px rainbow strips to cover the 2px borders. With color on the thick lines
 paint as solid rainbow bars because `border-image` replaces the dashed style; accepted.
 The font fallback stack is monospace rather than the site's sans stack, on purpose.
-Body text never changes font.
+Body text never changes font. Silkscreen has no Cyrillic, so Cyrillic text (СР, Српски)
+falls back to the monospace stack under pixel style.
 
 **Backdrop** (`assets/js/backdrop.js`): a fixed canvas behind the page drawn by one
 fragment shader while `data-color="on"`: light is an acid trip (domain-warped candy
@@ -256,6 +258,28 @@ based on `event.detail`.
 **Changing colors:** edit the variables in `assets/css/theme.css`. Do not add
 `!important` or hard-coded colors to component rules.
 
+### Language
+
+A fourth switch, `data-lang` on `<html>` (`en`, `yu` Naš in Latin, `sr` Српски in Cyrillic;
+storage key `lang`, default `en`, never the browser language), set before first paint by
+`_includes/head.html` and changed by the nav menu (`_includes/lang-menu.html`,
+`assets/js/lang.js`, shortcut `l`). Posts carry `lang:` in front matter (default `en` from
+`_config.yml`); post pages fix `<html lang>` to the post's (`data-content-lang`), other pages
+follow the choice (`en`, `sh`, `sr-Cyrl`).
+
+Nothing is swapped by script. Liquid writes every string in all three languages
+(`_data/i18n.yml` through `{% include t.html key="..." %}`, dates through `date.html`), each
+marked `data-t="<lang>"`; post entries and groups carry `data-langs="<langs>"`; CSS hides
+what does not match. Lists write a `lang-empty` note for each language they have nothing
+for. The tags constellation rebuilds from the chosen language's posts on a `themechange`
+whose `lang` changed. A post page in another language than the chosen one shows a note; a
+translation is linked when posts share `ref:` in front matter.
+
+To add a string: add a key to `_data/i18n.yml` with `en`, `yu` and `sr` (yu and sr say the
+same thing in two scripts) and use `t.html`. `_tests/lang.test.cjs` tests `resolveLang`,
+`menuStep` and the menu; `node _tests/tools/lang-check.cjs <base> <yu post path>` drives
+it in a browser and needs a throwaway yu post in the build.
+
 ### Reference side notes
 
 Write references as Kramdown footnotes: `[^1]` inline and `[^1]: text` definitions
@@ -283,7 +307,7 @@ layout) listing the shortcuts. Its rows are the single source of truth: each car
 (a page). `assets/js/shortcuts.js` reads that table on load, listens for `keydown` on
 the document, ignores modifier combinations and editable targets, and runs `step()`:
 `t`/`c`/`p` click the matching `[data-toggle]` button, `g` arms a 1.5 s two-key
-sequence for `h`/`a`/`r`/`t`, `?` toggles the dialog, `Esc` and the backdrop close it.
+sequence for `h`/`a`/`r`/`t`, `l` opens the language menu (a row with `data-action` clicks the element whose `data-action-target` matches), `?` toggles the dialog, `Esc` and the backdrop close it.
 The pure helpers (`ignores`, `readBindings`, `step`) are tested in
 `_tests/shortcuts.test.cjs`. Dialog styles live in `theme.css` next to the nav buttons,
 with pixel and color variants at the end of the file. To add a shortcut, add a row to

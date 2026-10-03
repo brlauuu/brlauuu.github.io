@@ -1,6 +1,7 @@
 // Keyboard shortcuts. The key table lives in the markup of the help dialog
 // (_includes/shortcuts.html): each row carries data-shortcut plus either
-// data-toggle (a theme axis button to click) or data-href (a page to open).
+// data-toggle (a theme axis button to click), data-action (clicks the element
+// whose data-action-target matches) or data-href (a page to open).
 // Single keys act at once; "g" arms a two-key sequence for a moment.
 (() => {
   const SEQUENCE_MS = 1500;
@@ -15,9 +16,9 @@
   function readBindings(rows) {
     const bindings = {};
     for (const row of rows) {
-      const { shortcut, toggle, href } = row.dataset;
+      const { shortcut, toggle, href, action } = row.dataset;
       if (!shortcut) continue;
-      bindings[shortcut] = toggle ? { toggle } : { href };
+      bindings[shortcut] = toggle ? { toggle } : action ? { action } : { href };
     }
     return bindings;
   }
@@ -43,10 +44,11 @@
 
     const toggleHelp = () => (dialog.open ? dialog.close() : dialog.showModal());
 
-    function act(action) {
-      if (action.help) toggleHelp();
-      else if (action.toggle) doc.querySelector(`[data-toggle="${action.toggle}"]`)?.click();
-      else if (action.href) win.location.assign(action.href);
+    function act(binding) {
+      if (binding.help) toggleHelp();
+      else if (binding.toggle) doc.querySelector(`[data-toggle="${binding.toggle}"]`)?.click();
+      else if (binding.action) doc.querySelector(`[data-action-target="${binding.action}"]`)?.click();
+      else if (binding.href) win.location.assign(binding.href);
     }
 
     doc.addEventListener('keydown', (event) => {

@@ -29,12 +29,23 @@ function check(name, ok, detail) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1500);
 
-  const counts = await page.evaluate(() => ({
-    nodes: document.querySelectorAll('.constellation .node').length,
-    links: document.querySelectorAll('.constellation .link').length,
-  }));
-  check('node count is 11', counts.nodes === 11, `nodes=${counts.nodes}`);
-  check('link count is 10', counts.links === 10, `links=${counts.links}`);
+  // Expected counts come from #constellation-data for the active language
+  // (English by default): the posts in that language plus the tags they use,
+  // and one link per post-tag pair.
+  const counts = await page.evaluate(() => {
+    const data = JSON.parse(document.getElementById('constellation-data').textContent);
+    const lang = document.documentElement.getAttribute('data-lang') || 'en';
+    const posts = data.posts.filter((p) => p.lang === lang);
+    const tagSlugs = new Set(posts.flatMap((p) => p.tags));
+    return {
+      nodes: document.querySelectorAll('.constellation .node').length,
+      links: document.querySelectorAll('.constellation .link').length,
+      expectedNodes: posts.length + tagSlugs.size,
+      expectedLinks: posts.reduce((n, p) => n + p.tags.length, 0),
+    };
+  });
+  check(`node count is ${counts.expectedNodes}`, counts.nodes === counts.expectedNodes, `nodes=${counts.nodes}`);
+  check(`link count is ${counts.expectedLinks}`, counts.links === counts.expectedLinks, `links=${counts.links}`);
 
   // --- Hover tag:tools lights its posts, dims the rest --------------------
   const toolsBox = await page.locator('[data-id="tag:tools"] .shape').boundingBox();

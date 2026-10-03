@@ -297,6 +297,36 @@ pre {
   color: var(--heading-color);
 }
 
+/* Post language note (post.html): shown when the chosen language is not the post's. */
+.post-lang-note {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  color: var(--catalogue-date-color);
+}
+
+.post-lang-note .flag {
+  display: inline-block;
+  width: 18px;
+  height: 12px;
+  vertical-align: -1px;
+}
+
+/* Per-language empty notes on list pages (lang-empty.html). */
+.lang-empty-home .lang-empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.lang-empty-home .lang-empty em {
+  font-style: normal;
+}
+
+/* The notes wrapper is always the last child of .catalogue, so Tale's
+   .catalogue-item:last-child rule no longer reaches the last post. */
+.catalogue-item:nth-last-child(2) {
+  border: 0;
+}
+
 @keyframes sidenote-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
@@ -533,6 +563,11 @@ footer span {
   overflow: visible;
 }
 
+/* No tagged posts in the chosen language: the list's empty note says so. */
+.constellation[data-empty="true"] {
+  display: none;
+}
+
 .constellation .link {
   stroke: var(--border-color);
   stroke-width: 1;
@@ -725,6 +760,146 @@ footer span {
 :root:not([data-style="pixel"]) .theme-toggle[data-toggle="style"] [data-when="smooth"],
 [data-style="pixel"] .theme-toggle[data-toggle="style"] [data-when="pixel"] {
   display: block;
+}
+
+/* Language axis (lang.js). [data-t] marks content in exactly one language;
+   [data-langs] lists the languages a post or a group holds. Hiding rules only,
+   so every element keeps its own display. Without JavaScript nothing sets
+   data-lang, and English shows. */
+:root:not([data-lang="yu"]) [data-t="yu"],
+:root:not([data-lang="sr"]) [data-t="sr"],
+[data-lang="yu"] [data-t="en"],
+[data-lang="sr"] [data-t="en"],
+:root:not([data-lang="yu"]):not([data-lang="sr"]) [data-langs]:not([data-langs~="en"]),
+[data-lang="yu"] [data-langs]:not([data-langs~="yu"]),
+[data-lang="sr"] [data-langs]:not([data-langs~="sr"]) {
+  display: none;
+}
+
+/* Tale sets line-height 1.5 on every element, so a language span would change
+   the line box wherever master had bare text under another line-height. This
+   is a closed list of those places on purpose: a general [data-t] rule would
+   break spans that master already gave 1.5 (.post-info, <time>). */
+h1 > [data-t],
+h2 > [data-t],
+h3 > [data-t],
+.tag-count > [data-t],
+.catalogue-pinned > [data-t] {
+  line-height: inherit;
+}
+
+/* Language menu (lang.js): a flag button and a panel under it. */
+.lang-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.lang-menu-button {
+  display: inline-flex;
+  list-style: none;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform 0.2s ease;
+}
+
+.lang-menu-button::-webkit-details-marker {
+  display: none;
+}
+
+.lang-menu-button:hover {
+  transform: scale(1.15);
+}
+
+.flag {
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+
+.lang-menu-list {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  z-index: 20;
+  min-width: 10.5rem;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  box-shadow: 0 8px 30px var(--share-shadow);
+}
+
+/* Tale's `.nav { overflow: auto }` would clip the panel (and add a scrollbar)
+   since it hangs below the nav bar. `overflow: auto` also made .nav a block
+   formatting context, which kept .nav-container's 1rem margins inside the nav;
+   `display: flow-root` restores that so the nav box and its shadow line stay put. */
+/* The panel hangs over the page, and Tale's `.nav li { opacity: .6 }` traps its
+   z-index in the nav item's stacking context, so the nav as a whole must rise
+   above later positioned content such as .post or clicks would miss the panel. */
+.nav {
+  position: relative;
+  z-index: 20;
+  overflow: visible;
+  display: flow-root;
+}
+
+/* The panel is a <ul> inside the nav's <ul>, so Tale's `.nav ul` and `.nav li`
+   rules reach it (bottom anchor, top margin, centred text, item padding and
+   opacity). The extra .nav class outranks them. */
+.nav .lang-menu-list {
+  bottom: auto;
+  margin: 0;
+  text-align: left;
+}
+
+.nav .nav-toggles:focus-within {
+  opacity: 1;
+}
+
+.nav .nav-toggles:has(> .lang-menu[open]) {
+  opacity: 1;
+}
+
+.nav .lang-menu-list li {
+  display: block;
+  padding: 0;
+  opacity: 1;
+  transition: none;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--text-color);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lang-option:hover,
+.lang-option:focus-visible {
+  background: var(--code-bg);
+}
+
+.lang-option[aria-current="true"] {
+  color: var(--heading-color);
+  font-weight: bold;
+}
+
+.lang-badge {
+  min-width: 1.6rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--catalogue-date-color);
 }
 
 /* ------------------------------------------------------------------ */
@@ -923,6 +1098,7 @@ footer span {
 }
 
 [data-color="on"] .catalogue-item:last-child::after,
+[data-color="on"] .catalogue-item:nth-last-child(2)::after,
 [data-color="on"] .tag-section:last-child::after {
   content: none;
 }
@@ -1431,4 +1607,59 @@ footer span {
   font-family: var(--pixel-font);
   font-size: 0.75rem;
   border-radius: 0;
+}
+
+/* Language menu under the other axes. */
+[data-color="on"] .lang-menu-list {
+  border-color: transparent;
+}
+
+[data-color="on"] .lang-menu-list::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--rainbow-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  filter: var(--melt) hue-rotate(var(--hue));
+  animation: var(--cycle-name) var(--cycle-duration) var(--rainbow-timing) infinite;
+  animation-play-state: var(--rainbow-play);
+}
+
+[data-style="pixel"] .lang-menu-list,
+[data-style="pixel"] .lang-option,
+[data-style="pixel"] .flag {
+  border-radius: 0;
+}
+
+[data-style="pixel"] .lang-menu-list {
+  border-width: 2px;
+  box-shadow: 4px 4px 0 var(--heading-color);
+}
+
+[data-style="pixel"] .lang-badge,
+[data-style="pixel"] .lang-name {
+  font-family: var(--pixel-font);
+  font-size: 0.75rem;
+}
+
+[data-style="pixel"] .flag {
+  shape-rendering: crispEdges;
+}
+
+[data-style="pixel"] .lang-menu-button {
+  transition: none;
+}
+
+[data-style="pixel"] .lang-menu-button:hover {
+  transform: translate(1px, 1px);
+}
+
+[data-style="pixel"][data-color="on"] .lang-menu-list::before {
+  padding: 2px;
 }

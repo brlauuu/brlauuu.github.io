@@ -82,3 +82,29 @@ test('isClick uses a 4 px threshold', () => {
   assert.equal(isClick(3, 3), false);
   assert.equal(isClick(0, 4), false);
 });
+
+test('forLang keeps one language and recounts its tags', () => {
+  const { forLang } = load();
+  const data = {
+    tags: [{ name: 'python', slug: 'python', count: 2 }, { name: 'tools', slug: 'tools', count: 2 }],
+    posts: [
+      { url: '/a', title: 'A', lang: 'en', tags: ['python', 'tools'] },
+      { url: '/b', title: 'B', lang: 'yu', tags: ['tools'] },
+      { url: '/c', title: 'C', tags: ['python'] }
+    ]
+  };
+  const en = forLang(data, 'en');
+  assert.deepEqual(en.posts.map((p) => p.url), ['/a', '/c']);
+  assert.deepEqual(en.tags.map((t) => [t.slug, t.count]), [['python', 2], ['tools', 1]]);
+  const yu = forLang(data, 'yu');
+  assert.deepEqual(yu.tags.map((t) => [t.slug, t.count]), [['tools', 1]]);
+  assert.deepEqual(forLang(data, 'sr'), { tags: [], posts: [] });
+});
+
+test('langChanged is true only for a themechange that switches language', () => {
+  const { langChanged } = load();
+  assert.equal(langChanged('en', { lang: 'yu' }), true);
+  assert.equal(langChanged('en', { lang: 'en', color: 'on' }), false);
+  assert.equal(langChanged('en', { theme: 'dark' }), false);
+  assert.equal(langChanged('en', undefined), false);
+});

@@ -2,6 +2,7 @@
 layout: post
 title: "The bottleneck moved: the effect of agent-assisted software engineering in the pharma industry"
 author: "Đorđe Relić"
+lang: en
 tags: [software development, pharma, biotech, ai, opinion]
 ---
 

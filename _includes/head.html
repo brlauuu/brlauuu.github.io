@@ -16,8 +16,8 @@
   {% endif %}
   <link type="application/atom+xml" rel="alternate" href="{{ site.url }}/feed.xml" title="{{ site.title }}" />
 
-  <!-- Set the three theme axes before first paint so the page never flashes the wrong look.
-       Keep in sync with the defaults in assets/js/theme.js. -->
+  <!-- Set the four theme axes before first paint so the page never flashes the wrong look.
+       Keep in sync with assets/js/theme.js and assets/js/lang.js. -->
   <script>
     (function () {
       var html = document.documentElement, storage = null;
@@ -31,6 +31,13 @@
       set('theme', 'light', 'dark', systemDark ? 'dark' : 'light');
       set('color', 'off', 'on', 'off');
       set('style', 'smooth', 'pixel', 'smooth');
+      // Language: en, yu or sr, English unless chosen. Posts keep their own lang
+      // attribute (data-content-lang); other pages take the chosen language's.
+      var lang = null;
+      try { lang = storage && storage.getItem('lang'); } catch (e) {}
+      if (lang !== 'yu' && lang !== 'sr') lang = 'en';
+      html.setAttribute('data-lang', lang);
+      if (!html.hasAttribute('data-content-lang')) html.setAttribute('lang', { en: 'en', yu: 'sh', sr: 'sr-Cyrl' }[lang]);
     })();
   </script>
 </head>
