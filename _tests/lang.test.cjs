@@ -45,7 +45,17 @@ test('shouldCloseOnFocusOut closes only for a target outside an open menu', () =
   assert.equal(shouldCloseOnFocusOut(null, {}), false);
 });
 
-function fakeDom({ stored = {}, brokenStorage = false, contentLang = null } = {}) {
+test('versionFor returns the path of another language version, else null', () => {
+  const { versionFor } = load();
+  const versions = { en: '/en/x', yu: '/yu/x', sr: '/sr/x' };
+  assert.equal(versionFor('sr', 'en', versions), '/sr/x');
+  assert.equal(versionFor('en', 'yu', versions), '/en/x');
+  assert.equal(versionFor('en', 'en', versions), null, 'already on it');
+  assert.equal(versionFor('sr', 'en', { en: '/en/x' }), null, 'no such version');
+  assert.equal(versionFor('sr', null, {}), null, 'not a post');
+});
+
+function fakeDom({ stored = {}, brokenStorage = false, contentLang = null, versions = {}, hash = '' } = {}) {
   const attrs = { 'data-theme': 'light', 'data-color': 'off', 'data-style': 'smooth', 'data-lang': 'en', lang: 'en' };
   if (contentLang) attrs['data-content-lang'] = contentLang;
   const html = {
@@ -61,9 +71,11 @@ function fakeDom({ stored = {}, brokenStorage = false, contentLang = null } = {}
   const menu = { open: false, querySelector: () => summary, querySelectorAll: () => options,
     addEventListener() {}, contains: () => false };
   const events = [];
+  const links = Object.entries(versions).map(([key, p]) => ({ dataset: { langVersion: key, path: p } }));
   const doc = {
     documentElement: html,
     querySelector: (s) => (s === '[data-lang-menu]' ? menu : null),
+    querySelectorAll: (s) => (s === 'link[data-lang-version]' ? links : []),
     addEventListener() {},
     dispatchEvent: (e) => events.push(e),
     get activeElement() { return focused; }
@@ -73,8 +85,10 @@ function fakeDom({ stored = {}, brokenStorage = false, contentLang = null } = {}
     : { getItem: (k) => stored[k] ?? null, setItem: (k, v) => { stored[k] = v; } };
   class CustomEvent { constructor(type, o) { this.type = type; this.detail = o.detail; } }
   const api = load({ CustomEvent });
-  const controller = api.init(doc, storage);
-  return { attrs, options, summary, menu, events, stored, controller, focused: () => focused };
+  const replaced = [];
+  const location = { search: '', hash, replace: (u) => replaced.push(u) };
+  const controller = api.init(doc, storage, location);
+  return { attrs, options, summary, menu, events, stored, replaced, controller, focused: () => focused };
 }
 
 test('init applies the stored language, marks its option and labels the button', () => {
@@ -112,5 +126,36 @@ test('blocked storage still switches the language for the session', () => {
   const { attrs, options } = fakeDom({ brokenStorage: true });
   assert.equal(attrs['data-lang'], 'en');
   options[1].onclick();
+  assert.equal(attrs['data-lang'], 'yu');
+});
+
+test('choosing another language on a post opens that version in place of this one', () => {
+  const { attrs, options, menu, events, stored, replaced } = fakeDom({
+    contentLang: 'en', versions: { en: '/en/x', yu: '/yu/x', sr: '/sr/x' }, hash: '#fn:1'
+  });
+  menu.open = true;
+  options[2].onclick();
+  assert.deepEqual(replaced, ['/sr/x#fn:1']);
+  assert.equal(stored.lang, 'sr');
+  assert.equal(menu.open, false);
+  assert.equal(attrs['data-lang'], 'en', 'the page leaving is not switched');
+  assert.equal(events.length, 0);
+});
+
+test('choosing the post\'s own language stays and switches in place', () => {
+  const { attrs, options, events, stored, replaced } = fakeDom({
+    contentLang: 'sr', versions: { en: '/en/x', yu: '/yu/x', sr: '/sr/x' }
+  });
+  options[2].onclick();
+  assert.deepEqual(replaced, []);
+  assert.equal(stored.lang, 'sr');
+  assert.equal(attrs['data-lang'], 'sr');
+  assert.equal(events.length, 1);
+});
+
+test('a page without versions (About, lists) switches in place', () => {
+  const { attrs, options, replaced } = fakeDom({ contentLang: 'en' });
+  options[1].onclick();
+  assert.deepEqual(replaced, []);
   assert.equal(attrs['data-lang'], 'yu');
 });

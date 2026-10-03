@@ -14,7 +14,6 @@ pinned:        { en: "Pinned", yu: "Prikačeno", sr: "Прикачено" }
 no_posts:      { en: "No posts in this language yet.", yu: "Još nema članaka na ovom jeziku.", sr: "Још нема чланака на овом језику." }
 no_recent:     { en: "No recent posts. Check out the {a}archive{/a} for older articles.", yu: "Nema novih članaka. Starije potražite u {a}arhivi{/a}.", sr: "Нема нових чланака. Старије потражите у {a}архиви{/a}." }
 archive_empty: { en: "No archived posts yet. Posts older than one year will appear here.", yu: "Arhiva je još prazna. Članci stariji od godinu dana pojaviće se ovde.", sr: "Архива је још празна. Чланци старији од годину дана појавиће се овде." }
-only_in:       { en: "Only available in:", yu: "Dostupno samo na:", sr: "Доступно само на:" }
 months:
   en: [January, February, March, April, May, June, July, August, September, October, November, December]
   yu: [januar, februar, mart, april, maj, jun, jul, avgust, septembar, oktobar, novembar, decembar]

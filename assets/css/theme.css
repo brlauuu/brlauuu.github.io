@@ -297,20 +297,6 @@ pre {
   color: var(--heading-color);
 }
 
-/* Post language note (post.html): shown when the chosen language is not the post's. */
-.post-lang-note {
-  margin: 0.5rem 0;
-  font-size: 0.85rem;
-  color: var(--catalogue-date-color);
-}
-
-.post-lang-note .flag {
-  display: inline-block;
-  width: 18px;
-  height: 12px;
-  vertical-align: -1px;
-}
-
 /* Per-language empty notes on list pages (lang-empty.html). */
 .lang-empty-home .lang-empty {
   padding: 2rem 0;

@@ -282,13 +282,18 @@ Nothing is swapped by script. Liquid writes every string in all three languages
 marked `data-t="<lang>"`; post entries and groups carry `data-langs="<langs>"`; CSS hides
 what does not match. Lists write a `lang-empty` note for each language they have nothing
 for. The tags constellation rebuilds from the chosen language's posts on a `themechange`
-whose `lang` changed. A post page in another language than the chosen one shows a note; a
-translation is linked when posts share `ref:` in front matter.
+whose `lang` changed. Post pages are the exception to "nothing is swapped": `head.html` writes
+a `<link rel="alternate" hreflang data-lang-version data-path>` for each version sharing the
+post's `ref:`, choosing another language in the menu opens that version with
+`location.replace` (Back leaves the post rather than bouncing between versions; the hash is
+kept), and opening a post in another language than a *stored* choice redirects to the chosen
+version before first paint. With nothing stored (first visit, crawlers) a post stays on the
+version its link named. Post arrows step through posts in the post's own language.
 
 To add a string: add a key to `_data/i18n.yml` with `en`, `yu` and `sr` (yu and sr say the
 same thing in two scripts) and use `t.html`. `_tests/lang.test.cjs` tests `resolveLang`,
-`menuStep` and the menu; `node _tests/tools/lang-check.cjs <base> <yu post path>` drives
-it in a browser and needs a throwaway yu post in the build.
+`menuStep`, `versionFor` and the menu; `node _tests/tools/lang-check.cjs <base>` drives it
+in a browser, including switching, the arrival redirect and Back.
 
 ### Reference side notes
 
