@@ -3,7 +3,7 @@ Overrides Tale's catalogue_item.html. Tale wraps the whole card in one <a>,
 which makes the date and excerpt read as link text. Here only the title is
 a link; the date and excerpt are plain text (see issue #5).
 {% endcomment %}
-<article class="catalogue-item" data-langs="{{ post.lang }}">
+<article class="catalogue-item{% if include.last %} is-lang-last{% endif %}" data-langs="{{ post.lang }}">
   <div>
     {% if include.sticky == 'true' %}
     <span class="catalogue-pinned">{% include t.html key="pinned" %} &middot;</span>
