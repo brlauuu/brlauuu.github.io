@@ -15,7 +15,11 @@ test('brlauuu.dev/flatpare redirects to flatpare.com, keeping the path', () => {
 
 // The podlog landing page is the repository's GitHub Pages site, proxied so the
 // address stays brlauuu.dev/podlog/. Its assets are relative, hence the slash.
+// The source is a regex because Vercel's /podlog/:path* does not match /podlog/
+// itself (it served NOT_FOUND there while the assets proxied fine).
 test('brlauuu.dev/podlog/ shows the podlog GitHub Pages site', () => {
   assert.ok(config.redirects.some((r) => r.source === '/podlog' && r.destination === '/podlog/'));
-  assert.ok(config.rewrites.some((r) => r.source === '/podlog/:path*' && r.destination === 'https://brlauuu.github.io/podlog/:path*'));
+  const rule = config.rewrites.find((r) => r.source === '/podlog/(.*)');
+  assert.equal(rule?.destination, 'https://brlauuu.github.io/podlog/$1');
+  assert.ok(new RegExp(`^${rule.source}$`).test('/podlog/'));
 });
