@@ -305,9 +305,17 @@ Both declare a filter region large enough that smears are not clipped. Applied w
 `.catalogue-title a`; `h4`–`h6` stay crisp. The gradient text fill is unchanged under
 the filter. Pixel style applies no melt filter.
 
+Phones (#64). On a coarse pointer or a screen 600 px wide or less, the melt rules do not
+apply (`@media not ((pointer: coarse) or (max-width: 600px))`) and the hue cycle is held
+(`--rainbow-play: paused`, as under reduced motion). Measured on an emulated phone
+(390x844, DPR 3, CPU throttled 4x) the home page ran at 6 fps with color on and a post at
+12 to 22 fps; the backdrop alone held 60 fps, so the cost was the per-frame CPU filters:
+the melt's turbulence and displacement, and the `hue-rotate(var(--hue))` animation, which
+the compositor cannot run, repainting every animated element. With both held, 60 fps.
+
 `assets/js/melt.js` pauses the SVG animations (`pauseAnimations()`) when they cannot
-be seen or must not move: color off, pixel style, reduced motion, hidden tab. Its pure
-helper `meltState({ color, style, reduced, hidden })` returns `'run'` or `'pause'` and
+be seen or must not move: color off, pixel style, reduced motion, a phone, hidden tab. Its pure
+helper `meltState({ color, style, reduced, phone, hidden })` returns `'run'` or `'pause'` and
 is tested in `_tests/melt.test.cjs`. It listens for `themechange`, the reduced-motion
 media query and `visibilitychange`.
 

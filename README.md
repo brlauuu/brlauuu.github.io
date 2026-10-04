@@ -59,7 +59,8 @@ cycles once every 12 seconds. Dark is dread: oxblood, bruise and bone gradients,
 and a slow pulse of plus or minus 20 degrees over 40 seconds. Body text and code blocks stay
 neutral, with a soft halo (`--halo`) so they read on the backdrop. In smooth style headings
 melt (an SVG displacement filter, `assets/js/melt.js`); pixel style never melts.
-`prefers-reduced-motion` freezes the cycle and the melt.
+`prefers-reduced-motion` freezes the cycle and the melt. Phones (a coarse pointer or a
+screen 600 px wide or less) skip the melt and hold the cycle, which made scrolling lag there.
 
 A WebGL backdrop (`assets/js/backdrop.js`) runs behind the page and reacts to the pointer.
 Light is marbling with drips that bead, stretch and fall; dark is ink, fog, a vignette and a
