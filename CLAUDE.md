@@ -76,7 +76,7 @@ When running `jekyll serve`, the site is available at `http://localhost:4000`
 - **Feed**: `feed.xml` in the root is jekyll-feed 0.17.0's template, copied so each entry's
   `xml:lang` is the language code (`en`, `sh`, `sr-Cyrl`) instead of the `lang` key; jekyll-feed
   skips its own feed while that file exists
-- **Reading time**: `_layouts/post.html` shows the word count and minutes to read (200 words/min, rounded up) under the date, counted from the rendered body without the footnote list; pages that use the post layout don't show it
+- **Reading time**: `_layouts/post.html` shows the word count and minutes to read (200 words/min, rounded up) at the right of the tags row (`.post-meta`, alone when a post has no tags), counted from the rendered body without the footnote list; pages that use the post layout don't show it
 - **Tags**: Posts can optionally include tags for categorization
   - Add tags as an array in the front matter: `tags: [python, bioinformatics]`
   - Tags are displayed below the post title
