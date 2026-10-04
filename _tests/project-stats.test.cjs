@@ -6,6 +6,7 @@ const script = fs.readFileSync(require('node:path').join(__dirname, '../assets/j
 const github = 'https://api.github.com/repos/owner/project';
 const endpoint = 'https://metrics.example.test/project';
 const versionFile = 'https://raw.githubusercontent.com/owner/project/HEAD/VERSION';
+const latestRelease = `${github}/releases/latest`;
 
 async function render(overrides = {}, sources = {}, options = {}) {
   const config = { name: 'Project', repository: 'owner/project', ...overrides };
@@ -93,7 +94,7 @@ test('no website or counter configured leaves unavailable indicators', async () 
   assert.equal(elements.website.href, undefined);
   assert.equal(elements.website.attrs['aria-disabled'], 'true');
   assert.equal(elements.counter.textContent, '—');
-  assert.deepEqual(requests, [github, versionFile]);
+  assert.deepEqual(requests, [github, versionFile, latestRelease]);
 });
 
 test('primitive JSON and default count fields support real zero', async () => {
@@ -161,4 +162,24 @@ test('a missing, invalid or failing VERSION file keeps the badge hidden without 
   const { elements } = await render({}, { [versionFile]: { body: '1.0.0' } });
   assert.equal(elements.version.textContent, 'v1.0.0');
   assert.equal(elements.stars.textContent, '—');
+});
+
+test('without a VERSION file the badge shows the latest GitHub release tag', async () => {
+  const { elements, requests } = await render({}, { [github]: { body: {} }, [versionFile]: { status: 404 }, [latestRelease]: { body: { tag_name: 'v0.6.0' } } });
+  assert.equal(elements.version.textContent, 'v0.6.0');
+  assert.equal(elements.version.hidden, false);
+  assert.ok(requests.includes(latestRelease));
+});
+
+test('a valid VERSION file wins and the releases API is not asked', async () => {
+  const { elements, requests } = await render({}, { [versionFile]: { body: '1.2.0' }, [latestRelease]: { body: { tag_name: 'v9.9.9' } } });
+  assert.equal(elements.version.textContent, 'v1.2.0');
+  assert.ok(!requests.includes(latestRelease));
+});
+
+test('no VERSION file and no usable release keep the badge hidden', async () => {
+  for (const release of [{ status: 404 }, { body: {} }, { body: { tag_name: 'nightly' } }, { body: { tag_name: 7 } }]) {
+    const { elements } = await render({}, { [versionFile]: { status: 404 }, [latestRelease]: release });
+    assert.equal(elements.version.hidden, true);
+  }
 });
