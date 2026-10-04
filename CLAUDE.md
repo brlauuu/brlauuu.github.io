@@ -380,6 +380,10 @@ The site is served from two places, both built automatically on every push to `m
   requests get Vercel preview deployments. `_config.vercel.yml` sets `vercel: true` and nothing
   else, so canonical, feed and sitemap URLs still point at github.io. Both files are excluded from
   the built site.
+- **Project paths on brlauuu.dev** (`vercel.json`, checked by `_tests/vercel.test.cjs`): `/flatpare`
+  redirects (307) to https://flatpare.com, keeping any subpath; `/podlog` redirects to `/podlog/`,
+  which proxies the podlog repository's GitHub Pages site (https://brlauuu.github.io/podlog/) so the
+  address stays on brlauuu.dev. On github.io, `/podlog/` is that Pages site itself.
 - **Vercel Web Analytics** is on for the Vercel project. `_includes/head.html` adds
   `/_vercel/insights/script.js` only when `site.vercel` is set, so github.io pages carry no
   analytics and request nothing.
