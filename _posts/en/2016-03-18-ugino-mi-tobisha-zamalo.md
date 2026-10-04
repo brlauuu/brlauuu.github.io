@@ -2,8 +2,8 @@
 layout: post
 title: "My Tobisha kicked the bucket (almost)"
 author: "Đorđe Relić"
-tags: ["AI translated (Claude Opus 5.5)"]
 ref: ugino-mi-tobisha-zamalo
+ai_translated: Claude Opus 5.5
 ---
 
 I got Tobisha because I had to. I didn't really need it. The Asus I owned was more than enough for uni work and then some, but then that Imagine Cup 2013 happened.

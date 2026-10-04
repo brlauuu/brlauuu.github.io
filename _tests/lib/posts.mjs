@@ -4,13 +4,11 @@
 export const LANGS = ['en', 'yu', 'sr'];
 export const FOLDERS = { en: '_posts/en', yu: '_posts/yu', sr: '_posts/sr' };
 
-// The tag a machine translation carries until the author proofreads it.
-export function aiTag(lang, model) {
-  return { en: `AI translated (${model})`, yu: `Prevedeno pomoću VI (${model})`, sr: `Преведено помоћу ВИ (${model})` }[lang];
-}
-
-const AI_TAG = /^(AI translated|Prevedeno pomoću VI|Преведено помоћу ВИ) \(.+\)$/;
-export const isAiTag = (tag) => AI_TAG.test(tag);
+// A machine translation names its model in `ai_translated:` until the author
+// proofreads it; post.html shows that as a notice. The tags these versions
+// once carried instead must not come back.
+const OLD_AI_TAG = /^(AI translated|Prevedeno pomoću VI|Преведено помоћу ВИ) \(.+\)$/;
+export const isOldAiTag = (tag) => OLD_AI_TAG.test(tag);
 
 // ------------------------------------------------------------------ front matter
 // Only the keys these posts use are parsed; every other line is kept verbatim.
@@ -45,6 +43,7 @@ export function parsePost(text) {
     author: get('author') !== undefined ? unquote(get('author')) : '',
     tags: tags ? parseList(tags.trim().replace(/^\[|\]$/g, '')) : [],
     ref: get('ref')?.trim() || null,
+    aiTranslated: get('ai_translated') !== undefined ? unquote(get('ai_translated')) || null : null,
     body: m[2],
   };
 }
@@ -88,7 +87,7 @@ export const shapeOf = (body) => [
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 // Problems with one post's versions, judged against `source`: code, URLs,
-// headings and footnotes copied, refs equal, AI tag last, sr = yu in Cyrillic.
+// headings and footnotes copied, refs equal, no AI tag, sr = yu in Cyrillic.
 export function checkPost(versions, source) {
   const problems = [];
   const src = versions[source];
@@ -96,8 +95,7 @@ export function checkPost(versions, source) {
     const v = versions[lang];
     if (!v) { problems.push(`${lang}: missing`); continue; }
     if (v.ref !== src.ref || !v.ref) problems.push(`${lang}: ref ${v.ref} differs from ${source}'s ${src.ref}`);
-    const ai = v.tags.filter(isAiTag);
-    if (ai.length > 1 || (ai.length && v.tags[v.tags.length - 1] !== ai[0])) problems.push(`${lang}: the AI tag must appear once, last`);
+    if (v.tags.some(isOldAiTag)) problems.push(`${lang}: AI translation is marked by ai_translated:, not a tag`);
     if (lang === source) continue;
     if (!same(codeOf(v.body), codeOf(src.body))) problems.push(`${lang}: code differs from ${source}`);
     if (!same(urlsOf(v.body), urlsOf(src.body))) problems.push(`${lang}: links differ from ${source}`);

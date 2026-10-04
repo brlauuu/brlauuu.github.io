@@ -228,6 +228,19 @@ pre {
   color: var(--nav-link-hover-color);
 }
 
+/* "AI translated" notice under a post's title (post.html, ai_translated in front matter). */
+.ai-notice {
+  margin: 1rem 0;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--link-color);
+  border-radius: 0 6px 6px 0;
+  background: var(--code-bg);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 /* Reference side notes (sidenotes.js): a copy of a footnote shown beside or
    under the paragraph that cites it. */
 .post.has-sidenotes {
@@ -1577,7 +1590,8 @@ h3 > [data-t],
   transition: none;
 }
 
-/* Side notes under the other axes. */
+/* Side notes and the AI notice under the other axes. */
+[data-color="on"] .ai-notice,
 [data-color="on"] .sidenote {
   border-left-color: transparent;
   border-image: var(--rainbow) 1;
@@ -1586,6 +1600,11 @@ h3 > [data-t],
 [data-style="pixel"] .sidenote {
   border-radius: 0;
   border-left-width: 4px;
+}
+
+[data-style="pixel"] .ai-notice {
+  border-width: 2px 2px 2px 4px;
+  border-radius: 0;
 }
 
 [data-style="pixel"] .sidenote-number,

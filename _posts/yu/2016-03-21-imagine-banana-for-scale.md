@@ -2,8 +2,8 @@
 layout: post
 title: "Imagine Banana for scale"
 author: "Đorđe Relić"
-tags: ["Prevedeno pomoću VI (Claude Opus 5.5)"]
 ref: imagine-banana-for-scale
+ai_translated: Claude Opus 5.5
 ---
 
 Imagine @ EPFL Hackathon održan je prošlog vikenda u INN biblioteci na EPFL-u. Pokušao sam da nagovorim nekoliko ljudi da mi se pridruže, ali nisam uspeo. Ili su imali pametnija posla ili su karte bile prosto preskupe, pa sam morao da idem sam i da tim sklopim tamo. To što sam otišao bez tima je zapravo ispalo dobro. Upoznao sam super ljude, radio na projektu o kom pre toga nisam imao pojma, koristio tehnologiju koju sam baš hteo da probam ali nikako da stignem i proveo 24 sata radeći ono što stvarno volim – kodiranje.

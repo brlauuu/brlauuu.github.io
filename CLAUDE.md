@@ -357,10 +357,12 @@ automatically. `master` rejects a change that breaks this: branch protection req
 versions disagree (code, links, headings, footnotes, `ref`, or a Српски text that is not its
 Naš twin in Cyrillic, foreign names staying in Latin).
 
-- A version written by a model carries the tag `AI translated (<model>)` /
-  `Prevedeno pomoću VI (<model>)` / `Преведено помоћу ВИ (<model>)` as its last tag until the
-  author proofreads it and removes the tag. A Naš↔Српски copy of an untagged text is not a
-  translation and is not tagged.
+- A version written by a model carries `ai_translated: <model>` in its front matter until the
+  author proofreads it and removes the line. `_layouts/post.html` shows it as a notice under the
+  title (`.ai-notice`, text from the `ai_translated` key in `_data/i18n.yml` with `{model}`
+  filled in), in the post's own language; it is not a tag, so it never reaches the Tags page or
+  the constellation, and the check fails on the old `AI translated (…)` tags. A Naš↔Српски copy
+  of an unmarked text is not a translation and is not marked.
 - External links, code, inline code and footnote markers are never changed in a translation;
   only prose, link text, headings, alt text and footnote text are translated.
 - `_tests/lib/posts.mjs` holds the checks (no dependencies), tested in

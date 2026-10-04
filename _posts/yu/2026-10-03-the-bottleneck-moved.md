@@ -2,8 +2,9 @@
 layout: post
 title: "Usko grlo se pomerilo: uticaj razvoja softvera uz pomoć agenata u farmaceutskoj industriji"
 author: "Đorđe Relić"
-tags: [razvoj softvera, farmacija, biotehnologija, vi, mišljenje, "Prevedeno pomoću VI (Claude Opus 5.5)"]
+tags: [razvoj softvera, farmacija, biotehnologija, vi, mišljenje]
 ref: the-bottleneck-moved
+ai_translated: Claude Opus 5.5
 ---
 
 Kao i u svim industrijama, razvoj softvera u farmaceutskoj/biotehnološkoj industriji menja se brzo i nepovratno. Kao neko čiji je osnovni posao usmeren na dizajn i razvoj softvera u ovoj industriji, posmatrao sam kako se moj posao menjao, ali i kako tek treba da se promeni. U ovom tekstu ponudiću kombinaciju neospornih činjenica, ali i svojih mišljenja o tome koji su trenutni problemi i šta bi bilo potrebno da se oni promene.

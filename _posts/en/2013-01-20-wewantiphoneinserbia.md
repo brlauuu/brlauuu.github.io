@@ -2,8 +2,8 @@
 layout: post
 title: "#WeWantiPhoneInSerbia"
 author: "Đorđe Relić"
-tags: ["AI translated (Claude Opus 5.5)"]
 ref: wewantiphoneinserbia
+ai_translated: Claude Opus 5.5
 ---
 
 Not so long ago, about a month back, the following hashtag popped up on Twitter: #WeWantiPhoneInSerbia. It quickly got so popular (around 30,000 tweets) that some of the leading news outlets reported it as a big deal, how people were up in arms, demanding that the carriers add this product to their lineup. Some influential people on the internet joined the whole movement too. And now I'm asking myself: is this for real?

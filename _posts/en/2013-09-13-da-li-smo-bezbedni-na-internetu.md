@@ -2,8 +2,9 @@
 layout: post
 title: "Are we safe on the internet, and what does internet security even mean for an ordinary person?"
 author: "Đorđe Relić"
-tags: [internet, privacy, snowden, wikileaks, nsa, serbia, "AI translated (Claude Opus 5.5)"]
+tags: [internet, privacy, snowden, wikileaks, nsa, serbia]
 ref: da-li-smo-bezbedni-na-internetu
+ai_translated: Claude Opus 5.5
 ---
 
 With [Edward Snowden](https://sr.wikipedia.org/wiki/%D0%95%D0%B4%D0%B2%D0%B0%D1%80%D0%B4_%D0%A1%D0%BD%D0%BE%D1%83%D0%B4%D0%B5%D0%BD)'s recent decision to expose the [PRISM](https://sh.wikipedia.org/wiki/Prizma_(program_za_nadziranje)) project of the American National Security Agency, the NSA, the world was shaken for a short while. Sadly not long enough for anything to change, but then again, you have to start somewhere, and every step counts, and this one was a pretty big one.
