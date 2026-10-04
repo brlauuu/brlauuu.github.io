@@ -228,6 +228,28 @@ pre {
   color: var(--nav-link-hover-color);
 }
 
+/* Tags and reading time share a row under the title (post.html): tags on the
+   left, reading time on the right, wrapping under the tags on narrow screens. */
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.25rem 1.5rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.post-reading {
+  margin-left: auto;
+  color: var(--catalogue-date-color);
+  white-space: nowrap;
+}
+
+.post-reading span {
+  font-style: italic;
+}
+
 /* "AI translated" notice under a post's title (post.html, ai_translated in front matter). */
 .ai-notice {
   margin: 1rem 0;
@@ -1377,6 +1399,7 @@ h3 > [data-t],
 [data-style="pixel"] .catalogue-time,
 [data-style="pixel"] .catalogue-pinned,
 [data-style="pixel"] .post-info,
+[data-style="pixel"] .post-reading,
 [data-style="pixel"] .tag-date,
 [data-style="pixel"] .tag-chip,
 [data-style="pixel"] .tag-count,
@@ -1408,6 +1431,7 @@ h3 > [data-t],
 [data-style="pixel"] .catalogue-time,
 [data-style="pixel"] .catalogue-pinned,
 [data-style="pixel"] .post-info,
+[data-style="pixel"] .post-reading,
 [data-style="pixel"] .tag-date,
 [data-style="pixel"] .pagination,
 [data-style="pixel"] .tag-chip { font-size: 0.75rem; }
@@ -1416,7 +1440,8 @@ h3 > [data-t],
 [data-style="pixel"] .project-version,
 [data-style="pixel"] .share-feedback { font-size: 0.5rem; }
 
-[data-style="pixel"] .post-info span {
+[data-style="pixel"] .post-info span,
+[data-style="pixel"] .post-reading span {
   font-style: normal;
 }
 

@@ -15,14 +15,6 @@ layout: default
       <br>
       {% include t.html key="on" %}{% include date.html date=page.date %}
     {% endif %}
-
-    {% if page.collection == "posts" %}
-      {% comment %} Body words only: the footnote list is references, not reading. 200 words per minute. {% endcomment %}
-      {% assign words = content | split: '<div class="footnotes"' | first | strip_html | number_of_words %}
-      {% assign minutes = words | divided_by: 200.0 | ceil | at_least: 1 %}
-      <br>
-      {{ words }}{% include t.html key="words" %}{{ minutes }}{% include t.html key="min_read" %}
-    {% endif %}
   </div>
 
   <h1 class="post-title">{% if page.title_key %}{% include t.html key=page.title_key %}{% else %}{{ page.title }}{% endif %}</h1>
@@ -34,12 +26,23 @@ layout: default
   <p class="ai-notice" role="note" lang="{{ ai_lang.code }}">{{ ai_text }}</p>
   {% endif %}
 
-  {% if page.tags and page.tags.size > 0 %}
-  <div class="post-tags" style="margin: 1rem 0; font-size: 0.9rem;">
-    {% include t.html key="tags_label" %}
-    {% for tag in page.tags %}
-      <a href="{{ site.baseurl }}/tags#{{ tag | slugify }}" style="margin-right: 0.5rem;">{{ tag }}</a>
-    {% endfor %}
+  {% assign has_tags = false %}{% if page.tags and page.tags.size > 0 %}{% assign has_tags = true %}{% endif %}
+  {% if has_tags or page.collection == "posts" %}
+  <div class="post-meta">
+    {% if has_tags %}
+    <div class="post-tags">
+      {% include t.html key="tags_label" %}
+      {% for tag in page.tags %}
+        <a href="{{ site.baseurl }}/tags#{{ tag | slugify }}" style="margin-right: 0.5rem;">{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if page.collection == "posts" %}
+      {% comment %} Body words only: the footnote list is references, not reading. 200 words per minute. {% endcomment %}
+      {% assign words = content | split: '<div class="footnotes"' | first | strip_html | number_of_words %}
+      {% assign minutes = words | divided_by: 200.0 | ceil | at_least: 1 %}
+      <div class="post-reading">{{ words }}{% include t.html key="words" %}{{ minutes }}{% include t.html key="min_read" %}</div>
+    {% endif %}
   </div>
   {% endif %}
 
