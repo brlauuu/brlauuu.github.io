@@ -43,11 +43,12 @@
   function showVersion(card, config, text) {
     const version = parseVersion(text);
     const element = card.querySelector('[data-project-version]');
-    if (!version || !element) return;
+    if (!version || !element) return false;
     element.textContent = `v${version}`;
     element.setAttribute('aria-label', `${config.name} version ${version}`);
     element.title = `Version ${version}`;
     element.hidden = false;
+    return true;
   }
 
   function showCount(element, count, label, fallback = false) {
@@ -101,10 +102,13 @@
         if (validCount(data?.forks_count)) showCount(forks, data.forks_count, 'forks');
         showWebsite(card, config, data?.homepage);
       }).catch(() => {})); // Retain fallback values on a failed or blocked request.
-      // The version comes from the VERSION file on the repository's default branch; without one the badge stays hidden.
-      requests.push(fetchText(`https://raw.githubusercontent.com/${config.repository}/HEAD/VERSION`).then((text) => {
-        showVersion(card, config, text);
-      }).catch(() => {}));
+      // The version comes from the VERSION file on the repository's default branch, else from the
+      // latest GitHub release's tag; with neither the badge stays hidden.
+      requests.push(fetchText(`https://raw.githubusercontent.com/${config.repository}/HEAD/VERSION`)
+        .then((text) => showVersion(card, config, text), () => false)
+        .then((shown) => shown || fetchJson(`https://api.github.com/repos/${config.repository}/releases/latest`)
+          .then((release) => showVersion(card, config, release?.tag_name)))
+        .catch(() => {}));
     }
 
     const counterUrl = webUrl(counter.url);
