@@ -4,5 +4,13 @@
   "installCommand": "bundle install",
   "buildCommand": "bundle exec jekyll build --config _config.yml,_config.vercel.yml",
   "outputDirectory": "_site",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/flatpare", "destination": "https://flatpare.com", "permanent": false },
+    { "source": "/flatpare/:path*", "destination": "https://flatpare.com/:path*", "permanent": false },
+    { "source": "/podlog", "destination": "/podlog/", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/podlog/:path*", "destination": "https://brlauuu.github.io/podlog/:path*" }
+  ]
 }
