@@ -11,6 +11,6 @@
     { "source": "/podlog", "destination": "/podlog/", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/podlog/:path*", "destination": "https://brlauuu.github.io/podlog/:path*" }
+    { "source": "/podlog/(.*)", "destination": "https://brlauuu.github.io/podlog/$1" }
   ]
 }
