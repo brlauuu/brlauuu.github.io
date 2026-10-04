@@ -10,7 +10,7 @@ const load = () => import(pathToFileURL(path.join(root, '_tests/lib/posts.mjs'))
 // Every post exists in en, yu and sr, and each version agrees with the original:
 // same code, links, headings and footnotes, same ref, and sr is yu in Cyrillic.
 test('every post exists in all three languages and its versions agree', async () => {
-  const { LANGS, FOLDERS, parsePost, isAiTag, checkPost } = await load();
+  const { LANGS, FOLDERS, parsePost, checkPost } = await load();
   const posts = {};
   for (const lang of LANGS) {
     for (const file of fs.readdirSync(path.join(root, FOLDERS[lang])).filter((f) => f.endsWith('.md'))) {
@@ -20,7 +20,7 @@ test('every post exists in all three languages and its versions agree', async ()
   const problems = [];
   for (const [file, versions] of Object.entries(posts)) {
     const present = LANGS.filter((l) => versions[l]);
-    const source = present.find((l) => !versions[l].tags.some(isAiTag)) || present[0];
+    const source = present.find((l) => !versions[l].aiTranslated) || present[0];
     for (const p of checkPost(versions, source)) problems.push(`${file}: ${p}`);
   }
   assert.deepEqual(problems, []);

@@ -2,8 +2,9 @@
 layout: post
 title: "Industrijalizovano kockanje imaće geopolitički uticaj"
 author: "Đorđe Relić"
-tags: [geopolitika, mišljenje, kockanje, skaliranje tržišta, "Prevedeno pomoću VI (Claude Opus 5.5)"]
+tags: [geopolitika, mišljenje, kockanje, skaliranje tržišta]
 ref: industrialized-gambling
+ai_translated: Claude Opus 5.5
 ---
 
 Prateći brzi razvoj onlajn kockanja i tržišta predviđanja u Sjedinjenim Američkim Državama, dosta sam razmišljao o tome kuda sve ovo vodi i došao do prilično pesimističnih očekivanja.

@@ -10,6 +10,7 @@ words:         { en: "&nbsp;words, ~", yu: "&nbsp;reči, ~", sr: "&nbsp;речи
 min_read:      { en: "&nbsp;min read", yu: "&nbsp;min čitanja", sr: "&nbsp;мин читања" }
 tags_label:    { en: "Tags: ", yu: "Kategorije: ", sr: "Категорије: " }
 tag_index:     { en: "Tag index", yu: "Indeks kategorija", sr: "Индекс категорија" }
+ai_translated: { en: "AI translated by {model}, not yet proofread.", yu: "Preveo {model} (VI), još nije lektorisano.", sr: "Превео {model} (ВИ), још није лекторисано." }
 pinned:        { en: "Pinned", yu: "Prikačeno", sr: "Прикачено" }
 no_posts:      { en: "No posts in this language yet.", yu: "Još nema članaka na ovom jeziku.", sr: "Још нема чланака на овом језику." }
 no_recent:     { en: "No recent posts. Check out the {a}archive{/a} for older articles.", yu: "Nema novih članaka. Starije potražite u {a}arhivi{/a}.", sr: "Нема нових чланака. Старије потражите у {a}архиви{/a}." }

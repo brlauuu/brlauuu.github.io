@@ -2,8 +2,8 @@
 layout: post
 title: "A perfectly (un)ordinary day"
 author: "Đorđe Relić"
-tags: ["AI translated (Claude Opus 5.5)"]
 ref: jedan-sasvim-neobican-dan
+ai_translated: Claude Opus 5.5
 ---
 
 I woke up. The alarm didn't go off again, or rather I didn't hear it, but that didn't stop some really loud bell from waking me up and reminding me that I'm late again, as usual, and that once more I have to cram everything into those few minutes. Even though I'm fully aware of the situation I have to face, I still take my sweet time with everything... Rolling up the blinds, and again that piercing ray that makes me want to crawl back into bed and say fuck it to all the obligations waiting for me, but still, that lack of immorality, or rather that surplus of responsibility in this pumpkin on my shoulders, won't allow it, and it shuts my eyelids to shield me from the biting morning sun that says: "Good morning, this is your new teenage day. Enjoy it."

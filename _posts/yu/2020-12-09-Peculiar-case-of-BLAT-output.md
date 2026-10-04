@@ -2,8 +2,9 @@
 layout: post
 title: "Neobičan slučaj BLAT izlaza"
 author: "Đorđe Relić"
-tags: [bioinformatika, poravnanje-sekvenci, alati, "Prevedeno pomoću VI (Claude Opus 5.5)"]
+tags: [bioinformatika, poravnanje-sekvenci, alati]
 ref: Peculiar-case-of-BLAT-output
+ai_translated: Claude Opus 5.5
 ---
 
 U ovom blog postu opisaću kako sam koristio BLAT da rešim zadatak poravnanja proteinskih sekvenci.

@@ -27,6 +27,13 @@ layout: default
 
   <h1 class="post-title">{% if page.title_key %}{% include t.html key=page.title_key %}{% else %}{{ page.title }}{% endif %}</h1>
 
+  {% if page.ai_translated %}
+  {% comment %} In the post's own language: it is about this text, like the body. Removed when the author proofreads. {% endcomment %}
+  {% assign ai_lang = site.data.languages | where: "key", page.lang | first %}
+  {% assign ai_text = site.data.i18n.ai_translated[page.lang] | replace: "{model}", page.ai_translated %}
+  <p class="ai-notice" role="note" lang="{{ ai_lang.code }}">{{ ai_text }}</p>
+  {% endif %}
+
   {% if page.tags and page.tags.size > 0 %}
   <div class="post-tags" style="margin: 1rem 0; font-size: 0.9rem;">
     {% include t.html key="tags_label" %}
