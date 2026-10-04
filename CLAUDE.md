@@ -212,6 +212,9 @@ Headings `h1`–`h3`, the site title and home-page post titles melt in smooth st
 flickering ink bleed). `assets/js/melt.js` pauses the animations unless color is on, style is
 smooth, motion is allowed and the tab is visible; its `meltState` is tested in
 `_tests/melt.test.cjs`. Pixel style never melts.
+Phones (`(pointer: coarse), (max-width: 600px)`) get a lighter color mode (#64): no melt and the hue
+cycle held (`--rainbow-play: paused`), because both repaint on the CPU every frame and made
+scrolling lag; the backdrop and gradients stay. `melt.js` pauses the SVG animations there too.
 Dark adds a glow on headings via `--cycle-glow-name`; the other cross-axis
 blocks belong to the style axis below.
 **Style axis** (`[data-style="pixel"]`, last layer of `theme.css`): one `@font-face` for

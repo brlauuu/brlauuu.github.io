@@ -999,21 +999,25 @@ h3 > [data-t],
   overflow: hidden;
 }
 
-/* Melting headings, smooth style only: warping the pixel font turns it to mush. */
-[data-color="on"]:not([data-style="pixel"]) h1,
-[data-color="on"]:not([data-style="pixel"]) h2,
-[data-color="on"]:not([data-style="pixel"]) h3,
-[data-color="on"]:not([data-style="pixel"]) .nav-title,
-[data-color="on"]:not([data-style="pixel"]) .catalogue-title a {
-  --melt: url(#melt-light);
-}
+/* Melting headings, smooth style only: warping the pixel font turns it to mush.
+   Not on phones (a coarse pointer or a narrow screen): the filters are recomputed
+   on the CPU every frame and made scrolling there lag (#64). */
+@media not ((pointer: coarse) or (max-width: 600px)) {
+  [data-color="on"]:not([data-style="pixel"]) h1,
+  [data-color="on"]:not([data-style="pixel"]) h2,
+  [data-color="on"]:not([data-style="pixel"]) h3,
+  [data-color="on"]:not([data-style="pixel"]) .nav-title,
+  [data-color="on"]:not([data-style="pixel"]) .catalogue-title a {
+    --melt: url(#melt-light);
+  }
 
-[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h1,
-[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h2,
-[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h3,
-[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) .nav-title,
-[data-color="on"][data-theme="dark"]:not([data-style="pixel"]) .catalogue-title a {
-  --melt: url(#melt-dark);
+  [data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h1,
+  [data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h2,
+  [data-color="on"][data-theme="dark"]:not([data-style="pixel"]) h3,
+  [data-color="on"][data-theme="dark"]:not([data-style="pixel"]) .nav-title,
+  [data-color="on"][data-theme="dark"]:not([data-style="pixel"]) .catalogue-title a {
+    --melt: url(#melt-dark);
+  }
 }
 
 /* Headings and the site title: rainbow text fill. Engines without
@@ -1232,6 +1236,14 @@ h3 > [data-t],
 [data-color="on"] {
   --rainbow-play: running;
   --rainbow-timing: linear;
+}
+
+/* Phones hold the cycle too: animating --hue inside a filter repaints every
+   animated element on every frame, which they cannot afford (#64). */
+@media (pointer: coarse), (max-width: 600px) {
+  [data-color="on"] {
+    --rainbow-play: paused;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

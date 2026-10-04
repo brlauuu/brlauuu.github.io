@@ -11,14 +11,23 @@ function load() {
   return module.exports;
 }
 
-test('meltState runs only with color on, smooth style, motion allowed and the tab visible', () => {
+test('meltState runs only with color on, smooth style, motion allowed, not on a phone and the tab visible', () => {
   const { meltState } = load();
-  const on = { color: 'on', style: 'smooth', reduced: false, hidden: false };
+  const on = { color: 'on', style: 'smooth', reduced: false, phone: false, hidden: false };
   assert.equal(meltState(on), 'run');
   assert.equal(meltState({ ...on, style: undefined }), 'run');
   assert.equal(meltState({ ...on, color: 'off' }), 'pause');
   assert.equal(meltState({ ...on, color: undefined }), 'pause');
   assert.equal(meltState({ ...on, style: 'pixel' }), 'pause');
   assert.equal(meltState({ ...on, reduced: true }), 'pause');
+  assert.equal(meltState({ ...on, phone: true }), 'pause');
   assert.equal(meltState({ ...on, hidden: true }), 'pause');
+});
+
+test('the phone query matches the CSS that leaves phones unmelted and holds the cycle', () => {
+  const { PHONE } = load();
+  const css = fs.readFileSync(path.join(__dirname, '../assets/css/theme.css'), 'utf8');
+  const [coarse, narrow] = PHONE.split(', ');
+  assert.ok(css.includes(`@media not (${coarse} or ${narrow}) {`), 'melt rules are gated on the phone query');
+  assert.ok(css.includes(`@media ${PHONE} {\n  [data-color="on"] {\n    --rainbow-play: paused;`), 'phones pause the hue cycle');
 });
