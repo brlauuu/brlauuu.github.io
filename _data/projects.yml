@@ -12,6 +12,7 @@
 - name: Flatpare
   repository: brlauuu/flatpare
   logo_url: https://raw.githubusercontent.com/brlauuu/flatpare/main/public/icon-512.png
+  logo_scale: 1.25
   website_fallback: https://flatpare.vercel.app
   counter:
     label: users

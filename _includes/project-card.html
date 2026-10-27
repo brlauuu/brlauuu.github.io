@@ -27,6 +27,6 @@
     </span>
   </div>
   {% if include.project.logo_url %}
-    <img class="project-logo" src="{{ include.project.logo_url | escape }}" width="36" height="36" alt="" loading="lazy" decoding="async">
+    <img class="project-logo" src="{{ include.project.logo_url | escape }}" width="36" height="36" alt="" loading="lazy" decoding="async"{% if include.project.logo_scale %} style="--logo-scale: {{ include.project.logo_scale | plus: 0 }}"{% endif %}>
   {% endif %}
 </article>
