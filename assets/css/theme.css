@@ -1457,10 +1457,6 @@ h3 > [data-t],
   font-style: normal;
 }
 
-[data-style="pixel"] .project-version {
-  margin-left: 0;
-}
-
 /* Shapes: no rounding anywhere, thicker borders, hard shadows. */
 [data-style="pixel"] .tag-chip,
 [data-style="pixel"] .tag-count,
