@@ -23,3 +23,12 @@ test('brlauuu.dev/podlog/ shows the podlog GitHub Pages site', () => {
   assert.equal(rule?.destination, 'https://brlauuu.github.io/podlog/$1');
   assert.ok(new RegExp(`^${rule.source}$`).test('/podlog/'));
 });
+
+// The cardak landing page, proxied the same way as podlog's. Its assets are
+// relative too, so the bare path redirects to the trailing slash.
+test('brlauuu.dev/cardak/ shows the cardak GitHub Pages site', () => {
+  assert.ok(config.redirects.some((r) => r.source === '/cardak' && r.destination === '/cardak/'));
+  const rule = config.rewrites.find((r) => r.source === '/cardak/(.*)');
+  assert.equal(rule?.destination, 'https://brlauuu.github.io/cardak/$1');
+  assert.ok(new RegExp(`^${rule.source}$`).test('/cardak/'));
+});

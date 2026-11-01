@@ -19,3 +19,13 @@
     url:
     field: count
     fallback: "—"
+
+- name: Cardak
+  repository: brlauuu/cardak
+  logo_url: https://raw.githubusercontent.com/brlauuu/cardak/main/site/assets/cardak-mark-mono-512.png
+  website_fallback:
+  counter:
+    label: users
+    url:
+    field: count
+    fallback: "—"

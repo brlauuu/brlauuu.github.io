@@ -8,9 +8,11 @@
   "redirects": [
     { "source": "/flatpare", "destination": "https://flatpare.com", "permanent": false },
     { "source": "/flatpare/:path*", "destination": "https://flatpare.com/:path*", "permanent": false },
-    { "source": "/podlog", "destination": "/podlog/", "permanent": true }
+    { "source": "/podlog", "destination": "/podlog/", "permanent": true },
+    { "source": "/cardak", "destination": "/cardak/", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/podlog/(.*)", "destination": "https://brlauuu.github.io/podlog/$1" }
+    { "source": "/podlog/(.*)", "destination": "https://brlauuu.github.io/podlog/$1" },
+    { "source": "/cardak/(.*)", "destination": "https://brlauuu.github.io/cardak/$1" }
   ]
 }
