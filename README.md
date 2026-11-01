@@ -2,7 +2,7 @@ Personal blog.
 
 ## Project cards
 
-Edit `_data/projects.yml` to add, remove, or reorder projects. Each entry creates one sidebar card; there is no separate Projects page.
+Edit `_data/projects.yml` to add or remove projects. Each entry creates one sidebar card; there is no separate Projects page. The cards are ordered by the latest commit on each repository's default branch, newest first, once the page has loaded them from GitHub. A card whose commit date cannot be loaded (GitHub unreachable or rate-limited) goes after the dated ones, and the file's order applies among those and before the dates arrive, so list projects in a sensible fallback order.
 
 ```yaml
 - name: My project

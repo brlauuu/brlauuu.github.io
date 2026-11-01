@@ -51,6 +51,26 @@
     return true;
   }
 
+  // The time of the latest commit on the default branch, from GitHub's commit list, or null.
+  function lastCommitTime(commits) {
+    const date = Array.isArray(commits) ? commits[0]?.commit?.committer?.date : undefined;
+    const time = typeof date === 'string' ? Date.parse(date) : NaN;
+    return Number.isFinite(time) ? time : null;
+  }
+
+  // Indices of the cards newest commit first; cards without a time follow in their listed order.
+  function recencyOrder(times) {
+    return times.map((time, index) => ({ time, index })).sort((a, b) => {
+      if (a.time === null || b.time === null) return (a.time === null) - (b.time === null) || a.index - b.index;
+      return b.time - a.time || a.index - b.index;
+    }).map(({ index }) => index);
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { lastCommitTime, recencyOrder };
+    return;
+  }
+
   function showCount(element, count, label, fallback = false) {
     if (!element) return;
     element.textContent = validCount(count) ? compact.format(count) : '—';
@@ -71,14 +91,15 @@
     link.title = 'Open website';
   }
 
-  document.querySelectorAll('[data-project-config]').forEach(async (card) => {
+  async function loadCard(card) {
     let config;
     try {
       config = JSON.parse(card.dataset.projectConfig);
-      if (!config || typeof config !== 'object') return;
+      if (!config || typeof config !== 'object') return null;
     } catch {
-      return;
+      return null;
     }
+    let commitTime = null;
     const counter = config.counter || {};
     const label = counter.label === 'users' ? 'users' : 'downloads';
     const stars = card.querySelector('[data-project-stars]');
@@ -102,6 +123,10 @@
         if (validCount(data?.forks_count)) showCount(forks, data.forks_count, 'forks');
         showWebsite(card, config, data?.homepage);
       }).catch(() => {})); // Retain fallback values on a failed or blocked request.
+      // The default branch's latest commit orders the cards; without it the card keeps its listed place.
+      requests.push(fetchJson(`https://api.github.com/repos/${config.repository}/commits?per_page=1`)
+        .then((commits) => { commitTime = lastCommitTime(commits); })
+        .catch(() => {}));
       // The version comes from the VERSION file on the repository's default branch, else from the
       // latest GitHub release's tag; with neither the badge stays hidden.
       requests.push(fetchText(`https://raw.githubusercontent.com/${config.repository}/HEAD/VERSION`)
@@ -123,5 +148,21 @@
       }).catch(() => {})); // The counter and GitHub requests fail independently.
     }
     await Promise.all(requests);
+    return commitTime;
+  }
+
+  // Cards move once, after every card has loaded, so the sidebar never reshuffles more than once.
+  const cards = [];
+  const loads = [];
+  document.querySelectorAll('[data-project-config]').forEach((card) => {
+    const load = loadCard(card);
+    cards.push(card);
+    loads.push(load);
+    return load;
+  });
+  Promise.all(loads).then((times) => {
+    const parent = cards[0]?.parentNode;
+    if (!parent || cards.some((card) => card.parentNode !== parent)) return;
+    recencyOrder(times).forEach((index) => parent.appendChild(cards[index]));
   });
 })();
