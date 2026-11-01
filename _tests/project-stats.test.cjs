@@ -7,6 +7,7 @@ const github = 'https://api.github.com/repos/owner/project';
 const endpoint = 'https://metrics.example.test/project';
 const versionFile = 'https://raw.githubusercontent.com/owner/project/HEAD/VERSION';
 const latestRelease = `${github}/releases/latest`;
+const commits = `${github}/commits?per_page=1`;
 
 async function render(overrides = {}, sources = {}, options = {}) {
   const config = { name: 'Project', repository: 'owner/project', ...overrides };
@@ -94,7 +95,7 @@ test('no website or counter configured leaves unavailable indicators', async () 
   assert.equal(elements.website.href, undefined);
   assert.equal(elements.website.attrs['aria-disabled'], 'true');
   assert.equal(elements.counter.textContent, '—');
-  assert.deepEqual(requests, [github, versionFile, latestRelease]);
+  assert.deepEqual(requests, [github, commits, versionFile, latestRelease]);
 });
 
 test('primitive JSON and default count fields support real zero', async () => {
@@ -182,4 +183,56 @@ test('no VERSION file and no usable release keep the badge hidden', async () => 
     const { elements } = await render({}, { [versionFile]: { status: 404 }, [latestRelease]: release });
     assert.equal(elements.version.hidden, true);
   }
+});
+
+function helpers() {
+  const module = { exports: {} };
+  vm.runInNewContext(script, { module, URL, Intl, AbortController });
+  return module.exports;
+}
+
+test('lastCommitTime reads the committer date of the first listed commit', () => {
+  const { lastCommitTime } = helpers();
+  assert.equal(lastCommitTime([{ commit: { committer: { date: '2026-11-01T10:13:43Z' } } }]), Date.parse('2026-11-01T10:13:43Z'));
+  for (const body of [null, {}, [], [{}], [{ commit: { committer: { date: 'soon' } } }], [{ commit: { committer: { date: 7 } } }], { message: 'API rate limit exceeded' }]) {
+    assert.equal(lastCommitTime(body), null);
+  }
+});
+
+test('recencyOrder puts the newest commit first and undated cards last in listed order', () => {
+  const { recencyOrder } = helpers();
+  assert.deepEqual(Array.from(recencyOrder([10, 30, 20])), [1, 2, 0]);
+  assert.deepEqual(Array.from(recencyOrder([null, 5, null, 9])), [3, 1, 0, 2]);
+  assert.deepEqual(Array.from(recencyOrder([null, null])), [0, 1]);
+  assert.deepEqual(Array.from(recencyOrder([4, 4, 8])), [2, 0, 1]);
+});
+
+test('the sidebar reorders cards by their latest commit once all have loaded', async () => {
+  const parent = { children: [], appendChild(child) {
+    this.children = this.children.filter((c) => c !== child).concat(child);
+    child.parentNode = this;
+  } };
+  const repos = { a: '2026-10-01T00:00:00Z', b: null, c: '2026-11-01T00:00:00Z' };
+  const cards = Object.keys(repos).map((name) => {
+    const card = {
+      name, parentNode: parent,
+      dataset: { projectConfig: JSON.stringify({ name, repository: `owner/${name}` }) },
+      querySelector: () => null
+    };
+    parent.children.push(card);
+    return card;
+  });
+  const pending = [];
+  vm.runInNewContext(script, {
+    URL, Intl, AbortController, setTimeout: () => ({}), clearTimeout() {},
+    document: { querySelectorAll: () => ({ forEach: (callback) => cards.forEach((card) => pending.push(callback(card))) }) },
+    fetch: async (url) => {
+      const match = url.match(/repos\/owner\/(\w+)\/commits/);
+      if (!match || !repos[match[1]]) return { ok: false };
+      return { ok: true, json: async () => [{ commit: { committer: { date: repos[match[1]] } } }] };
+    }
+  });
+  await Promise.all(pending);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(parent.children.map((card) => card.name), ['c', 'a', 'b']);
 });
