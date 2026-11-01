@@ -387,6 +387,8 @@ The site is served from two places, both built automatically on every push to `m
   redirects (307) to https://flatpare.com, keeping any subpath; `/podlog` redirects to `/podlog/`,
   which proxies the podlog repository's GitHub Pages site (https://brlauuu.github.io/podlog/) so the
   address stays on brlauuu.dev. On github.io, `/podlog/` is that Pages site itself.
+  `/cardak` works the same way: it redirects to `/cardak/`, which proxies the cardak repository's
+  GitHub Pages site (https://brlauuu.github.io/cardak/).
 - **Vercel Web Analytics** is on for the Vercel project. `_includes/head.html` adds
   `/_vercel/insights/script.js` only when `site.vercel` is set, so github.io pages carry no
   analytics and request nothing.
