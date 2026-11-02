@@ -29,7 +29,7 @@ async function render(overrides = {}, sources = {}, options = {}) {
   };
   const requests = [], pending = [], timers = new Set();
   vm.runInNewContext(script, {
-    URL, Intl, AbortController,
+    URL, Intl, AbortController, localStorage: options.storage,
     document: { querySelectorAll: () => ({ forEach: callback => pending.push(callback(card)) }) },
     setTimeout(callback) { const id = {}; timers.add(id); if (options.timeout) queueMicrotask(callback); return id; },
     clearTimeout(id) { timers.delete(id); },
@@ -39,7 +39,7 @@ async function render(overrides = {}, sources = {}, options = {}) {
       if (options.timeout) return new Promise((_, reject) => init.signal.addEventListener('abort', () => reject(new Error('Aborted'))));
       if (!(url in sources)) throw new Error('Network failure');
       const response = sources[url];
-      return { ok: response.status ? response.status < 400 : true,
+      return { ok: response.status ? response.status < 400 : true, status: response.status ?? 200,
         json: async () => { if (response.invalidJson) throw new Error('Invalid JSON'); return response.body; },
         text: async () => response.body };
     }
@@ -245,4 +245,83 @@ test('the sidebar reorders cards by their latest commit once all have loaded', a
   await Promise.all(pending);
   await new Promise((resolve) => setImmediate(resolve));
   assert.deepEqual(parent.children.map((card) => card.name), ['c', 'a', 'b']);
+});
+
+// The GitHub cache (localStorage), so a few page views do not use up GitHub's 60
+// unauthenticated requests an hour.
+function memoryStorage(entries = {}) {
+  const data = new Map(Object.entries(entries).map(([key, value]) => [key, JSON.stringify(value)]));
+  return { data, getItem: (key) => data.get(key) ?? null, setItem: (key, value) => data.set(key, String(value)) };
+}
+const cacheKey = (url) => `project-stats:${url}`;
+const hourAgo = () => Date.now() - 61 * 60 * 1000;
+const sources = {
+  [github]: { body: { stargazers_count: 7, forks_count: 2, homepage: 'https://app.example.test', big: 'x'.repeat(1000) } },
+  [commits]: { body: [{ commit: { committer: { date: '2026-10-01T00:00:00Z' } } }] },
+  [latestRelease]: { body: { tag_name: 'v1.2.0' } }
+};
+
+test('cacheState: fresh under an hour, stale after, none without a usable entry', () => {
+  const { cacheState } = require('../assets/js/project-stats.js');
+  const now = 10 * 60 * 60 * 1000;
+  assert.equal(cacheState({ time: now - 1000, value: 1 }, now), 'fresh');
+  assert.equal(cacheState({ time: now - 60 * 60 * 1000, value: 1 }, now), 'stale');
+  assert.equal(cacheState({ time: now + 1000, value: 1 }, now), 'stale'); // a clock that went back
+  assert.equal(cacheState({ time: now, value: null }, now), 'fresh'); // a remembered 404
+  for (const entry of [null, undefined, {}, { time: 'x', value: 1 }, { time: now }]) assert.equal(cacheState(entry, now), 'none');
+});
+
+test('a second page view within the hour asks GitHub nothing and shows the same card', async () => {
+  const storage = memoryStorage();
+  const first = await render({}, sources, { storage });
+  assert.deepEqual(first.requests, [github, commits, versionFile, latestRelease]);
+  assert.ok(!storage.data.get(cacheKey(github)).includes('xxx'), 'only the used fields are kept');
+  const second = await render({}, {}, { storage });
+  assert.deepEqual(second.requests, [versionFile]); // VERSION failed as a network error, so it is asked again
+  assert.equal(second.elements.stars.textContent, '7');
+  assert.equal(second.elements.forks.textContent, '2');
+  assert.equal(second.elements.website.href, 'https://app.example.test/');
+  assert.equal(second.elements.version.textContent, 'v1.2.0');
+});
+
+test('a remembered 404 is not asked again within the hour', async () => {
+  const storage = memoryStorage();
+  await render({}, { ...sources, [versionFile]: { status: 404 } }, { storage });
+  const again = await render({}, {}, { storage });
+  assert.deepEqual(again.requests, []);
+  assert.equal(again.elements.version.textContent, 'v1.2.0');
+});
+
+test('an answer older than an hour is asked again, and replaced', async () => {
+  const storage = memoryStorage({ [cacheKey(github)]: { time: hourAgo(), value: { stargazers_count: 1 } } });
+  const { elements, requests } = await render({}, sources, { storage });
+  assert.ok(requests.includes(github));
+  assert.equal(elements.stars.textContent, '7');
+  assert.equal(JSON.parse(storage.data.get(cacheKey(github))).value.stargazers_count, 7);
+});
+
+test('when GitHub refuses, the last answers keep the version, counts and commit time', async () => {
+  const storage = memoryStorage({
+    [cacheKey(github)]: { time: hourAgo(), value: { stargazers_count: 3, forks_count: 1 } },
+    [cacheKey(commits)]: { time: hourAgo(), value: [{ commit: { committer: { date: '2026-10-01T00:00:00Z' } } }] },
+    [cacheKey(versionFile)]: { time: hourAgo(), value: null },
+    [cacheKey(latestRelease)]: { time: hourAgo(), value: { tag_name: 'v0.9.0' } }
+  });
+  const refused = { [github]: { status: 403 }, [commits]: { status: 403 }, [latestRelease]: { status: 403 } };
+  const { elements } = await render({}, refused, { storage });
+  assert.equal(elements.stars.textContent, '3');
+  assert.equal(elements.version.textContent, 'v0.9.0');
+  // A refusal is not remembered: the stale answer stays as it was, to be retried next time.
+  assert.equal(JSON.parse(storage.data.get(cacheKey(github))).value.stargazers_count, 3);
+});
+
+test('storage that throws or holds junk leaves the card working uncached', async () => {
+  const throwing = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
+  const junk = memoryStorage();
+  junk.data.set(cacheKey(github), '{not json');
+  for (const storage of [throwing, junk]) {
+    const { elements, requests } = await render({}, sources, { storage });
+    assert.equal(elements.stars.textContent, '7');
+    assert.ok(requests.includes(github));
+  }
 });

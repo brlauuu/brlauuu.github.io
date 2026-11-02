@@ -22,7 +22,7 @@
         credentials: 'omit',
         headers: { Accept: accept }
       });
-      if (!response.ok) throw new Error('Data source unavailable');
+      if (!response.ok) throw Object.assign(new Error('Data source unavailable'), { status: response.status });
       return await read(response);
     } finally {
       clearTimeout(timeout);
@@ -31,6 +31,20 @@
 
   const fetchJson = (url) => fetchResource(url, 'application/json', (response) => response.json());
   const fetchText = (url) => fetchResource(url, 'text/plain', (response) => response.text());
+
+  // GitHub lets a visitor's network make 60 unauthenticated API requests an hour, and each
+  // card makes three, so a few page views would use them up. Answers are kept in
+  // localStorage: an hour-old answer is reused without asking again, an older one is
+  // shown when GitHub refuses or cannot be reached, and a 404 is remembered as missing.
+  const CACHE_PREFIX = 'project-stats:';
+  const CACHE_FRESH_MS = 60 * 60 * 1000;
+
+  // 'fresh' (reuse without a request), 'stale' (use only if the request fails) or 'none'.
+  function cacheState(entry, now, maxAge = CACHE_FRESH_MS) {
+    if (!entry || typeof entry.time !== 'number' || !('value' in entry)) return 'none';
+    const age = now - entry.time;
+    return age >= 0 && age < maxAge ? 'fresh' : 'stale';
+  }
 
   // The first line of the repository's VERSION file, e.g. "1.2.3" or "v1.2.3-beta.1".
   function parseVersion(text) {
@@ -67,9 +81,54 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { lastCommitTime, recencyOrder };
+    module.exports = { lastCommitTime, recencyOrder, cacheState };
     return;
   }
+
+  // Storage can be missing or throw (private windows, blocked site data); then nothing is kept.
+  function cacheRead(url) {
+    try {
+      const entry = JSON.parse(globalThis.localStorage.getItem(CACHE_PREFIX + url));
+      return cacheState(entry, 0) === 'none' ? null : entry;
+    } catch {
+      return null;
+    }
+  }
+
+  function cacheWrite(url, value, time) {
+    try {
+      globalThis.localStorage.setItem(CACHE_PREFIX + url, JSON.stringify({ time, value }));
+    } catch {
+      // Not kept; the next page view asks GitHub again.
+    }
+  }
+
+  // Fetches a GitHub resource through the cache. `keep` trims the answer to what the card
+  // uses, so little is stored. A missing resource (404) is cached as null and rejects.
+  async function cached(url, request, keep) {
+    const now = Date.now();
+    const entry = cacheRead(url);
+    const missing = () => Promise.reject(Object.assign(new Error('Not found'), { status: 404 }));
+    if (cacheState(entry, now) === 'fresh') return entry.value === null ? missing() : entry.value;
+    try {
+      const value = keep(await request(url));
+      cacheWrite(url, value, now);
+      return value;
+    } catch (error) {
+      if (error?.status === 404) {
+        cacheWrite(url, null, now);
+        throw error;
+      }
+      if (entry && entry.value !== null) return entry.value; // A stale answer beats none.
+      throw error;
+    }
+  }
+
+  const keepRepo = (data) => ({ stargazers_count: data?.stargazers_count, forks_count: data?.forks_count, homepage: data?.homepage });
+  const keepCommits = (commits) => (Array.isArray(commits) && commits[0]
+    ? [{ commit: { committer: { date: commits[0].commit?.committer?.date } } }] : []);
+  const keepRelease = (release) => ({ tag_name: release?.tag_name });
+  const keepText = (text) => (typeof text === 'string' ? text.slice(0, 200) : '');
 
   function showCount(element, count, label, fallback = false) {
     if (!element) return;
@@ -118,20 +177,21 @@
 
     const requests = [];
     if (/^[a-zA-Z0-9-]+\/[a-zA-Z0-9_.-]+$/.test(config.repository)) {
-      requests.push(fetchJson(`https://api.github.com/repos/${config.repository}`).then((data) => {
+      const api = `https://api.github.com/repos/${config.repository}`;
+      requests.push(cached(api, fetchJson, keepRepo).then((data) => {
         if (validCount(data?.stargazers_count)) showCount(stars, data.stargazers_count, 'stars');
         if (validCount(data?.forks_count)) showCount(forks, data.forks_count, 'forks');
         showWebsite(card, config, data?.homepage);
       }).catch(() => {})); // Retain fallback values on a failed or blocked request.
       // The default branch's latest commit orders the cards; without it the card keeps its listed place.
-      requests.push(fetchJson(`https://api.github.com/repos/${config.repository}/commits?per_page=1`)
+      requests.push(cached(`${api}/commits?per_page=1`, fetchJson, keepCommits)
         .then((commits) => { commitTime = lastCommitTime(commits); })
         .catch(() => {}));
       // The version comes from the VERSION file on the repository's default branch, else from the
       // latest GitHub release's tag; with neither the badge stays hidden.
-      requests.push(fetchText(`https://raw.githubusercontent.com/${config.repository}/HEAD/VERSION`)
+      requests.push(cached(`https://raw.githubusercontent.com/${config.repository}/HEAD/VERSION`, fetchText, keepText)
         .then((text) => showVersion(card, config, text), () => false)
-        .then((shown) => shown || fetchJson(`https://api.github.com/repos/${config.repository}/releases/latest`)
+        .then((shown) => shown || cached(`${api}/releases/latest`, fetchJson, keepRelease)
           .then((release) => showVersion(card, config, release?.tag_name)))
         .catch(() => {}));
     }
