@@ -13,22 +13,23 @@ test('brlauuu.dev/flatpare redirects to flatpare.com, keeping the path', () => {
   ]);
 });
 
-// The podlog landing page is the repository's GitHub Pages site, proxied so the
-// address stays brlauuu.dev/podlog/. Its assets are relative, hence the slash.
-// The source is a regex because Vercel's /podlog/:path* does not match /podlog/
-// itself (it served NOT_FOUND there while the assets proxied fine).
-test('brlauuu.dev/podlog/ shows the podlog GitHub Pages site', () => {
-  assert.ok(config.redirects.some((r) => r.source === '/podlog' && r.destination === '/podlog/'));
-  const rule = config.rewrites.find((r) => r.source === '/podlog/(.*)');
-  assert.equal(rule?.destination, 'https://brlauuu.github.io/podlog/$1');
-  assert.ok(new RegExp(`^${rule.source}$`).test('/podlog/'));
+// Everything on brlauuu.github.io is also on brlauuu.dev: a path the Vercel
+// build has no file for is proxied to github.io, which also serves every
+// repository's GitHub Pages site under /<repository>/ (podlog, cardak,
+// inbox-mcp, and any added later). Vercel checks the build's files before
+// rewrites, so the blog itself is still served from the Vercel build.
+test('brlauuu.dev falls back to brlauuu.github.io for every path', () => {
+  assert.deepEqual(config.rewrites, [{ source: '/(.*)', destination: 'https://brlauuu.github.io/$1' }]);
+  const source = new RegExp(`^${config.rewrites[0].source}$`);
+  for (const p of ['/', '/podlog/', '/cardak/app.js', '/inbox-mcp/']) assert.ok(source.test(p), p);
 });
 
-// The cardak landing page, proxied the same way as podlog's. Its assets are
-// relative too, so the bare path redirects to the trailing slash.
-test('brlauuu.dev/cardak/ shows the cardak GitHub Pages site', () => {
-  assert.ok(config.redirects.some((r) => r.source === '/cardak' && r.destination === '/cardak/'));
-  const rule = config.rewrites.find((r) => r.source === '/cardak/(.*)');
-  assert.equal(rule?.destination, 'https://brlauuu.github.io/cardak/$1');
-  assert.ok(new RegExp(`^${rule.source}$`).test('/cardak/'));
+// A bare /<repository> on github.io answers with a redirect to
+// https://brlauuu.github.io/<repository>/, which would take the visitor off
+// brlauuu.dev, so the Pages sites get their trailing slash here first. Their
+// assets are relative, so the slash is needed anyway.
+test('bare project paths redirect to their trailing slash on brlauuu.dev', () => {
+  const rule = config.redirects.find((r) => r.destination === '/:project/');
+  assert.equal(rule?.source, '/:project(podlog|cardak|inbox-mcp)');
+  assert.equal(rule.permanent, true);
 });
