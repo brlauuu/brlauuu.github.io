@@ -29,3 +29,13 @@
     url:
     field: count
     fallback: "—"
+
+- name: Inbox MCP
+  repository: brlauuu/inbox-mcp
+  logo_url: https://raw.githubusercontent.com/brlauuu/inbox-mcp/main/docs/logo.svg
+  website_fallback: https://brlauuu.github.io/inbox-mcp/
+  counter:
+    label: users
+    url:
+    field: count
+    fallback: "—"
