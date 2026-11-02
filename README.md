@@ -8,6 +8,7 @@ Edit `_data/projects.yml` to add or remove projects. Each entry creates one side
 - name: My project
   repository: owner/repository
   logo_url: https://raw.githubusercontent.com/owner/repository/main/public/icon.png
+  logo_url_dark: https://raw.githubusercontent.com/owner/repository/main/public/icon-dark.png
   logo_scale: 1.25
   website_fallback: https://my-project.example
   fallbacks:
@@ -23,8 +24,10 @@ Edit `_data/projects.yml` to add or remove projects. Each entry creates one side
 - `name` and `repository` are required. Other settings are optional.
 - GitHub supplies stars, forks, and the website from the repository's **About → Website** field. `website_fallback` is used if that field is empty, invalid, or GitHub cannot be reached. With neither URL, the website icon is muted and disabled. The GitHub icon always links to the repository.
 - The version badge on its own line under the name reads the first line of a `VERSION` file at the root of the repository's default branch (for example `1.2.0` or `v1.2.0-beta.1`). Without that file it shows the tag of the repository's latest GitHub release (for example `v0.6.0`); with neither, no badge.
-- `logo_url` loads directly from the supplied URL. A raw GitHub URL following `main` picks up future changes after normal browser/CDN caching. Broken images are hidden. Current icons are monochrome and receive contrast/inversion styling for light and dark themes; revisit that styling before using a full-color logo.
-- `logo_scale` enlarges the logo inside its 36 px box, for images with padding around the mark (Flatpare's `icon-512.png` uses `1.25`). Leave it out for a tightly cropped image.
+- `logo_url` loads directly from the supplied URL, or from a path on this site such as `/assets/images/projects/…`. A raw GitHub URL following `main` picks up future changes after normal browser/CDN caching. Broken images are hidden.
+- `logo_url_dark` is the project's own logo for dark backgrounds (Cardak's `cardak-mark-dark.svg`, Flatpare's yellow mark). With it, each theme shows its logo in its own colors. Without it, dark mode inverts the lightness of `logo_url` and turns the hue back, so black becomes white and colors stay roughly the same (Inbox MCP's orange stays orange).
+- Flatpare's logos include the wordmark, so `assets/images/projects/` keeps mark-only copies of `flatpare_logo_blue.svg` and `flatpare_logo_yellow.svg` (the same paths with the wordmark removed). Redo them if Flatpare's logo changes.
+- `logo_scale` enlarges the logo inside its 36 px box, for images with padding around the mark (for example `1.25`). Leave it out for a tightly cropped image.
 - `counter.label` is `downloads` (default) or `users`; this selects the icon and accessible label.
 - `counter.url` is your public JSON endpoint. Leave it blank until available. No download/user totals are inferred from GitHub release downloads or fabricated.
 - `counter.field` selects a JSON field, defaulting to `count`. Use a dot path such as `stats.active_users` for nested data, or `field: ""` when the entire response is a number.

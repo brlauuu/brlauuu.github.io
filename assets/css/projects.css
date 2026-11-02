@@ -96,11 +96,24 @@
   mix-blend-mode: multiply;
 }
 
-/* The repository favicons are monochrome with light backgrounds. */
+/* A single logo is drawn for light backgrounds; dark inverts its lightness.
+   The hue turn puts colors back where they were (orange stays orange), and
+   does nothing to a black-and-white logo. */
 [data-theme="dark"] .project-logo {
-  filter: contrast(1.2) invert(1);
+  filter: contrast(1.2) invert(1) hue-rotate(180deg);
   mix-blend-mode: screen;
 }
+
+/* A project with its own light and dark logos (logo_url_dark) shows the one
+   for the current theme, in its own colors. */
+.project-logo--light,
+.project-logo--dark,
+[data-theme="dark"] .project-logo--dark {
+  filter: none;
+  mix-blend-mode: normal;
+}
+:root:not([data-theme="dark"]) .project-logo--dark,
+[data-theme="dark"] .project-logo--light { display: none; }
 
 .project-links {
   grid-column: 1;

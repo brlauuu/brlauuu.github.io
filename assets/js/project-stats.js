@@ -110,11 +110,11 @@
     showCount(custom, counter.fallback, label, true);
     showWebsite(card, config, config.website_fallback);
 
-    const logo = card.querySelector('.project-logo');
-    if (logo) {
+    // One logo, or a light and a dark one; each hides itself when broken.
+    card.querySelectorAll('.project-logo').forEach((logo) => {
       logo.addEventListener('error', () => { logo.hidden = true; });
       if (logo.complete && !logo.naturalWidth) logo.hidden = true;
-    }
+    });
 
     const requests = [];
     if (/^[a-zA-Z0-9-]+\/[a-zA-Z0-9_.-]+$/.test(config.repository)) {

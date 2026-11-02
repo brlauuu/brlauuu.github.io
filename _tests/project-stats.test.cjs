@@ -16,14 +16,16 @@ async function render(overrides = {}, sources = {}, options = {}) {
     setAttribute(name, value) { this.attrs[name] = value; },
     removeAttribute(name) { delete this.attrs[name]; }
   }]));
-  const logo = { complete: !!options.brokenLogo, naturalWidth: options.brokenLogo ? 0 : 36,
-    addEventListener(name, handler) { this[name] = handler; } };
+  const makeLogo = (broken) => ({ complete: broken, naturalWidth: broken ? 0 : 36,
+    addEventListener(name, handler) { this[name] = handler; } });
+  const logo = makeLogo(!!options.brokenLogo);
+  const logos = options.darkLogo ? [logo, makeLogo(!!options.brokenDarkLogo)] : [logo];
   const card = {
     dataset: { projectConfig: options.rawConfig ?? JSON.stringify(config) },
     querySelector(selector) {
-      if (selector === '.project-logo') return logo;
       return elements[selector.replace('[data-project-', '').replace(']', '')];
-    }
+    },
+    querySelectorAll(selector) { return selector === '.project-logo' ? logos : []; }
   };
   const requests = [], pending = [], timers = new Set();
   vm.runInNewContext(script, {
@@ -44,7 +46,7 @@ async function render(overrides = {}, sources = {}, options = {}) {
   });
   await Promise.all(pending);
   assert.equal(timers.size, 0);
-  return { elements, requests, logo };
+  return { elements, requests, logo, logos };
 }
 
 test('GitHub provides the website and counts, including zero', async () => {
@@ -137,6 +139,13 @@ test('a broken logo is hidden without affecting counters', async () => {
   assert.equal(later.logo.hidden, true);
 });
 
+test('a light and a dark logo are each hidden only when broken', async () => {
+  const { logos } = await render({}, {}, { darkLogo: true, brokenDarkLogo: true });
+  assert.deepEqual(logos.map((l) => !!l.hidden), [false, true]);
+  logos[0].error();
+  assert.equal(logos[0].hidden, true);
+});
+
 test('malformed project configuration does not cause requests', async () => {
   const { requests } = await render({}, {}, { rawConfig: '{invalid' });
   assert.deepEqual(requests, []);
@@ -217,7 +226,8 @@ test('the sidebar reorders cards by their latest commit once all have loaded', a
     const card = {
       name, parentNode: parent,
       dataset: { projectConfig: JSON.stringify({ name, repository: `owner/${name}` }) },
-      querySelector: () => null
+      querySelector: () => null,
+      querySelectorAll: () => []
     };
     parent.children.push(card);
     return card;
